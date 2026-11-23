@@ -1431,6 +1431,7 @@
   .form-grid { display: flex; flex-direction: column; gap: 10px; max-width: 460px; }
   .form-grid input, .form-grid textarea, .form-grid select {
     font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  }
   .bubble { padding: 12px 14px; background: var(--fill); border: 0; border-radius: 8px; line-height: 1.45; }
   .bubble.buyer { background: var(--hover); }
   .meter { height: 2px; background: var(--hover); border-radius: 2px; overflow: hidden; }
@@ -1544,6 +1545,183 @@
     padding: 0;
   }
   #auth-error { min-height: 18px; text-align: center; font-size: 13px; color: #e7b3b3; }
+  /* ---------- polish: session, receipt, shared controls ---------- */
+  :root, html[data-theme="light"] { --good: #0e7d6d; --good-soft: #e3f4f1; --bad: #b4443c; --bad-soft: #fbeceb; --beta: #a0650b; --beta-soft: #fbf1df; --focus: #2f6fed; }
+  html[data-theme="dark"] { --good: #4cc9a6; --good-soft: rgba(76,201,166,0.12); --bad: #f07a72; --bad-soft: rgba(240,122,114,0.12); --beta: #e7b45a; --beta-soft: rgba(231,180,90,0.12); --focus: #6b9bff; }
+
+  /* markdown */
+  .md { max-width: 68ch; line-height: 1.55; }
+  .md > :first-child { margin-top: 0; }
+  .md > :last-child { margin-bottom: 0; }
+  .md p { margin: 0 0 10px; }
+  .md h3, .md h4, .md h5, .md h6 { margin: 16px 0 6px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.3; }
+  .md h3 { font-size: 18px; } .md h4 { font-size: 16px; } .md h5, .md h6 { font-size: 14px; }
+  .md strong { font-weight: 600; }
+  .md ul, .md ol { margin: 0 0 10px; padding-left: 22px; }
+  .md li { margin: 3px 0; }
+  .md code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.88em; background: var(--fill-2); border-radius: 5px; padding: 1px 5px; }
+  .md pre { margin: 0 0 10px; padding: 12px 14px; background: var(--fill-2); border-radius: 10px; overflow-x: auto; }
+  .md pre code { background: transparent; padding: 0; font-size: 13px; }
+  .md table { width: auto; margin: 0 0 10px; font-size: 14px; border-collapse: collapse; }
+  .md th, .md td { padding: 6px 12px 6px 0; border-bottom: 1px solid var(--line); }
+  .md a { color: var(--focus); text-decoration: underline; text-underline-offset: 2px; }
+
+  /* session log */
+  #log { gap: 10px; }
+  #log .bubble { max-width: 72ch; }
+  .steps-log { display: flex; flex-direction: column; gap: 4px; padding: 2px 0; }
+  .steps-log .note {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted); line-height: 1.4; padding: 1px 0;
+  }
+  .steps-log .note::before {
+    content: ""; flex: none; width: 14px; height: 14px; border-radius: 50%;
+    background: var(--good-soft) no-repeat center / 10px
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e9d7d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E");
+  }
+  #log:not(.done) > .steps-log:last-child .note:last-child::before { background: transparent; box-shadow: inset 0 0 0 4px var(--focus); width: 10px; height: 10px; margin: 0 2px; }
+  #log.done .steps-log .note:last-child::before {
+    width: 14px; height: 14px; margin: 0; box-shadow: none;
+    background: var(--good-soft) no-repeat center / 10px
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230e9d7d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5 9-10'/%3E%3C/svg%3E");
+  }
+  .steps-log .note:last-child { color: var(--text); }
+  .steps-log:not(.open) .note:not(:last-child) { display: none; }
+  .steps-more { align-self: flex-start; border: 0; background: transparent; color: var(--faint); font-size: 12px; padding: 0 0 0 22px; }
+  .steps-more:empty { display: none; }
+  .steps-more:hover { color: var(--text); }
+  #session-status.live::before {
+    content: ""; width: 6px; height: 6px; border-radius: 50%; margin-right: 8px;
+    background: var(--focus); animation: pill-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pill-pulse { 50% { opacity: 0.25; } }
+
+  /* file chips */
+  #log .bubble.file-bubble { background: transparent; padding: 0; }
+  #log a.file-chip, #log a.file-chip:visited {
+    display: inline-flex; align-items: center; gap: 10px; max-width: 100%;
+    height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px;
+    background: var(--fill-2); color: var(--text); text-decoration: none; font-size: 14px;
+    transition: border-color .15s, background .15s;
+  }
+  html[data-theme] #log a.file-chip, html[data-theme] #log a.file-chip:visited { color: var(--text); }
+  html[data-theme="light"] #log a.file-chip { background: var(--panel); }
+  #log a.file-chip svg { flex: none; color: var(--muted); }
+  #log a.file-chip .file-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #log a.file-chip .file-dl { margin-left: 6px; }
+  #log a.file-chip:hover { border-color: var(--muted); background: var(--hover); }
+  #log a.file-chip:hover .file-dl { color: var(--text); }
+
+  /* ask / confirm card */
+  #ask {
+    display: block; margin: 12px 0; padding: 14px 16px; max-width: 560px;
+    border: 1px solid var(--line); border-radius: 14px; background: var(--fill);
+  }
+  #ask.hidden { display: none !important; }
+  .ask-label { margin: 0 0 10px; font-size: 13px; color: var(--muted); }
+  .ask-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  .ask-row input { flex: 1 1 220px; }
+
+  /* receipt card */
+  #receipt { margin: 16px 0; }
+  .rc { max-width: 420px; padding: 18px 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--fill); }
+  .rc-top { margin: 0 0 12px; display: block; }
+  .rc-label { color: var(--muted); font-size: 13px; margin-right: 6px; }
+  .rc-amount { font-size: 30px; font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .rc-rows { display: flex; flex-direction: column; }
+  .rc-row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid var(--line); font-size: 13px; }
+  .rc-row span { color: var(--muted); }
+  .rc-row b { font-weight: 400; font-variant-numeric: tabular-nums; }
+  .rc-head { margin: 14px 0 2px; font-size: 12px; color: var(--faint); text-transform: uppercase; letter-spacing: 0.04em; }
+  .rc-note { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+  /* shared controls on session, compare, report, wallet, creator, admin */
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) button:where(:not(.nav-item):not(.session-row):not(.steps-more):not([data-step])) {
+    height: 32px; padding: 0 14px; border: 1px solid transparent; border-radius: 999px;
+    background: var(--send); color: var(--send-text); font-size: 13px; line-height: 1;
+    transition: opacity .15s, background .15s, border-color .15s;
+  }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) button.ghost {
+    background: transparent; color: var(--text); border-color: var(--line);
+  }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) button:where(:not(.nav-item):not(.session-row):not(.steps-more):not([data-step])):not(.ghost):hover { opacity: 0.85; }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) button.ghost:hover { background: var(--fill); border-color: var(--muted); }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) button:disabled { opacity: 0.4; cursor: default; }
+  #admin button[data-kill] { background: transparent; color: var(--bad); border-color: var(--bad); }
+  #admin button[data-kill]:hover { background: var(--bad-soft); opacity: 1; }
+  :is(#session, #compare, #report, #wallet, #creator, #admin) :is(input:not([type="checkbox"]):not([type="file"]), select, textarea) {
+    height: 34px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px;
+    background: transparent; color: var(--text); font: inherit; font-size: 14px;
+  }
+  :is(#session, #compare, #report, #wallet, #creator, #admin) textarea { height: auto; padding: 8px 10px; resize: vertical; }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar) :is(input, select, textarea):focus { outline: none; border-color: var(--focus); box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 20%, transparent); }
+  :is(#session, #compare, #report, #wallet, #creator, #admin, #compare-bar, #thread) button:focus-visible,
+  #log a.file-chip:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  :is(#session, #creator) input[type="file"] { font-size: 13px; color: var(--muted); }
+  :is(#session, #creator) input[type="file"]::file-selector-button {
+    height: 30px; margin-right: 10px; padding: 0 12px; border: 1px solid var(--line); border-radius: 999px;
+    background: transparent; color: var(--text); font: inherit; cursor: pointer;
+  }
+  .session-tools label, #after-receipt label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+  .session-tools input[type="number"] { width: 80px; }
+  #after-receipt { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+  #after-receipt.hidden { display: none !important; }
+  #after-receipt .form-grid { flex-direction: row; flex-wrap: wrap; align-items: center; max-width: 640px; }
+  #after-receipt #rate-stars { width: 70px; }
+  #after-receipt input[type="text"] { flex: 1 1 200px; }
+  .form-grid [data-step-panel] { display: flex; flex-direction: column; gap: 10px; }
+  .form-grid > div:last-child { display: flex; gap: 8px; flex-wrap: wrap; }
+  .page h3 { font-weight: 500; font-size: 15px; letter-spacing: -0.01em; margin: 24px 0 10px; }
+  #creator-error:empty, #admin-error:empty, #session-edge:empty { display: none; }
+  #admin-error, #creator-error { margin: 8px 0; font-size: 13px; }
+  #compare-bar { justify-content: flex-end; margin: 8px 0 0; }
+
+  /* cards: compare, wallet, report, admin */
+  .grid-3 { align-items: stretch; }
+  .cmp, .card-block { gap: 8px; padding: 16px; border-radius: 16px; background: var(--panel); }
+  .cmp h3 { margin: 0; font-size: 16px; font-weight: 500; letter-spacing: -0.01em; }
+  .cmp > p { margin: 0; }
+  .cmp > button { align-self: flex-start; margin-top: auto; }
+  .cmp > button + button { margin-top: 0; }
+  .cmp .flag { min-height: 22px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .hl { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--good-soft); color: var(--good); text-transform: capitalize; }
+  .cmp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .report-head h2 { margin: 0 0 4px; }
+  .cmp-sum { color: var(--muted); font-size: 13px; line-height: 1.45; min-height: 38px; }
+  .cmp-rows .kv { padding: 7px 0; font-size: 13px; }
+  .cmp-rows .kv span:last-child, .kv span:last-child { font-variant-numeric: tabular-nums; }
+  .cmp-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 6px; }
+  .conf { display: inline-flex; align-items: center; gap: 8px; flex: none; padding: 6px 10px 6px 8px; border-radius: 12px; background: var(--good-soft); color: var(--good); }
+  .conf b { font-size: 22px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+  .conf span { font-size: 10px; line-height: 1.25; opacity: 0.9; }
+  .conf.beta { background: var(--beta-soft); color: var(--beta); }
+  .status { display: inline-block; margin-left: 6px; padding: 2px 9px; border-radius: 999px; font-size: 12px; text-transform: capitalize; }
+  .status.good { background: var(--good-soft); color: var(--good); }
+  .status.bad { background: var(--bad-soft); color: var(--bad); }
+  .status.beta { background: var(--beta-soft); color: var(--beta); }
+  .card-block p { margin: 0; }
+  .card-block ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+  .stage-list li { display: flex; align-items: baseline; gap: 6px; }
+  .stage-list li::before { content: "●"; font-size: 9px; color: var(--muted); }
+  .stage-list li.st-passed::before, .stage-list li.st-done::before, .stage-list li.st-approved::before { color: var(--good); }
+  .stage-list li.st-failed::before, .stage-list li.st-rejected::before { color: var(--bad); }
+  .stage-list li.st-held::before, .stage-list li.st-skipped::before, .stage-list li.st-changes_requested::before { color: var(--beta); }
+  .finding { line-height: 1.45; }
+  .sev { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; background: var(--fill-2); color: var(--muted); }
+  .sev-critical, .sev-high { background: var(--bad-soft); color: var(--bad); }
+  .sev-medium { background: var(--beta-soft); color: var(--beta); }
+  #admin-body { display: flex; flex-direction: column; gap: 12px; }
+  #admin-body .cmp > button { margin-top: 0; }
+  #admin-body .cmp { flex-direction: row; flex-wrap: wrap; align-items: center; }
+  #admin-body .cmp > h3, #admin-body .cmp > p, #admin-body .cmp > .card-block { flex: 1 1 100%; }
+  #admin-body .card-block { border: 0; padding: 0; background: transparent; }
+  #compare-back, #report-back { margin: 8px 0 12px; }
+  #report-start { margin-top: 16px; }
+  #creator-home .grid-3 { margin-top: 16px; }
+  #creator-steps { margin-top: 24px; }
+  #creator-review { margin-top: 24px; }
+  #creator-review h3 { margin-top: 0; }
+  @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -1767,7 +1945,7 @@
       <span id="file-note" class="meta"></span>
     </div>
     <button class="ghost" id="cancel" type="button">Cancel session</button>
-    <pre id="receipt"></pre>
+    <div id="receipt"></div>
     <div id="after-receipt" class="hidden">
       <form id="rate-form" class="form-grid">
         <label>Stars <input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
@@ -2145,6 +2323,8 @@ function show(view) {
   if (view === "wallet") loadWallet();
   if (view === "compare") setCrumb("Compare");
   if (view === "report") setCrumb("Report card");
+  const titles = { session: "Session", wallet: "Wallet", creator: "Creator", admin: "Review" };
+  if (titles[view]) setCrumb(titles[view]);
 }
 function setCrumb(title) {
   $("#crumb-label").textContent = title && title !== "New chat" ? title : "New chat";
@@ -2336,13 +2516,63 @@ function readImage(file) {
 
 function credits(n) {
   const value = Number(n) || 0;
+  if (value > 0 && value < 0.1) return "<0.1 credits";
   const shown = value < 10 ? String(Math.round(value * 10) / 10) : Math.round(value).toLocaleString("en-US");
   return shown + " credits";
 }
 function creditsFine(n) {
-  const value = Math.round((Number(n) || 0) * 10) / 10;
+  const raw = Number(n) || 0;
+  if (raw !== 0 && Math.abs(raw) < 0.1) return (raw < 0 ? "-" : "") + "<0.1 credits";
+  const value = Math.round(raw * 10) / 10;
   const whole = Math.abs(value - Math.round(value)) < 0.001;
-  return (whole ? String(Math.round(value)) : value.toFixed(1)) + " credits";
+  return (whole ? Math.round(value).toLocaleString("en-US") : value.toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 })) + " credits";
+}
+// Small markdown renderer for agent text. Escapes HTML first; links only to http(s) or site paths.
+function md(src) {
+  const lines = esc(src || "").split("\n");
+  const inline = (s) => s
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\*)/g, "$1<em>$2</em>")
+    .replace(/\[([^\]]+)\]\(((?:https?:\/\/|\/)[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  const cells = (row) => row.trim().replace(/^\||\|$/g, "").split("|").map((c) => inline(c.trim()));
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) {
+      const buf = [];
+      i++;
+      while (i < lines.length && !/^\s*```/.test(lines[i])) buf.push(lines[i++]);
+      i++;
+      out.push(`<pre><code>${buf.join("\n")}</code></pre>`);
+      continue;
+    }
+    const h = line.match(/^(#{1,6})\s+(.*)$/);
+    if (h) { const n = Math.min(h[1].length + 2, 6); out.push(`<h${n}>${inline(h[2])}</h${n}>`); i++; continue; }
+    if (/^\s*\|/.test(line) && /^\s*\|?\s*:?-{2,}/.test(lines[i + 1] || "")) {
+      const head = cells(line);
+      const body = [];
+      i += 2;
+      while (i < lines.length && /^\s*\|/.test(lines[i])) body.push(cells(lines[i++]));
+      out.push(`<table><thead><tr>${head.map((c) => `<th>${c}</th>`).join("")}</tr></thead><tbody>${body.map((r) => `<tr>${r.map((c) => `<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table>`);
+      continue;
+    }
+    const list = line.match(/^\s*([-*+]|\d+[.)])\s+/);
+    if (list) {
+      const ordered = /\d/.test(list[1]);
+      const items = [];
+      while (i < lines.length && (ordered ? /^\s*\d+[.)]\s+/ : /^\s*[-*+]\s+/).test(lines[i])) items.push(inline(lines[i++].replace(/^\s*([-*+]|\d+[.)])\s+/, "")));
+      out.push(`<${ordered ? "ol" : "ul"}>${items.map((x) => `<li>${x}</li>`).join("")}</${ordered ? "ol" : "ul"}>`);
+      continue;
+    }
+    if (!line.trim()) { i++; continue; }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|\s*```|\s*([-*+]|\d+[.)])\s|\s*\|)/.test(lines[i])) para.push(inline(lines[i++]));
+    if (!para.length) para.push(inline(lines[i++]));
+    out.push(`<p>${para.join("<br>")}</p>`);
+  }
+  return out.join("");
 }
 function fromMicro(n) { return (Number(n) || 0) / 1000; }
 function esc(value) {
@@ -2453,8 +2683,11 @@ function renderThread(data) {
         : best[0]
           ? best[0].sample[0] + " is the only agent that fits this. The others score too low."
           : m.content;
-    } else {
+    } else if (m.role === "user") {
       div.textContent = m.content;
+    } else {
+      div.classList.add("md");
+      div.innerHTML = md(m.content);
     }
     thread.appendChild(div);
   });
@@ -2876,6 +3109,7 @@ async function start(agentId, cap) {
   state.session = ses.session_id || ses.id;
   state.cap = cap;
   $("#log").innerHTML = "";
+  $("#log").classList.remove("done");
   $("#receipt").textContent = "";
   $("#after-receipt").classList.add("hidden");
   $("#session-edge").textContent = "";
@@ -2913,21 +3147,45 @@ function openEvents(id, cap) {
     const terminal = ["settled", "failed", "cancelled", "timed_out", "budget_exhausted"];
     if (data.status && terminal.includes(data.status)) $("#cancel").classList.add("hidden");
     if (data.type === "status" || data.type === "progress") {
-      const line = document.createElement("div");
-      line.className = "note";
-      line.textContent = data.text || data.label || data.status || data.type;
-      $("#log").appendChild(line);
+      const text = data.text || data.label || data.status || data.type;
+      let group = $("#log").lastElementChild;
+      if (!group || !group.classList.contains("steps-log")) {
+        group = document.createElement("div");
+        group.className = "steps-log";
+        const more = document.createElement("button");
+        more.type = "button";
+        more.className = "steps-more";
+        more.onclick = () => group.classList.toggle("open");
+        group.appendChild(more);
+        $("#log").appendChild(group);
+      }
+      const notes = group.querySelectorAll(".note");
+      if (!notes.length || notes[notes.length - 1].textContent !== text) {
+        const line = document.createElement("div");
+        line.className = "note";
+        line.textContent = text;
+        group.appendChild(line);
+      }
+      const earlier = group.querySelectorAll(".note").length - 1;
+      group.querySelector(".steps-more").textContent = earlier ? (group.classList.contains("open") ? "Hide" : "Show") + " " + earlier + " earlier step" + (earlier > 1 ? "s" : "") : "";
+      group.querySelector(".steps-more").onclick = () => { group.classList.toggle("open"); group.querySelector(".steps-more").textContent = (group.classList.contains("open") ? "Hide" : "Show") + " " + (group.querySelectorAll(".note").length - 1) + " earlier step" + (group.querySelectorAll(".note").length > 2 ? "s" : ""); };
       if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
     } else if (data.type !== "spend" && data.type !== "budget_warning" && data.type !== "budget_exhausted") {
       const div = document.createElement("div");
       div.className = "bubble " + (data.role || "");
       div.textContent = data.text || data.label || data.type;
+      if (data.role !== "buyer" && data.type !== "error" && data.type !== "file") {
+        div.classList.add("md");
+        div.innerHTML = md(data.text || data.label || data.type);
+      }
       if (data.type === "file" && data.url) {
         const link = document.createElement("a");
         link.href = data.url + (data.url.includes("?") ? "&" : "?") + "access_token=" + encodeURIComponent(state.token || "");
         link.download = data.name || "";
-        link.textContent = data.name || "Download file";
+        link.className = "file-chip";
+        link.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg><span class="file-name">${esc(data.name || "Download file")}</span><svg class="file-dl" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>`;
         div.textContent = "";
+        div.classList.add("file-bubble");
         div.appendChild(link);
       }
       if (data.type === "error") {
@@ -2947,16 +3205,18 @@ function openEvents(id, cap) {
     if (data.type === "budget_warning") $("#session-edge").textContent = "Spend is at 80% of the cap. Extend it, or let the agent wrap up.";
     if (data.type === "budget_exhausted") $("#session-edge").textContent = "The cap is used up. The agent has a short window to deliver what it has.";
     const ask = $("#ask");
+    if (data.type !== "settled") $("#session-status").classList.add("live");
     if (data.type === "ask_user") {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
-      ask.innerHTML = "";
+      ask.innerHTML = `<p class="ask-label">${data.options && data.options.length ? "Pick one" : "Your answer"}</p><div class="ask-row"></div>`;
+      const row = ask.querySelector(".ask-row");
       if (data.options && data.options.length) {
         data.options.forEach((opt) => {
           const b = document.createElement("button");
           b.textContent = opt;
           b.onclick = () => answer(opt, data.id);
-          ask.appendChild(b);
+          row.appendChild(b);
         });
       } else {
         const input = document.createElement("input");
@@ -2966,22 +3226,24 @@ function openEvents(id, cap) {
         send.textContent = "Send";
         send.onclick = () => { if (input.value.trim()) answer(input.value.trim(), data.id); };
         input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
-        ask.append(input, send);
+        row.append(input, send);
         input.focus();
       }
     }
     if (data.type === "confirm") {
       $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
-      ask.innerHTML = "";
+      ask.innerHTML = `<p class="ask-label">Approval needed</p><div class="ask-row"></div>`;
+      const row = ask.querySelector(".ask-row");
       [["Approve", true], ["Deny", false]].forEach(([label, approved]) => {
         const b = document.createElement("button");
         b.textContent = label;
+        if (!approved) b.className = "ghost";
         b.onclick = async () => {
           ask.classList.add("hidden");
           await api("/v1/sessions/" + state.session + "/confirm", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ confirm_id: data.id, approved })});
         };
-        ask.appendChild(b);
+        row.appendChild(b);
       });
     }
     if (data.type === "settled" || (data.status && terminal.includes(data.status) && data.type === "status")) {
@@ -3007,13 +3269,16 @@ $("#cancel").onclick = async () => {
 async function showReceipt(id) {
   const r = await api("/v1/receipts/" + id);
   const charged = Number(r.price_credits) || 0;
-  const lines = [
-    charged === 0 ? "You were not charged." : "Charged " + creditsFine(charged) + ".",
-    "Held " + creditsFine(r.cap_credits) + ". Released " + creditsFine(r.released_credits) + ".",
-    "Where it went: creator " + creditsFine(r.earnings_credits) + ", platform fee " + creditsFine(r.fee_credits) + ", model and tools " + creditsFine(r.cost_credits) + "."
-  ];
-  if (r.refund_reason) lines.push(r.refund_reason);
-  $("#receipt").textContent = lines.join("\n");
+  const row = (label, value) => `<div class="rc-row"><span>${label}</span><b>${esc(creditsFine(value))}</b></div>`;
+  $("#receipt").innerHTML = `<div class="rc">
+    <p class="rc-top">${charged === 0 ? `<span class="rc-label">You were not charged.</span>` : `<span class="rc-label">Charged</span> <b class="rc-amount">${esc(creditsFine(charged))}</b>`}</p>
+    <div class="rc-rows">${row("Held", r.cap_credits)}${row("Released", r.released_credits)}</div>
+    <p class="rc-head">Where it went</p>
+    <div class="rc-rows">${row("Creator earnings", r.earnings_credits)}${row("Platform fee", r.fee_credits)}${row("Model and tools", r.cost_credits)}</div>
+    ${r.refund_reason ? `<p class="rc-note">${esc(r.refund_reason)}</p>` : ""}
+  </div>`;
+  $("#session-status").classList.remove("live");
+  $("#log").classList.add("done");
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
   $("#cancel").classList.add("hidden");
   $("#after-receipt").classList.remove("hidden");
@@ -3072,23 +3337,36 @@ async function loadAccount() {
     button.onclick = () => openConversation(button.dataset.chat);
   });
 }
+function statusTone(value) {
+  const v = String(value || "").toLowerCase();
+  if (["approved", "live", "passed", "done"].includes(v)) return "good";
+  if (["rejected", "failed", "paused", "delisted"].includes(v)) return "bad";
+  return "beta";
+}
+function confBadge(score, n) {
+  const beta = (Number(n) || 0) < 30;
+  return `<span class="conf ${beta ? "beta" : "good"}"><b>${esc(score)}</b><span>Confidence${beta ? " · beta" : ""}<br>n ${esc(n)}</span></span>`;
+}
 function reportCardHtml(card) {
   if (!card) return `<p class="empty">No report card yet.</p>`;
   const scores = card.scores || {};
   const scoreRows = Object.keys(scores).map((key) => `<div class="kv"><span>${esc(key)}</span><span>${esc(scores[key])}</span></div>`).join("");
-  const findings = (card.findings || []).map((f) => `<li>${esc(f.severity || "")} ${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
-  const stages = (card.stages || []).map((s) => `<li>${esc(s.stage)} · ${esc(s.status)} ${esc(s.detail || "")}</li>`).join("");
+  const findings = (card.findings || []).map((f) => {
+    const m = typeof f.detail === "string" && !f.severity ? f.detail.match(/^\[(\w+)\]\s*(.*)$/) : null;  // admin list sends "[sev] text"
+    return m ? { severity: m[1], detail: m[2] } : f;
+  }).map((f) => `<li class="finding">${f.severity ? `<span class="sev sev-${esc(f.severity)}">${esc(f.severity)}</span> ` : ""}${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
+  const stages = (card.stages || []).map((s) => `<li class="stage st-${esc(s.status)}">${esc(s.stage)} · ${esc(s.status)} <span class="meta">${esc(s.detail || "")}</span></li>`).join("");
   const tests = card.tests || [];
   const passed = tests.filter((t) => t.passed).length;
   const decision = card.decision || "pending";
   return `<article class="card-block">
-    <p>Decision <span class="${decision === "rejected" ? "warn" : ""}">${esc(decision)}</span></p>
-    <p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>
-    <p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>
+    <p class="rc-decision">Decision <span class="status ${statusTone(decision)}">${esc(decision)}</span></p>
+    ${card.cost_p50_microcredits != null ? `<p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>` : ""}
+    ${card.latency_p50_ms != null ? `<p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>` : ""}
     ${tests.length ? `<p class="meta">Tests ${passed}/${tests.length} passed</p>` : ""}
-    ${scoreRows ? `<div>${scoreRows}</div>` : `<p class="empty">No confidence breakdown yet.</p>`}
-    ${stages ? `<p class="meta">Stages</p><ul>${stages}</ul>` : ""}
-    ${findings ? `<p class="meta">Findings</p><ul>${findings}</ul>` : `<p class="empty">No findings.</p>`}
+    ${scoreRows ? `<div>${scoreRows}</div>` : card.scores !== undefined ? `<p class="empty">No confidence breakdown yet.</p>` : ""}
+    ${stages ? `<p class="meta">Stages</p><ul class="stage-list">${stages}</ul>` : ""}
+    ${findings ? `<p class="meta">Findings</p><ul class="finding-list">${findings}</ul>` : `<p class="empty">No findings.</p>`}
   </article>`;
 }
 function paintCompareBar() {
@@ -3112,16 +3390,19 @@ async function runCompare() {
   const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => key.replaceAll("_", " ")).join(" · ");
   $("#compare-body").innerHTML = `<div class="grid-3">${(data.agents || []).map((a) => {
     const price = a.price || {};
-    return `<article class="cmp">
-      <p class="flag">${esc(label(a.id))}</p>
-      <h3>${esc(a.title)}</h3>
-      <p>${esc(a.summary || "")}</p>
-      <p class="meta">p50 ${creditsFine(fromMicro(price.low_microcredits))} · high ${creditsFine(fromMicro(price.high_microcredits))} · max ${creditsFine(fromMicro(price.max_microcredits))}</p>
-      <p class="meta">Confidence ${esc(a.confidence_score)} from ${esc(a.confidence_n)} sessions</p>
-      <p class="meta">Speed p50 ${esc(a.duration_p50_s)}s · p95 ${esc(a.duration_p95_s)}s</p>
-      <p>${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
-      <button type="button" data-start="${a.id}">Start with this agent</button>
-      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
+    return `<article class="cmp cmp-agent">
+      <p class="flag">${label(a.id).split(" · ").filter(Boolean).map((x) => `<span class="hl">${esc(x)}</span>`).join(" ")}</p>
+      <div class="cmp-head"><h3>${esc(a.title)}</h3>${confBadge(a.confidence_score, a.confidence_n)}</div>
+      <p class="cmp-sum">${esc(a.summary || "")}</p>
+      <div class="cmp-rows">
+        <div class="kv"><span>Price p50</span><span>${creditsFine(fromMicro(price.low_microcredits))}</span></div>
+        <div class="kv"><span>Price high</span><span>${creditsFine(fromMicro(price.high_microcredits))}</span></div>
+        <div class="kv"><span>Maximum</span><span>${creditsFine(fromMicro(price.max_microcredits))}</span></div>
+        <div class="kv"><span>Speed p50 / p95</span><span>${esc(a.duration_p50_s)}s / ${esc(a.duration_p95_s)}s</span></div>
+      </div>
+      <p class="cmp-badges">${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
+      <div class="cmp-actions"><button type="button" data-start="${a.id}">Start with this agent</button>
+      <button class="ghost" type="button" data-detail="${a.id}">Report card</button></div>
     </article>`;
   }).join("")}</div>`;
   show("compare");
@@ -3131,7 +3412,7 @@ async function runCompare() {
 async function openReport(id) {
   const data = await api("/v1/agents/" + id);
   const live = data.live_stats || data.seeded_live_stats || {};
-  $("#report-body").innerHTML = `<h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p>
+  $("#report-body").innerHTML = `<div class="cmp-head report-head"><div><h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p></div>${confBadge(data.confidence_score, data.confidence_n)}</div>
     <p>${(data.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="empty">No badge</span>`}</p>
     <p class="meta">Confidence ${esc(data.confidence_score)} · lower bound ${esc(data.confidence_lower_bound)} · n ${esc(data.confidence_n)}</p>
     <p class="meta">Live success ${live.success_rate == null ? "no live stats yet" : esc(live.success_rate)} · incidents in findings below</p>
