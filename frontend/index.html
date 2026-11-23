@@ -923,6 +923,32 @@
   #session-back { margin: 8px 0 16px; }
   .bubble { padding: 12px 14px; background: var(--fill); border: 0; border-radius: 8px; line-height: 1.45; }
   .bubble.buyer { background: var(--hover); }
+  .note { font-size: 12px; color: var(--muted); line-height: 1.4; padding: 2px 0; }
+  html[data-theme="dark"] #log a, #log a:visited { color: #d7e4ff; }
+  html[data-theme="light"] #log a, #log a:visited { color: #1d4ed8; }
+  .session-tools, .quote-files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+  .session-tools input[type="number"], .session-tools input[type="text"], #quote input[type="file"] { font: inherit; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .cmp, .card-block {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .cmp .flag { font-size: 12px; color: var(--muted); }
+  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .kv span:first-child { color: var(--muted); }
+  .steps { display: flex; gap: 8px; margin: 8px 0 16px; }
+  .steps button { border: 0; background: transparent; color: var(--muted); padding: 0 0 6px; border-bottom: 1px solid transparent; }
+  .steps button.on { color: var(--text); border-bottom-color: var(--text); }
+  .form-grid { display: flex; flex-direction: column; gap: 10px; max-width: 460px; }
+  .form-grid input, .form-grid textarea, .form-grid select {
+    font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+  }
+  .warn { color: #c45c4a; }
   .meter { height: 2px; background: var(--hover); border-radius: 2px; overflow: hidden; }
   .meter > div { height: 100%; width: 0; background: var(--ink); }
   .meta { color: var(--muted); font-size: 13px; }
@@ -1093,6 +1119,10 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
       Session
     </button>
+    <button class="nav-item" type="button" data-view="wallet">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
+      Wallet
+    </button>
     <button class="nav-item" type="button" data-view="creator">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
       Creator
@@ -1209,20 +1239,106 @@
     <p class="meta" id="spend"></p>
     <div id="log"></div>
     <div id="ask" class="hidden"></div>
+    <p id="session-edge" class="warn"></p>
+    <div class="session-tools">
+      <label>Extend cap <input id="extend-credits" type="number" min="1" step="1" value="10" aria-label="Credits to add"></label>
+      <button class="ghost" id="extend" type="button">Extend</button>
+      <label>File <input id="session-file" type="file" aria-label="Attach a file"></label>
+      <span id="file-note" class="meta"></span>
+    </div>
     <button class="ghost" id="cancel" type="button">Cancel session</button>
     <pre id="receipt"></pre>
+    <div id="after-receipt" class="hidden">
+      <form id="rate-form" class="form-grid">
+        <label>Stars <input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
+        <input id="rate-comment" type="text" placeholder="Comment">
+        <button type="submit">Rate this agent</button>
+      </form>
+      <form id="dispute-form" class="form-grid">
+        <input id="dispute-reason" type="text" placeholder="Why this result should be reviewed" required>
+        <button type="submit">Open a dispute</button>
+      </form>
+      <p id="after-note" class="meta"></p>
+    </div>
   </div>
 </section>
 
 <section id="creator" class="page hidden">
-  <h2>Creator ledger</h2>
-  <div id="creator-body"></div>
+  <h2>Creator</h2>
+  <div id="creator-error" class="warn"></div>
+  <div id="creator-home"></div>
+  <div class="steps" id="creator-steps">
+    <button type="button" data-step="1">1 Basics</button>
+    <button type="button" data-step="2">2 Manifest</button>
+    <button type="button" data-step="3">3 Listing</button>
+    <button type="button" data-step="4">4 Samples</button>
+    <button type="button" data-step="5">5 Submit</button>
+  </div>
+  <form id="creator-form" class="form-grid">
+    <div data-step-panel="1">
+      <input id="c-slug" placeholder="slug" required>
+      <input id="c-category" placeholder="category" value="general">
+      <select id="c-mode"><option value="hosted">hosted</option><option value="external">external</option></select>
+      <input id="c-endpoint" placeholder="endpoint url, external only">
+    </div>
+    <div data-step-panel="2" class="hidden">
+      <input id="c-version" placeholder="version" value="0.1.0">
+      <select id="c-price-model"><option>per_task</option><option>per_message</option><option>per_minute</option><option>usage_based</option><option>outcome_based</option></select>
+      <input id="c-price" type="number" min="0" step="1" value="5" placeholder="price credits">
+    </div>
+    <div data-step-panel="3" class="hidden">
+      <input id="c-title" placeholder="title">
+      <input id="c-summary" placeholder="summary">
+      <textarea id="c-description" rows="3" placeholder="description"></textarea>
+      <input id="c-tags" placeholder="tags, comma separated">
+    </div>
+    <div data-step-panel="4" class="hidden">
+      <textarea id="c-samples" rows="3" placeholder="one example task per line"></textarea>
+    </div>
+    <div data-step-panel="5" class="hidden">
+      <input id="c-source" placeholder="source path, optional">
+      <p class="meta" id="c-submit-note"></p>
+    </div>
+    <div>
+      <button type="button" id="c-back">Back</button>
+      <button type="button" id="c-next">Next</button>
+      <button type="submit" id="c-submit" class="hidden">Submit for review</button>
+    </div>
+  </form>
+  <div id="creator-review"></div>
 </section>
 
 <section id="admin" class="page hidden">
-  <h2>Review queue</h2>
-  <p class="meta">Guaranteed Returns Bot is waiting. Run review, then use the kill switch on a live agent.</p>
+  <h2>Review</h2>
+  <div id="admin-error" class="warn"></div>
+  <div id="admin-metrics"></div>
+  <h3>Queue</h3>
+  <div id="admin-queue"></div>
+  <h3>Agents</h3>
   <div id="admin-body"></div>
+  <h3>Refund a session</h3>
+  <form id="refund-form" class="form-grid">
+    <input id="refund-id" placeholder="session id" required>
+    <input id="refund-reason" placeholder="reason" value="admin refund">
+    <button type="submit">Refund</button>
+    <p id="refund-note" class="meta"></p>
+  </form>
+</section>
+
+<section id="wallet" class="page hidden">
+  <h2>Wallet</h2>
+  <div id="wallet-body"></div>
+</section>
+
+<section id="compare" class="page hidden">
+  <button class="ghost" id="compare-back" type="button">Back</button>
+  <h2>Compare</h2>
+  <div id="compare-body"></div>
+</section>
+
+<section id="agent" class="page hidden">
+  <button class="ghost" id="agent-back" type="button">Back</button>
+  <div id="agent-body"></div>
 </section>
 </main>
 </div>
@@ -1236,6 +1352,10 @@
       <input id="quote-cap" type="number" min="1" step="1" />
     </label>
     <p id="quote-hold" class="meta"></p>
+    <label class="quote-files">Attach a file
+      <input id="quote-file" type="file">
+    </label>
+    <p id="quote-files" class="meta"></p>
     <p id="quote-error" class="warn"></p>
     <div class="quote-actions">
       <button id="quote-back" type="button">Back</button>
@@ -1267,7 +1387,7 @@ document.querySelectorAll("[data-theme-choice]").forEach((button) => {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (themeChoice === "system") applyTheme("system");
 });
-const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options" };
+const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options", me: null, files: [], picks: [], cap: 0, quote: null, step: 1, draftAgent: null };
 
 async function api(path, opts) {
   opts = opts || {};
@@ -1275,7 +1395,13 @@ async function api(path, opts) {
   if (state.token) headers.Authorization = "Bearer " + state.token;
   const res = await fetch(path, Object.assign({}, opts, { headers }));
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.detail || res.statusText);
+  if (!res.ok) {
+    const body = data.detail && typeof data.detail === "object" ? data.detail : data;
+    const err = new Error((body && body.detail) || (typeof data.detail === "string" ? data.detail : "") || res.statusText);
+    err.code = (body && body.error) || data.error || "";
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 async function refreshBal() {
@@ -1322,8 +1448,17 @@ function enterApp(session) {
   const name = meta.full_name || meta.name || (session.user.email || "Account").split("@")[0];
   paintUser(name);
   $("#auth").classList.add("hidden");
+  loadMe();
   refreshBal();
   loadSidebar();
+}
+async function loadMe() {
+  try { state.me = await api("/v1/me"); } catch (err) { state.me = { roles: [] }; }
+  if (state.me.name) paintUser(state.me.name);
+}
+function hasRole(role) {
+  const roles = (state.me && state.me.roles) || [];
+  return roles.includes(role);
 }
 function enterDemo(token) {
   localStorage.setItem("cohort-demo-token", token);
@@ -1497,13 +1632,19 @@ document.addEventListener("click", () => {
 });
 function show(view) {
   document.querySelectorAll(".nav-item").forEach((x) => x.classList.toggle("on", x.dataset.view === view));
-  ["discover","session","creator","admin"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
+  ["discover","session","creator","admin","wallet","compare","agent"].forEach((id) => {
+    const node = $("#"+id);
+    if (node) node.classList.toggle("hidden", id !== view);
+  });
   if (view === "session") {
     if (state.session) showLive();
     else showSessionList();
   }
   if (view === "creator") loadCreator();
   if (view === "admin") loadAdmin();
+  if (view === "wallet") loadWallet();
+  if (view === "compare") setCrumb("Compare");
+  if (view === "agent") setCrumb("Agent");
 }
 function setCrumb(title) {
   $("#crumb-label").textContent = title && title !== "New chat" ? title : "New chat";
@@ -1625,6 +1766,23 @@ function credits(n) {
   const shown = value < 10 ? String(Math.round(value * 10) / 10) : Math.round(value).toLocaleString("en-US");
   return shown + " credits";
 }
+function creditsFine(n) {
+  const value = Math.round((Number(n) || 0) * 10) / 10;
+  const whole = Math.abs(value - Math.round(value)) < 0.001;
+  return (whole ? String(Math.round(value)) : value.toFixed(1)) + " credits";
+}
+function fromMicro(n) { return (Number(n) || 0) / 1000; }
+function esc(value) {
+  return String(value == null ? "" : value).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[ch]));
+}
+function priceBand(price) {
+  if (!price) return "No price yet";
+  const low = price.low_credits != null ? price.low_credits : fromMicro(price.low_microcredits);
+  const mid = price.p50_credits != null ? price.p50_credits : (price.high_credits != null ? null : null);
+  const high = price.high_credits != null ? price.high_credits : fromMicro(price.high_microcredits);
+  const p50 = price.p50_microcredits != null ? fromMicro(price.p50_microcredits) : (low + high) / 2;
+  return creditsFine(low) + " / " + creditsFine(mid == null ? p50 : mid) + " / " + creditsFine(high);
+}
 function priceLabel(agent) {
   const low = Number(agent.price_low);
   const high = Number(agent.price_high);
@@ -1648,11 +1806,13 @@ function renderThread(data) {
   setCrumb(data.title);
   const cards = state.agents.map((a) => `
     <article class="match">
-      <h3>${a.title}</h3>
-      <p>${a.summary || ""}</p>
-      <div class="row">${(a.badges || []).map((b) => `<span class="tag">${b}</span>`).join("")}<span class="tag">${priceLabel(a)}</span></div>
-      <p>${confidenceLabel(a)}${a.latency_p50 ? " · about " + a.latency_p50 + " seconds" : ""}</p>
+      <label class="meta"><input type="checkbox" data-pick="${a.id}" ${state.picks.includes(a.id) ? "checked" : ""}> Compare</label>
+      <h3>${esc(a.title)}</h3>
+      <p>${esc(a.summary || "")}</p>
+      <div class="row">${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join("")}<span class="tag">${esc(priceLabel(a))}</span></div>
+      <p>${esc(confidenceLabel(a))}${a.latency_p50 ? " · about " + esc(a.latency_p50) + " seconds" : ""}</p>
       <button class="choose" type="button" data-id="${a.id}">Choose</button>
+      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
     </article>`).join("");
   thread.innerHTML = "";
   data.messages.forEach((m) => {
@@ -1667,6 +1827,17 @@ function renderThread(data) {
     wrap.innerHTML = cards || `<p class="empty">No listed agent fits that task yet. Try wording the outcome again.</p>`;
     thread.appendChild(wrap);
     thread.querySelectorAll(".choose").forEach((b) => b.onclick = () => openQuote(b.dataset.id));
+    thread.querySelectorAll("[data-pick]").forEach((box) => box.onclick = (event) => {
+      event.stopPropagation();
+      const id = box.dataset.pick;
+      if (box.checked) {
+        if (state.picks.length >= 3) { box.checked = false; return; }
+        if (!state.picks.includes(id)) state.picks.push(id);
+      } else state.picks = state.picks.filter((item) => item !== id);
+      paintCompareBar();
+    });
+    thread.querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openAgent(b.dataset.detail));
+    paintCompareBar();
   }
   thread.scrollTop = thread.scrollHeight;
 }
@@ -1861,19 +2032,38 @@ $("#quote-topup").onclick = async () => {
 $("#quote-start").onclick = () => start(state.quote.agentId, Number($("#quote-cap").value));
 async function start(agentId, cap) {
   const task = state.task || $("#task").value.trim();
-  const ses = await once("start", (key) => api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap })}));
+  let ses;
+  try {
+    ses = await once("start", (key) => api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap, files: state.files })}));
+  } catch (err) {
+    if (err.code === "insufficient_credits") {
+      $("#quote-error").textContent = err.message + " Add credits, or lower the cap.";
+      $("#quote-topup").classList.remove("hidden");
+      return;
+    }
+    if (err.code === "agent_unavailable") {
+      $("#quote-error").textContent = err.message || "This agent is paused or delisted.";
+      return;
+    }
+    $("#quote-error").textContent = err.message || "The session did not start.";
+    return;
+  }
   $("#quote").classList.add("hidden");
-  state.session = ses.session_id;
+  state.session = ses.session_id || ses.id;
+  state.cap = cap;
   $("#log").innerHTML = "";
   $("#receipt").textContent = "";
+  $("#after-receipt").classList.add("hidden");
+  $("#session-edge").textContent = "";
   $("#session-title").textContent = "Live session";
   $("#session-status").textContent = "Holding";
+  $("#cancel").classList.remove("hidden");
   $("#bar").style.width = "0";
   $("#bar").className = "";
   $("#spend").textContent = "Spent " + credits(0) + " of " + credits(cap);
   show("session");
   showLive();
-  openEvents(ses.session_id, cap);
+  openEvents(state.session, cap);
   refreshBal();
 }
 async function openHistory(id, cap, active) {
@@ -1890,31 +2080,48 @@ async function openHistory(id, cap, active) {
 }
 function openEvents(id, cap) {
   if (state.es) state.es.close();
+  state.cap = cap;
   const es = new EventSource("/v1/sessions/" + id + "/events?access_token=" + encodeURIComponent(state.token || ""));
   state.es = es;
+  es.onerror = () => { $("#session-status").textContent = "Connection dropped. Reconnecting…"; };
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
-    const div = document.createElement("div");
-    div.className = "bubble " + (data.role || "");
-    div.textContent = data.text || data.label || data.type;
-    if (data.type === "file" && data.url) {
-      const link = document.createElement("a");
-      link.href = data.url + "?access_token=" + encodeURIComponent(state.token || "");
-      link.download = data.name || "";
-      link.textContent = data.name || "Download file";
-      div.textContent = "";
-      div.appendChild(link);
+    const terminal = ["settled", "failed", "cancelled", "timed_out", "budget_exhausted"];
+    if (data.status && terminal.includes(data.status)) $("#cancel").classList.add("hidden");
+    if (data.type === "status" || data.type === "progress") {
+      const line = document.createElement("div");
+      line.className = "note";
+      line.textContent = data.text || data.label || data.status || data.type;
+      $("#log").appendChild(line);
+      if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
+    } else if (data.type !== "spend" && data.type !== "budget_warning" && data.type !== "budget_exhausted") {
+      const div = document.createElement("div");
+      div.className = "bubble " + (data.role || "");
+      div.textContent = data.text || data.label || data.type;
+      if (data.type === "file" && data.url) {
+        const link = document.createElement("a");
+        link.href = data.url + (data.url.includes("?") ? "&" : "?") + "access_token=" + encodeURIComponent(state.token || "");
+        link.download = data.name || "";
+        link.textContent = data.name || "Download file";
+        div.textContent = "";
+        div.appendChild(link);
+      }
+      if (data.type === "error") {
+        div.classList.add("warn");
+        if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
+      }
+      $("#log").appendChild(div);
     }
-    if (data.type !== "spend" && data.type !== "status") $("#log").appendChild(div);
-    if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
-    if (data.spent_credits != null) {
+    if (data.spent_credits != null && cap) {
       const pct = Math.min(100, (data.spent_credits / cap) * 100);
       const bar = $("#bar");
       bar.style.width = pct + "%";
       bar.classList.toggle("warn", pct >= 80 && pct < 100);
       bar.classList.toggle("hot", pct >= 100);
-      $("#spend").textContent = "Spent " + credits(data.spent_credits) + " of " + credits(cap);
+      $("#spend").textContent = "Spent " + creditsFine(data.spent_credits) + " of " + creditsFine(cap);
     }
+    if (data.type === "budget_warning") $("#session-edge").textContent = "Spend is at 80% of the cap. Extend it, or let the agent wrap up.";
+    if (data.type === "budget_exhausted") $("#session-edge").textContent = "The cap is used up. The agent has a short window to deliver what it has.";
     const ask = $("#ask");
     if (data.type === "ask_user") {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
@@ -1953,16 +2160,16 @@ function openEvents(id, cap) {
         ask.appendChild(b);
       });
     }
-    if (data.type === "error") {
-      div.classList.add("warn");
-      if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
+    if (data.type === "settled" || (data.status && terminal.includes(data.status) && data.type === "status")) {
+      if (data.type === "settled") {
+        es.close();
+        ask.classList.add("hidden");
+        $("#cancel").classList.add("hidden");
+        showReceipt(id);
+        refreshBal();
+      }
     }
-    if (data.type === "settled") {
-      es.close();
-      ask.classList.add("hidden");
-      showReceipt(id);
-      refreshBal();
-    }
+    if (data.type === "failed" || data.status === "failed" || data.status === "cancelled") $("#cancel").classList.add("hidden");
   };
 }
 async function answer(text, replyTo) {
@@ -1977,40 +2184,304 @@ async function showReceipt(id) {
   const r = await api("/v1/receipts/" + id);
   const charged = Number(r.price_credits) || 0;
   const lines = [
-    charged === 0 ? "You were not charged." : "Charged " + credits(charged) + ".",
-    "Held " + credits(r.cap_credits) + ". Released " + credits(r.released_credits) + ".",
-    "Where it went: creator " + credits(r.earnings_credits) + ", platform fee " + credits(r.fee_credits) + ", model and tools " + credits(r.cost_credits) + "."
+    charged === 0 ? "You were not charged." : "Charged " + creditsFine(charged) + ".",
+    "Held " + creditsFine(r.cap_credits) + ". Released " + creditsFine(r.released_credits) + ".",
+    "Where it went: creator " + creditsFine(r.earnings_credits) + ", platform fee " + creditsFine(r.fee_credits) + ", model and tools " + creditsFine(r.cost_credits) + "."
   ];
   if (r.refund_reason) lines.push(r.refund_reason);
   $("#receipt").textContent = lines.join("\n");
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
+  $("#cancel").classList.add("hidden");
+  $("#after-receipt").classList.remove("hidden");
+}
+function reportCardHtml(card) {
+  if (!card) return `<p class="empty">No report card yet.</p>`;
+  const scores = card.scores || {};
+  const scoreRows = Object.keys(scores).map((key) => `<div class="kv"><span>${esc(key)}</span><span>${esc(scores[key])}</span></div>`).join("");
+  const findings = (card.findings || []).map((f) => `<li>${esc(f.severity || "")} ${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
+  const stages = (card.stages || []).map((s) => `<li>${esc(s.stage)} · ${esc(s.status)} ${esc(s.detail || "")}</li>`).join("");
+  const tests = card.tests || [];
+  const passed = tests.filter((t) => t.passed).length;
+  const decision = card.decision || "pending";
+  return `<article class="card-block">
+    <p>Decision <span class="${decision === "rejected" ? "warn" : ""}">${esc(decision)}</span></p>
+    <p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>
+    <p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>
+    ${tests.length ? `<p class="meta">Tests ${passed}/${tests.length} passed</p>` : ""}
+    ${scoreRows ? `<div>${scoreRows}</div>` : `<p class="empty">No confidence breakdown yet.</p>`}
+    ${stages ? `<p class="meta">Stages</p><ul>${stages}</ul>` : ""}
+    ${findings ? `<p class="meta">Findings</p><ul>${findings}</ul>` : `<p class="empty">No findings.</p>`}
+  </article>`;
+}
+function paintCompareBar() {
+  let bar = $("#compare-bar");
+  if (!bar) {
+    bar = document.createElement("div");
+    bar.id = "compare-bar";
+    bar.className = "session-tools";
+    $("#thread").after(bar);
+  }
+  bar.innerHTML = state.picks.length
+    ? `<span class="meta">${state.picks.length} selected. Compare takes 2 or 3. The contract allows at most 3.</span> <button type="button" id="run-compare" ${state.picks.length < 2 ? "disabled" : ""}>Compare</button>`
+    : "";
+  const button = $("#run-compare");
+  if (button) button.onclick = runCompare;
+}
+async function runCompare() {
+  if (state.picks.length < 2) return;
+  const data = await api("/v1/compare", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_ids: state.picks.slice(0, 3), task: state.task || "" })});
+  const marks = data.highlights || {};
+  const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => key.replaceAll("_", " ")).join(" · ");
+  $("#compare-body").innerHTML = `<div class="grid-3">${(data.agents || []).map((a) => {
+    const price = a.price || {};
+    return `<article class="cmp">
+      <p class="flag">${esc(label(a.id))}</p>
+      <h3>${esc(a.title)}</h3>
+      <p>${esc(a.summary || "")}</p>
+      <p class="meta">p50 ${creditsFine(fromMicro(price.low_microcredits))} · high ${creditsFine(fromMicro(price.high_microcredits))} · max ${creditsFine(fromMicro(price.max_microcredits))}</p>
+      <p class="meta">Confidence ${esc(a.confidence_score)} from ${esc(a.confidence_n)} sessions</p>
+      <p class="meta">Speed p50 ${esc(a.duration_p50_s)}s · p95 ${esc(a.duration_p95_s)}s</p>
+      <p>${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
+      <button type="button" data-start="${a.id}">Start with this agent</button>
+      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
+    </article>`;
+  }).join("")}</div>`;
+  show("compare");
+  $("#compare-body").querySelectorAll("[data-start]").forEach((b) => b.onclick = () => openQuote(b.dataset.start));
+  $("#compare-body").querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openAgent(b.dataset.detail));
+}
+async function openAgent(id) {
+  const data = await api("/v1/agents/" + id);
+  const live = data.live_stats || data.seeded_live_stats || {};
+  $("#agent-body").innerHTML = `<h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p>
+    <p>${(data.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="empty">No badge</span>`}</p>
+    <p class="meta">Confidence ${esc(data.confidence_score)} · lower bound ${esc(data.confidence_lower_bound)} · n ${esc(data.confidence_n)}</p>
+    <p class="meta">Live success ${live.success_rate == null ? "no live stats yet" : esc(live.success_rate)} · incidents in findings below</p>
+    ${reportCardHtml(Object.assign({}, data.report_card || {}, { tests: (data.report_card && data.report_card.tests) || [] }))}
+    <button type="button" id="agent-start">Start with this agent</button>`;
+  $("#agent-start").onclick = () => openQuote(id);
+  show("agent");
+}
+async function loadWallet() {
+  const w = await api("/v1/wallet");
+  const packs = [["S", "$10", "1,000"], ["M", "$25", "2,750"], ["L", "$50", "5,750"]];
+  const plans = [["plus", "$19 / month", "2,200"], ["pro", "$49 / month", "6,000"]];
+  const hist = (w.history || []).slice(0, 20).map((row) => `<div class="kv"><span>${esc(row.ref_type || row.memo || row.direction)}</span><span>${esc(row.direction)} ${creditsFine(fromMicro(row.amount_microcredits))}</span></div>`).join("");
+  $("#wallet-body").innerHTML = `<div class="kv"><span>Balance</span><span>${creditsFine(w.balance_credits)}</span></div>
+    <div class="kv"><span>Held</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
+    <div class="kv"><span>Granted</span><span>${creditsFine(w.granted_credits)}</span></div>
+    <h3>Packs</h3>
+    <div class="grid-3">${packs.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-pack="${id}">Add ${id}</button></article>`).join("")}</div>
+    <h3>Plans</h3>
+    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>
+    <h3>History</h3>
+    ${hist || `<p class="empty">No transactions yet.</p>`}`;
+  $("#wallet-body").querySelectorAll("[data-pack]").forEach((b) => b.onclick = async () => {
+    await once("pack:" + b.dataset.pack, (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ pack: b.dataset.pack })}));
+    refreshBal();
+    loadWallet();
+  });
+  $("#wallet-body").querySelectorAll("[data-plan]").forEach((b) => b.onclick = async () => {
+    await api("/v1/subscriptions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ plan: b.dataset.plan })});
+    loadWallet();
+  });
+}
+function showCreatorStep(n) {
+  state.step = n;
+  document.querySelectorAll("#creator-steps button").forEach((b) => b.classList.toggle("on", Number(b.dataset.step) === n));
+  document.querySelectorAll("[data-step-panel]").forEach((p) => p.classList.toggle("hidden", Number(p.dataset.stepPanel) !== n));
+  $("#c-back").classList.toggle("hidden", n === 1);
+  $("#c-next").classList.toggle("hidden", n === 5);
+  $("#c-submit").classList.toggle("hidden", n !== 5);
 }
 async function loadCreator() {
-  const a = await api("/v1/creator/analytics");
-  const e = await api("/v1/creator/earnings");
-  $("#creator-body").innerHTML = `<table>
-    <tr><td>Sessions</td><td>${a.sessions}</td></tr>
-    <tr><td>Creator payable</td><td>${e.available_credits} credits (simulated, ${e.clearing_days}-day clearing)</td></tr>
-    <tr><td>Platform fee balance</td><td>${a.platform_revenue_credits}</td></tr>
-    <tr><td>Provider cost</td><td>${a.provider_cost_credits}</td></tr>
-  </table>`;
+  $("#creator-error").textContent = "";
+  if (!state.me) await loadMe();
+  if (!hasRole("creator") && !hasRole("admin")) {
+    $("#creator-home").innerHTML = "";
+    $("#creator-form").classList.add("hidden");
+    $("#creator-steps").classList.add("hidden");
+    $("#creator-error").textContent = "Creator role required. Sign in as Riya to open this view.";
+    return;
+  }
+  $("#creator-form").classList.remove("hidden");
+  $("#creator-steps").classList.remove("hidden");
+  if (!hasRole("creator")) {
+    $("#creator-error").textContent = "This account is an admin, not a creator. The creator API will refuse it.";
+  }
+  let analytics = { agents: [], sessions: 0 };
+  let earn = {};
+  try {
+    analytics = await api("/v1/creator/analytics");
+    earn = await api("/v1/creator/earnings");
+  } catch (err) {
+    $("#creator-error").textContent = err.message || "Creator role required.";
+    $("#creator-home").innerHTML = "";
+    $("#creator-form").classList.add("hidden");
+    $("#creator-steps").classList.add("hidden");
+    return;
+  }
+  const rows = (analytics.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title || a.agent_id)}</h3><p class="meta">${esc(a.status || "")} · ${esc(a.sessions)} sessions · rating ${a.rating_avg == null ? "none yet" : esc(a.rating_avg)}</p><button type="button" data-agent="${a.agent_id}">Open</button></article>`).join("");
+  $("#creator-home").innerHTML = `<div class="kv"><span>Sessions</span><span>${esc(analytics.sessions || 0)}</span></div>
+    <div class="kv"><span>Earnings</span><span>${creditsFine(earn.available_credits)}</span></div>
+    <div class="kv"><span>In clearing</span><span>${creditsFine(earn.clearing_credits || 0)} · ${esc(earn.clearing_days || 14)} days</span></div>
+    <div class="grid-3">${rows || `<p class="empty">No agents yet. Submit one below.</p>`}</div>`;
+  $("#creator-home").querySelectorAll("[data-agent]").forEach((b) => b.onclick = () => openCreatorAgent(b.dataset.agent));
+  showCreatorStep(state.step || 1);
+}
+async function openCreatorAgent(id) {
+  const mine = await api("/v1/creator/agents");
+  const agent = (mine || []).find((a) => a.id === id);
+  if (!agent || !agent.versions || !agent.versions.length) {
+    $("#creator-review").innerHTML = `<p class="empty">No version to review yet.</p>`;
+    return;
+  }
+  const version = agent.versions[0];
+  const data = await api("/v1/creator/agents/" + id + "/versions/" + version.id + "/review");
+  const review = data.review;
+  const card = review ? Object.assign({}, review.report_card || {}, { decision: review.decision, scores: review.scores, findings: review.findings, tests: review.tests, stages: (review.report_card || {}).stages, cost_p50_microcredits: review.cost_p50_microcredits, cost_p90_microcredits: review.cost_p90_microcredits, latency_p50_ms: review.latency_p50_ms, latency_p95_ms: review.latency_p95_ms }) : null;
+  $("#creator-review").innerHTML = `<h3>${esc(agent.title)} · ${esc(version.semver)} · ${esc(data.version_status)}</h3>
+    <p class="meta">Current stage ${esc(review ? review.stage : "not started")} · ${esc(review ? review.status : "")}</p>
+    ${reportCardHtml(card)}
+    <p class="empty">${(card && card.stages && card.stages.length) ? "" : "This report has no stage log yet. A fresh review writes the nine stages as they run."}</p>
+    <button type="button" id="rerun-review">Re-run review</button>`;
+  $("#rerun-review").onclick = async () => {
+    try {
+      await once("review:" + version.id, (key) => api("/v1/admin/versions/" + version.id + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
+      openCreatorAgent(id);
+    } catch (err) {
+      $("#creator-error").textContent = err.status === 403 ? "Re-run review needs the admin role. The pipeline itself starts when a version is submitted." : (err.message || "Review did not start.");
+    }
+  };
 }
 async function loadAdmin() {
+  $("#admin-error").textContent = "";
+  if (!state.me) await loadMe();
+  if (!hasRole("admin")) {
+    $("#admin-metrics").innerHTML = "";
+    $("#admin-queue").innerHTML = "";
+    $("#admin-body").innerHTML = "";
+    $("#admin-error").textContent = "Admin role required. Sign in as Admin to open Review.";
+    return;
+  }
+  const metrics = await api("/v1/admin/metrics");
+  $("#admin-metrics").innerHTML = `<div class="kv"><span>Settled sessions</span><span>${esc(metrics.sessions_settled)}</span></div>
+    <div class="kv"><span>Gross charged</span><span>${creditsFine(fromMicro(metrics.gross_charged_microcredits))}</span></div>
+    <div class="kv"><span>Platform revenue</span><span>${creditsFine(fromMicro(metrics.platform_revenue_microcredits))}</span></div>
+    <div class="kv"><span>Provider cost</span><span>${creditsFine(fromMicro(metrics.provider_cost_microcredits))}</span></div>
+    <div class="kv"><span>Failure rate</span><span>${esc(metrics.failure_rate)}</span></div>`;
+  const queue = await api("/v1/admin/review-queue");
+  const queueRows = (Array.isArray(queue) ? queue : []).map((row) => `<div class="kv"><span>${esc(row.agent_id)} ${esc(row.semver)} · ${esc(row.review_stage || row.status)}</span><span><button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
+  $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
   const data = await api("/v1/admin/agents");
-  $("#admin-body").innerHTML = `<table><tr><th>Agent</th><th>Status</th><th>Decision</th><th></th></tr>` +
-    data.agents.map((a) => `<tr><td>${a.title}<div class="meta">${(a.findings||[]).join(" ")}</div></td><td>${a.status}</td><td class="${a.decision==="rejected"?"warn":"ok"}">${a.decision}</td>
-      <td><button data-review="${a.version_id}">Run review</button> <button data-kill="${a.id}">Kill switch</button></td></tr>`).join("") + `</table>`;
-  document.querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
-    const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
-    alert(res.decision + "\n" + res.findings.join("\n") + "\nconfidence " + res.confidence);
+  $("#admin-body").innerHTML = (data.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title)}</h3><p class="meta">${esc(a.status)} · ${esc(a.decision || "")}</p>${reportCardHtml({ decision: a.decision, findings: (a.findings || []).map((f) => ({ detail: f })) })}
+    <button type="button" data-review="${a.version_id}">Run review</button>
+    <button type="button" data-kill="${a.id}">Kill switch</button>
+    <button type="button" data-unpause="${a.id}">Unpause</button></article>`).join("") || `<p class="empty">No agents.</p>`;
+  $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = async () => {
+    await api("/v1/admin/versions/" + b.dataset.decision + "/decision", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ decision: b.dataset.choice })});
     loadAdmin();
   });
-  document.querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
+  $("#admin-body").querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
+    const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
+    alert(res.decision + "\n" + (res.findings || []).join("\n") + "\nconfidence " + res.confidence);
+    loadAdmin();
+  });
+  $("#admin-body").querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
     const res = await api("/v1/admin/agents/" + b.dataset.kill + "/kill", { method: "POST" });
-    alert("Paused. Refunded " + res.refunded_sessions.length + " sessions.");
+    alert("Paused. Refunded " + (res.refunded_sessions || []).length + " sessions.");
+    loadAdmin();
+  });
+  $("#admin-body").querySelectorAll("[data-unpause]").forEach((b) => b.onclick = async () => {
+    await api("/v1/admin/agents/" + b.dataset.unpause + "/unpause", { method: "POST" });
     loadAdmin();
   });
 }
+$("#compare-back").onclick = () => show("discover");
+$("#agent-back").onclick = () => show("discover");
+$("#extend").onclick = async () => {
+  if (!state.session) return;
+  const add = Number($("#extend-credits").value);
+  try {
+    const ses = await once("extend", (key) => api("/v1/sessions/" + state.session + "/extend", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ add_microcredits: Math.round(add * 1000) })}));
+    state.cap = fromMicro(ses.cap_microcredits || (state.cap + add) * 1000);
+    $("#session-edge").textContent = "Cap is now " + creditsFine(state.cap) + ".";
+    refreshBal();
+  } catch (err) {
+    $("#session-edge").textContent = err.code === "insufficient_credits" ? err.message + " Add credits from Wallet." : (err.message || "Could not extend.");
+  }
+};
+async function rememberFile(file) {
+  if (!file) return;
+  if (file.size > 1500000) { $("#file-note").textContent = "That file is too large for this demo."; return; }
+  const buf = await file.arrayBuffer();
+  const bytes = new Uint8Array(buf);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  state.files = [{ name: file.name, content_base64: btoa(bin) }];
+  $("#file-note").textContent = file.name + " will be sent when the session starts.";
+  $("#quote-files").textContent = file.name;
+}
+$("#session-file").onchange = () => {
+  if (state.session) {
+    $("#file-note").textContent = "The API accepts files on session start only. Attach the file from the quote, then start.";
+    $("#session-file").value = "";
+    return;
+  }
+  rememberFile($("#session-file").files[0]);
+};
+$("#quote-file").onchange = () => rememberFile($("#quote-file").files[0]);
+$("#rate-form").onsubmit = async (event) => {
+  event.preventDefault();
+  try {
+    await api("/v1/sessions/" + state.session + "/rating", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ stars: Number($("#rate-stars").value), comment: $("#rate-comment").value })});
+    $("#after-note").textContent = "Rating saved.";
+  } catch (err) { $("#after-note").textContent = err.message || "Could not rate this session."; }
+};
+$("#dispute-form").onsubmit = async (event) => {
+  event.preventDefault();
+  try {
+    await api("/v1/sessions/" + state.session + "/dispute", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#dispute-reason").value })});
+    $("#after-note").textContent = "Dispute opened.";
+  } catch (err) { $("#after-note").textContent = err.message || "Could not open a dispute."; }
+};
+$("#creator-steps").querySelectorAll("button").forEach((b) => b.onclick = () => showCreatorStep(Number(b.dataset.step)));
+$("#c-next").onclick = () => showCreatorStep(Math.min(5, state.step + 1));
+$("#c-back").onclick = () => showCreatorStep(Math.max(1, state.step - 1));
+$("#creator-form").onsubmit = async (event) => {
+  event.preventDefault();
+  const manifest = {
+    name: $("#c-slug").value.trim(),
+    display_name: $("#c-title").value.trim() || $("#c-slug").value.trim(),
+    version: $("#c-version").value.trim() || "0.1.0",
+    summary: $("#c-summary").value.trim(),
+    description: $("#c-description").value.trim(),
+    category: $("#c-category").value.trim() || "general",
+    tags: $("#c-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
+    example_tasks: $("#c-samples").value.split("\n").map((t) => t.trim()).filter(Boolean),
+    pricing: { model: $("#c-price-model").value, price_credits: Number($("#c-price").value) || 0 }
+  };
+  try {
+    if (!state.draftAgent) {
+      const created = await api("/v1/creator/agents", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ slug: manifest.name, category: manifest.category, mode: $("#c-mode").value, endpoint_url: $("#c-endpoint").value || null })});
+      state.draftAgent = created.id;
+    }
+    const body = { manifest };
+    if ($("#c-source").value.trim()) body.source_path = $("#c-source").value.trim();
+    const submitted = await api("/v1/creator/agents/" + state.draftAgent + "/versions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    $("#c-submit-note").textContent = "Submitted. Review " + submitted.status + ".";
+    openCreatorAgent(state.draftAgent);
+  } catch (err) {
+    $("#c-submit-note").textContent = err.code === "review rejected" ? err.message : (err.message || "Submit failed.");
+  }
+};
+$("#refund-form").onsubmit = async (event) => {
+  event.preventDefault();
+  try {
+    const res = await api("/v1/admin/sessions/" + $("#refund-id").value.trim() + "/refund", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#refund-reason").value })});
+    $("#refund-note").textContent = "Refunded " + creditsFine(fromMicro(res.refunded_microcredits || 0)) + ".";
+  } catch (err) { $("#refund-note").textContent = err.message || "Refund failed."; }
+};
 bootAuth();
 </script>
 </body>
