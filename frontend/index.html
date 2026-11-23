@@ -350,16 +350,121 @@
   .acct-line b { font-weight: 400; color: var(--text); }
   .acct-split { height: 1px; background: #2c2e33; margin: 10px 0 8px; }
   html[data-theme="light"] .acct-split { background: #ececef; }
-  .account-list { margin-top: 8px; max-width: 440px; }
+  .account-list { margin-top: 8px; max-width: none; }
   .account-list div {
     display: flex;
     justify-content: space-between;
     gap: 16px;
-    padding: 12px 0;
+    padding: 14px 0;
     border-bottom: 1px solid var(--line);
     font-size: 14px;
   }
   .account-list span { color: var(--muted); }
+  .account-list b { font-weight: 400; color: var(--text); }
+  #account {
+    max-width: none;
+    padding: 16px 20px 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  .acct-sheet { width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0; }
+  .acct-cover { height: 188px; border-radius: 18px; flex: none; }
+  .acct-profile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-top: -48px;
+    padding: 0 32px;
+    flex: none;
+  }
+  .acct-pfp {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    flex: none;
+    display: grid;
+    place-items: center;
+    border: 4px solid var(--panel);
+    color: #fff;
+    font-size: 36px;
+    line-height: 1;
+    background: #2563eb;
+  }
+  #account .acct-id { margin: 14px 0 0; padding: 0; }
+  #account .acct-id h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 28px;
+    font-weight: 500;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+  }
+  .acct-id p { margin: 6px 0 0; color: var(--muted); font-size: 15px; line-height: 1.3; }
+  .acct-stats {
+    display: flex;
+    margin: 28px 20px 0;
+    padding: 0 12px 4px;
+    flex: none;
+  }
+  .acct-stat {
+    flex: 1;
+    min-width: 0;
+    padding: 4px 28px;
+    border-left: 1px solid var(--line);
+  }
+  .acct-stat:first-child { border-left: 0; padding-left: 12px; }
+  .acct-stat b {
+    display: block;
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .acct-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; }
+  .acct-sections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 28px;
+    flex: 1;
+    min-height: 0;
+  }
+  .acct-card {
+    min-width: 0;
+    background: var(--fill);
+    border-radius: 16px;
+    padding: 18px 18px 8px;
+    overflow: auto;
+  }
+  .acct-card.wide { grid-column: 1 / -1; }
+  .acct-card h3 {
+    margin: 0 0 8px;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .acct-row {
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 13px 8px;
+    border: 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+    color: var(--text);
+    text-align: left;
+    font: inherit;
+    font-size: 14px;
+  }
+  button.acct-row { cursor: pointer; border-radius: 8px; }
+  button.acct-row:hover { background: rgba(255,255,255,0.04); }
+  html[data-theme="light"] button.acct-row:hover { background: #f3f3f4; }
+  .acct-row b { font-weight: 400; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .acct-row span { color: var(--muted); font-size: 13px; flex: none; }
+  .acct-card .meta { padding: 12px 2px; }
   .user-row {
     appearance: none;
     -webkit-appearance: none;
@@ -398,13 +503,13 @@
   }
   .chat.home .stage { margin-top: 0; }
   .home-fill {
-    width: min(1100px, 100%);
+    width: 100%;
     flex: none;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 40px;
-    margin-top: 96px;
+    gap: 52px;
+    margin-top: 168px;
   }
   .chat:not(.home) .home-fill { display: none; }
   .home-shortcuts {
@@ -412,8 +517,8 @@
     justify-content: center;
     align-items: flex-start;
     gap: 6px;
-    width: min(980px, 100%);
-    flex-wrap: wrap;
+    width: 100%;
+    flex-wrap: nowrap;
   }
   .home-shortcuts button {
     appearance: none;
@@ -421,8 +526,9 @@
     border: 0;
     background: transparent;
     color: var(--muted);
-    width: 84px;
-    padding: 8px 4px;
+    width: auto;
+    min-width: 72px;
+    padding: 8px 10px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -451,7 +557,7 @@
     flex: none;
     justify-content: center;
     padding: 0;
-    margin-bottom: 18px;
+    margin-bottom: 36px;
   }
   .chat.home .composer {
     flex-direction: row;
@@ -534,7 +640,7 @@
     from { transform: translateX(-30%) rotate(0deg); }
     to { transform: translateX(20%) rotate(360deg); }
   }
-  .promo { width: 100%; display: flex; flex-direction: column; align-items: center; }
+  .promo { width: min(1080px, 100%); display: flex; flex-direction: column; align-items: center; }
   .banner {
     position: relative;
     width: 100%;
@@ -1128,11 +1234,25 @@
   }
   .facts strong { display: block; font-weight: 400; font-size: 13px; margin-bottom: 4px; }
   .facts span { color: var(--muted); font-size: 13px; line-height: 1.4; }
-  .matches {
-    display: flex;
-    gap: 10px;
-    margin-top: 12px;
-    overflow-x: auto;
+  .pick-ask { margin: 4px 0 0; font-size: 15px; line-height: 1.5; }
+  .picks { display: flex; flex-direction: column; gap: 16px; width: 100%; margin-top: 4px; }
+  .pick {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .pick .agent-hero { margin: 0; min-height: 168px; border-radius: 0; }
+  .pick .agent-hero h2 { font-size: 26px; }
+  .pick .pick-score { margin: 4px 0 0; color: #fff; font-size: 14px; }
+  .pick .pick-score b { font-size: 28px; font-weight: 500; letter-spacing: -0.03em; }
+  .pick .agent-block { margin: 18px 16px 0; }
+  .pick .pick-why { margin: 12px 16px 0; font-size: 15px; line-height: 1.5; }
+  .pick .choose {
+    margin: 16px;
+    min-width: 120px;
+    color: var(--send-text);
+    background: var(--send);
   }
   .match {
     flex: 1 0 220px;
@@ -1508,14 +1628,14 @@
   </div>
   <div class="home-fill">
     <div class="home-shortcuts">
-      <button type="button" data-prompt="Audit this invoice for tax errors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><span>Invoice</span></button>
-      <button type="button" data-prompt="Plan a three-day trip to Lisbon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span>Trip</span></button>
-      <button type="button" data-prompt="Write a research brief on battery recycling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg><span>Research</span></button>
-      <button type="button" data-prompt="Sort this inbox into what needs a reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>Inbox</span></button>
-      <button type="button" data-prompt="Turn these meeting notes into decisions and next actions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg><span>Notes</span></button>
-      <button type="button" data-prompt="Flag the odd clauses in this contract"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/></svg><span>Contract</span></button>
-      <button type="button" data-prompt="Draft a reply to this support ticket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg><span>Support</span></button>
-      <button type="button" data-prompt="Find the broken formulas in this spreadsheet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg><span>Sheet</span></button>
+      <button type="button" data-agent="0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><span>Invoice Auditor</span></button>
+      <button type="button" data-agent="1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span>Trip Planner</span></button>
+      <button type="button" data-agent="2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg><span>Research Briefer</span></button>
+      <button type="button" data-agent="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>Inbox Cleaner</span></button>
+      <button type="button" data-agent="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg><span>Meeting Notes</span></button>
+      <button type="button" data-agent="5"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/></svg><span>Contract Reader</span></button>
+      <button type="button" data-agent="6"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg><span>Support Reply</span></button>
+      <button type="button" data-agent="7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg><span>Spreadsheet Fixer</span></button>
     </div>
     <div class="promo">
     <div class="banner" id="banner" data-slide="0">
@@ -1543,9 +1663,31 @@
 </section>
 
 <section id="account" class="page hidden">
-  <h2>Account overview</h2>
-  <p class="meta">Your workspace and credit balance.</p>
-  <div id="account-body" class="account-list"></div>
+  <div class="acct-sheet">
+    <div class="acct-cover" id="acct-cover"></div>
+    <div class="acct-profile">
+      <div class="acct-pfp" id="acct-pfp">J</div>
+      <div class="acct-id">
+        <h2 id="acct-name">Jaineel</h2>
+        <p id="acct-email"></p>
+      </div>
+    </div>
+    <div id="account-body" class="acct-stats"></div>
+    <div class="acct-sections">
+      <section class="acct-card">
+        <h3>Orders</h3>
+        <div id="acct-orders"></div>
+      </section>
+      <section class="acct-card">
+        <h3>Monetize</h3>
+        <div id="acct-money"></div>
+      </section>
+      <section class="acct-card wide">
+        <h3>Activity</h3>
+        <div id="acct-activity"></div>
+      </section>
+    </div>
+  </div>
 </section>
 
 <section id="library" class="page hidden">
@@ -1665,6 +1807,37 @@ async function refreshBal() {
   $("#credit-left").textContent = shown(w.balance_credits || 0);
   paintUser(w.user);
 }
+function avatarPaint(seed) {
+  const paints = [
+    ["radial-gradient(90% 140% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11,47,134,0) 60%), radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59,130,246,0) 62%), linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%)", "linear-gradient(145deg, #93c5fd, #1d4ed8)"],
+    ["radial-gradient(80% 160% at 0% 40%, #fdba74 0%, #ea580c 34%, rgba(234,88,12,0) 62%), linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%)", "linear-gradient(145deg, #fdba74, #c2410c)"],
+    ["radial-gradient(80% 120% at 90% 10%, #bfdbfe 0%, rgba(191,219,254,0) 46%), linear-gradient(115deg, #172554 0%, #1d4ed8 48%, #60a5fa 100%)", "linear-gradient(145deg, #7dd3fc, #1e3a8a)"],
+    ["radial-gradient(70% 130% at 12% 80%, #fed7aa 0%, rgba(254,215,170,0) 50%), linear-gradient(110deg, #7c2d12 0%, #c2410c 40%, #fb923c 100%)", "linear-gradient(145deg, #fb923c, #7c2d12)"],
+    ["radial-gradient(60% 120% at 80% 90%, #1e3a8a 0%, rgba(30,58,138,0) 55%), linear-gradient(100deg, #082f49 0%, #0369a1 46%, #7dd3fc 100%)", "linear-gradient(145deg, #67e8f9, #0c4a6e)"],
+    ["radial-gradient(70% 120% at 0% 0%, #fdba74 0%, rgba(253,186,116,0) 48%), linear-gradient(120deg, #431407 0%, #9a3412 38%, #ea580c 100%)", "linear-gradient(145deg, #fed7aa, #9a3412)"]
+  ];
+  const key = String(seed || "account").trim().toLowerCase();
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 33 + key.charCodeAt(i)) >>> 0;
+  const pair = paints[hash % paints.length];
+  return { cover: pair[0], mark: pair[1] };
+}
+function paintAccount(name, email) {
+  const label = (name || "Account").replace(/\(.*\)/, "").trim() || "Account";
+  const letter = label.slice(0, 1).toUpperCase();
+  const paints = avatarPaint(label + " " + (email || ""));
+  const pfp = $("#acct-pfp");
+  const cover = $("#acct-cover");
+  if (pfp) {
+    pfp.textContent = letter;
+    pfp.style.background = paints.mark;
+  }
+  if (cover) cover.style.background = paints.cover;
+  const title = $("#acct-name");
+  const mail = $("#acct-email");
+  if (title) title.textContent = label;
+  if (mail) mail.textContent = email || "";
+}
 function paintUser(name) {
   const label = name || "Account";
   const letter = label.slice(0, 1).toUpperCase();
@@ -1672,6 +1845,7 @@ function paintUser(name) {
   const who = label.replace(/\(.*\)/, "").trim().split(/\s+/)[0] || "there";
   const agenda = $("#agenda");
   if (agenda) agenda.textContent = "How can Cohort help you, " + who + "?";
+  paintAccount(label, $("#acct-email") ? $("#acct-email").textContent : "");
 }
 function showAuth(message) {
   $("#auth").classList.remove("hidden");
@@ -1836,13 +2010,13 @@ $("#task").addEventListener("paste", (event) => {
   event.preventDefault();
   readImage(file);
 });
-document.querySelectorAll(".banner .try, .home-shortcuts button").forEach((button) => {
+document.querySelectorAll(".banner .try").forEach((button) => {
+  button.onclick = () => $("#task").focus();
+});
+document.querySelectorAll(".home-shortcuts button").forEach((button) => {
   button.onclick = () => {
-    if (button.dataset.prompt) {
-      $("#task").value = button.dataset.prompt;
-      fitTask();
-    }
-    $("#task").focus();
+    const sample = agentCatalog()[Number(button.dataset.agent)];
+    if (sample) tryAgent(sample);
   };
 });
 document.querySelectorAll(".banner .more").forEach((button) => {
@@ -2003,6 +2177,52 @@ function confidenceLabel(agent) {
   if (sessions < 30) return "Beta · not enough sessions yet";
   return agent.confidence + ", from " + sessions + " sessions";
 }
+function followUp(text) {
+  const t = (text || "").toLowerCase();
+  if (/\bspend\b/.test(t) && /\bcredits?\b/.test(t)) return "";
+  if (/\bhow much\b/.test(t) || /\bprice\b/.test(t) || /\bwhat does it cost\b/.test(t)) return "price";
+  if (/\b(any other|another agent|other agent|what else)\b/.test(t)) return "other";
+  return "";
+}
+function taskSoFar(messages) {
+  return (messages || [])
+    .filter((m) => m.role === "user" && !followUp(m.content))
+    .map((m) => m.content)
+    .join(" ");
+}
+function rankAgents(task, mode) {
+  const text = (task || "").toLowerCase();
+  const cues = {
+    "Invoice Auditor": { primary: ["invoice", "tax", "receipt", "audit", "bill"], why: "It reads an invoice for duplicate charges, tax that does not add up, and missing fields." },
+    "Trip Planner": { primary: ["trip", "travel", "itinerary", "flight", "hotel", "vacation"], why: "It builds the trip from the cities and dates, and it asks for the budget before it suggests bookings." },
+    "Research Briefer": { primary: ["research", "brief", "paper", "study"], why: "It turns a topic into a short brief and calls out what is still unknown." },
+    "Inbox Cleaner": { primary: ["inbox", "mailbox", "email", "e-mail"], secondary: ["mail"], why: "It sorts a mailbox into what needs a reply and what can wait." },
+    "Meeting Notes": { primary: ["meeting", "standup", "minutes", "decisions"], secondary: ["notes", "actions"], why: "It turns a meeting into decisions, open questions, and the next actions." },
+    "Contract Reader": { primary: ["contract", "clause", "agreement"], secondary: ["terms"], why: "It flags odd clauses, dates, and payment terms before you sign." },
+    "Support Reply": { primary: ["ticket", "refund", "policy"], secondary: ["support", "customer"], why: "It drafts the customer reply from the ticket and stays inside the policy notes." },
+    "Spreadsheet Fixer": { primary: ["spreadsheet", "formula", "excel"], secondary: ["sheet"], why: "It finds broken formulas, duplicate rows, and totals that do not match." }
+  };
+  const ranked = agentCatalog().map((sample, index) => {
+    const title = sample[0];
+    const cue = cues[title] || { primary: [], secondary: [], why: sample[1] };
+    const has = (word) => new RegExp("\\b" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "\\b").test(text);
+    const primary = cue.primary.filter(has);
+    const secondary = (cue.secondary || []).filter(has);
+    let score = 0;
+    if (primary.length) score = 74 + Math.min(18, (primary.length - 1) * 8);
+    if (secondary.length) score += primary.length ? 6 : 64;
+    if (text.includes(title.toLowerCase())) score = Math.max(score, 92);
+    score = Math.max(0, Math.min(100, score));
+    const hit = primary[0] || secondary[0];
+    const why = hit ? cue.why + " That is the part of the request that mentions " + hit + "." : cue.why;
+    return { sample, index, score, why };
+  }).sort((a, b) => b.score - a.score);
+  const strong = ranked.filter((item) => item.score >= 50);
+  if (mode === "other") return strong.length > 1 ? strong.slice(1, 4) : [];
+  if (!strong.length) return [];
+  const top = strong[0].score;
+  return strong.filter((item, index) => index === 0 || (top - item.score <= 24 && item.score >= 54)).slice(0, 3);
+}
 function renderThread(data) {
   $("#discover").classList.remove("home");
   $("#new-chat").classList.remove("on");
@@ -2010,29 +2230,103 @@ function renderThread(data) {
   const thread = $("#thread");
   thread.classList.remove("hidden");
   state.task = data.task || state.task;
-  state.agents = data.agents || [];
+  const users = (data.messages || []).filter((m) => m.role === "user");
+  const latest = users.length ? users[users.length - 1].content : "";
+  const kind = followUp(latest);
+  const asked = taskSoFar(data.messages) || data.task || latest;
+  const named = agentCatalog().map((sample, index) => ({ sample, index })).find((item) => latest.toLowerCase().includes(item.sample[0].toLowerCase()));
+  const spend = (latest.match(/spend\s+([\d,]+)\s+credits/i) || [])[1] || "";
+  const best = rankAgents(asked, "match");
+  const picks = named
+    ? [{ sample: named.sample, index: named.index, score: 92, why: named.sample[3] }]
+    : kind === "other" ? rankAgents(asked, "other") : best;
+  const live = new Map((state.liveCards || data.agents || []).map((agent) => [agent.title, agent]));
+  const esc = (value) => String(value == null ? "" : value).replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
+  const priceOf = (title) => {
+    const agent = live.get(title);
+    return agent ? priceLabel(agent) : "";
+  };
   setCrumb(data.title);
-  const cards = state.agents.map((a) => `
-    <article class="match">
-      <h3>${a.title}</h3>
-      <p>${a.summary || ""}</p>
-      <div class="row">${(a.badges || []).map((b) => `<span class="tag">${b}</span>`).join("")}<span class="tag">${priceLabel(a)}</span></div>
-      <p>${confidenceLabel(a)}${a.latency_p50 ? " · about " + a.latency_p50 + " seconds" : ""}</p>
-      <button class="choose" type="button" data-id="${a.id}">Choose</button>
-    </article>`).join("");
   thread.innerHTML = "";
-  data.messages.forEach((m) => {
+  data.messages.forEach((m, index) => {
+    if (m.role === "thinking") return;
     const div = document.createElement("div");
-    div.className = "msg " + (m.role === "user" ? "user" : m.role === "thinking" ? "thinking" : "assistant");
-    div.textContent = m.content;
+    div.className = "msg " + (m.role === "user" ? "user" : "assistant");
+    const lastAssistant = m.role === "assistant" && !data.messages.slice(index + 1).some((next) => next.role === "assistant");
+    if (lastAssistant && named) {
+      div.textContent = spend
+        ? named.sample[0] + " is set. This run spends " + spend + " credits."
+        : named.sample[0] + " is set.";
+    } else if (lastAssistant && kind === "price" && best[0]) {
+      const price = priceOf(best[0].sample[0]);
+      div.textContent = price
+        ? best[0].sample[0] + " is " + price + "."
+        : best[0].sample[0] + " uses the credits you choose for the run.";
+    } else if (lastAssistant && kind === "other") {
+      div.textContent = picks.length
+        ? "These are the other agents that can also take this. " + picks[0].sample[0] + " is the next closest."
+        : best[0]
+          ? best[0].sample[0] + " is the only agent that fits this. The others score too low."
+          : m.content;
+    } else {
+      div.textContent = m.content;
+    }
     thread.appendChild(div);
   });
-  if (data.ready) {
+  if (picks.length || (kind === "other" && best[0]) || kind === "price") {
+    const shown = picks.length ? picks : best;
     const wrap = document.createElement("div");
-    wrap.className = "matches";
-    wrap.innerHTML = cards || `<p class="empty">No listed agent fits that task yet. Try wording the outcome again.</p>`;
+    wrap.className = "picks";
+    const ask = kind === "other" && picks.length
+      ? `<p class="pick-ask">${esc(best[0] ? best[0].sample[0] : "The first match")} is the stronger fit. These are the others. Which one should we use?</p>`
+      : picks.length > 1
+        ? `<p class="pick-ask">${esc(picks[0].sample[0])} scores higher. Which one should we use?</p>`
+        : "";
+    wrap.innerHTML = ask + shown.map((pick) => {
+      const [title, summary, developer, detail] = pick.sample;
+      const price = priceOf(title);
+      const priceLine = kind === "price"
+        ? `<p class="pick-why">${esc(price ? "Price: " + price + "." : "This run uses the credits you choose.")}</p>`
+        : `<p class="pick-why">${esc(pick.why)}</p>`;
+      return `<article class="pick">
+        <div class="agent-hero tone-${pick.index}">
+          <p class="dev">${esc(developer)}</p>
+          <h2>${esc(title)}</h2>
+          <p class="blurb">${esc(summary)}</p>
+          <p class="pick-score"><b>${pick.score}</b> / 100</p>
+        </div>
+        <section class="agent-block">
+          <h3>Summary</h3>
+          <p class="summary">${esc(detail)}</p>
+        </section>
+        ${priceLine}
+        <button class="choose" type="button" data-index="${pick.index}">Use ${esc(title)}</button>
+      </article>`;
+    }).join("");
     thread.appendChild(wrap);
-    thread.querySelectorAll(".choose").forEach((b) => b.onclick = () => openQuote(b.dataset.id));
+    wrap.querySelectorAll(".choose").forEach((button) => {
+      button.onclick = () => {
+        const sample = agentCatalog()[Number(button.dataset.index)];
+        const agent = live.get(sample[0]);
+        if (agent) {
+          state.task = sample[4];
+          openQuote(agent.id);
+          return;
+        }
+        tryAgent(sample);
+      };
+    });
+  } else if (data.ready) {
+    const wrap = document.createElement("div");
+    wrap.className = "picks";
+    wrap.innerHTML = `<p class="empty">No listed agent fits that task yet. Try wording the outcome again.</p>`;
+    thread.appendChild(wrap);
+  }
+  if (!state.liveCards) {
+    api("/v1/agents").then((res) => {
+      state.liveCards = res.agents || [];
+      renderThread(data);
+    }).catch(() => {});
   }
   thread.scrollTop = thread.scrollHeight;
 }
@@ -2231,10 +2525,9 @@ function filterLibrary() {
 $("#library-find").oninput = filterLibrary;
 
 function taskLine(title, task, cap, balance) {
-  const lead = task.charAt(0).toLowerCase() + task.slice(1);
-  if (cap == null) return `Use ${title} to ${lead}`;
-  if (cap === "all") return `Use ${title} to ${lead} Spend all ${balance.toLocaleString("en-US")} credits.`;
-  return `Use ${title} to ${lead} Spend ${Number(cap).toLocaleString("en-US")} credits.`;
+  if (cap == null) return title;
+  if (cap === "all") return title + ". Spend all " + balance.toLocaleString("en-US") + " credits.";
+  return title + ". Spend " + Number(cap).toLocaleString("en-US") + " credits.";
 }
 async function tryAgent(sample, example) {
   const [title, , , , prompt] = sample;
@@ -2450,17 +2743,58 @@ async function showReceipt(id) {
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
 }
 async function loadAccount() {
-  const w = await api("/v1/wallet");
+  const [w, conv, sessions, analytics, earnings] = await Promise.all([
+    api("/v1/wallet"),
+    api("/v1/conversations"),
+    api("/v1/sessions").catch(() => ({ sessions: [] })),
+    api("/v1/creator/analytics").catch(() => null),
+    api("/v1/creator/earnings").catch(() => null)
+  ]);
   const shown = (n) => Math.round(n).toLocaleString("en-US");
-  const rows = [
-    ["Name", w.user || "Jaineel"],
-    ["Email", w.email || ""],
-    ["Total", shown(w.granted_credits || 0) + " credits"],
-    ["Remaining", shown(w.balance_credits || 0) + " credits"],
-    ["Used", shown(w.used_credits || 0) + " credits"]
-  ];
+  const name = w.user || "Jaineel";
+  const email = w.email || "";
+  paintAccount(name, email);
+  const granted = w.granted_credits || 0;
+  const used = w.used_credits || 0;
+  const balance = w.balance_credits || 0;
+  const pct = granted > 0 ? Math.round((used / granted) * 100) : 0;
   const esc = (value) => String(value).replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
-  $("#account-body").innerHTML = rows.map(([label, value]) => `<div><span>${esc(label)}</span><span>${esc(value)}</span></div>`).join("");
+  const when = (ts) => {
+    if (!ts) return "";
+    const date = new Date(String(ts).replace(" ", "T"));
+    if (Number.isNaN(date.getTime())) return "";
+    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+  };
+  const stats = [
+    [shown(granted), "Total credits"],
+    [shown(balance), "Remaining"],
+    [shown(used), "Used"],
+    [pct + "%", "Used of total"]
+  ];
+  $("#account-body").innerHTML = stats.map(([value, label]) => `<div class="acct-stat"><b>${esc(value)}</b><span>${esc(label)}</span></div>`).join("");
+  const orders = sessions.sessions || [];
+  const orderBox = $("#acct-orders");
+  orderBox.innerHTML = orders.length
+    ? orders.slice(0, 8).map((order) => `<button type="button" class="acct-row" data-order="${esc(order.id)}" data-cap="${esc(order.cap_credits)}" data-active="${order.active ? "1" : "0"}"><b>${esc(order.title || "Session")}</b><span>${esc(order.status)} · ${esc(shown(order.price_credits || order.spent_credits || 0))} credits</span></button>`).join("")
+    : `<p class="meta">No orders yet. A paid run shows up here.</p>`;
+  orderBox.querySelectorAll("[data-order]").forEach((button) => {
+    button.onclick = () => openHistory(button.dataset.order, Number(button.dataset.cap), button.dataset.active === "1");
+  });
+  const money = [
+    ["Available", shown((earnings && earnings.available_credits) || 0) + " credits"],
+    ["Clears in", ((earnings && earnings.clearing_days) || 14) + " days"],
+    ["Settled", String((analytics && analytics.settled) || 0)],
+    ["Sessions", String((analytics && analytics.sessions) || orders.length)]
+  ];
+  $("#acct-money").innerHTML = money.map(([label, value]) => `<div class="acct-row"><span>${esc(label)}</span><b>${esc(value)}</b></div>`).join("");
+  const chats = (conv.conversations || []).slice(0, 8);
+  const activity = $("#acct-activity");
+  activity.innerHTML = chats.length
+    ? chats.map((chat) => `<button type="button" class="acct-row" data-chat="${esc(chat.id)}"><b>${esc(chat.title || "New chat")}</b><span>${esc(when(chat.updated_at))}</span></button>`).join("")
+    : `<p class="meta">No chats yet.</p>`;
+  activity.querySelectorAll("[data-chat]").forEach((button) => {
+    button.onclick = () => openConversation(button.dataset.chat);
+  });
 }
 async function loadCreator() {
   const a = await api("/v1/creator/analytics");
