@@ -15,7 +15,7 @@ from ..config import MICRO, REPO_ROOT, platform_alias, settings
 from ..db import SessionLocal
 from ..models import (Agent, AgentVersion, Listing, ModelPrice, ReviewFinding, ReviewRun, Session, SessionFile,
                       SessionMessage, TestResult, ToolPrice, now)
-from . import ledger, sessions
+from . import ledger, nocode, sessions
 from .confidence import badges_for, compute_confidence
 from .pricing import FLAT_MODELS, ceil_div
 from .proxy import EXFIL_DOMAIN, INJECTION_CANARY
@@ -121,8 +121,12 @@ def static_scan(src: Path, manifest: dict) -> list[tuple[str, str, str]]:
 
 
 async def build(db: DB, run: ReviewRun, ver: AgentVersion, src: Path) -> str:
-    entry = (ver.manifest_json.get("runtime") or {}).get("entrypoint", "python main.py").split()
-    if len(entry) > 1 and not (src / entry[-1]).exists():
+    entry = nocode.entrypoint(ver.manifest_json).split()
+    if nocode.is_nocode(ver.manifest_json):
+        problems = nocode.check_folder(src, ver.manifest_json)
+        if problems:
+            raise RuntimeError("; ".join(problems))
+    elif len(entry) > 1 and not (src / entry[-1]).exists():
         raise RuntimeError(f"entrypoint file {entry[-1]} not found")
     if settings.runtime_mode != "docker":
         return "subprocess runtime: source checked, no image built"
@@ -214,7 +218,7 @@ async def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str
 
 def load_cases(src: Path | None, manifest: dict) -> list[dict]:
     cases = []
-    rel = (manifest.get("review") or {}).get("test_cases", "tests/cases.jsonl")
+    rel = nocode.cases_path(manifest)
     if src and (src / rel).exists():
         for line in (src / rel).read_text().splitlines():
             if line.strip():

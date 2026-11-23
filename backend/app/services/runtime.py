@@ -18,6 +18,7 @@ from pathlib import Path
 import httpx
 
 from ..config import settings
+from . import nocode
 
 PID_DIR = settings.data_dir / "pids"
 LABEL = "mkt.session"
@@ -199,10 +200,11 @@ async def start(session_id: str, agent, version, env: dict) -> Sandbox:
     if agent.mode == "external":  # no URL configured: run the external agent locally, still signed
         env = env | {"MARKETPLACE_HMAC_SECRET": settings.hmac_secret_external}
     runtime = m.get("runtime", {})
+    env = env | {"MARKETPLACE_MANIFEST": json.dumps(m)}  # the no-code runner reads its config from here
     if settings.runtime_mode == "docker" and version.image_ref:
         sb = DockerSandbox(session_id, version.image_ref, int(runtime.get("port", 8080)), env)
     else:
-        sb = SubprocessSandbox(session_id, resolve_source(agent, version), runtime.get("entrypoint", "python main.py"), env)
+        sb = SubprocessSandbox(session_id, resolve_source(agent, version), nocode.entrypoint(m), env)
     if agent.mode == "external":
         sb.hmac_secret = settings.hmac_secret_external
     try:

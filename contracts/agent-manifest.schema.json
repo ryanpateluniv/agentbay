@@ -17,11 +17,31 @@
     "outputs": {"type": "array", "items": {"enum": ["text", "markdown", "pdf", "csv", "json", "image"]}},
     "runtime": {
       "type": "object",
-      "required": ["entrypoint"],
       "properties": {
+        "kind": {"enum": ["code", "nocode"], "default": "code", "description": "nocode: the platform runs prompt.md with marketplace_sdk.nocode; no entrypoint"},
         "language": {"type": "string"},
         "entrypoint": {"type": "string"},
         "port": {"type": "integer", "default": 8080}
+      },
+      "if": {"properties": {"kind": {"const": "nocode"}}, "required": ["kind"]},
+      "else": {"required": ["entrypoint"]}
+    },
+    "nocode": {
+      "type": "object",
+      "description": "Runner settings for runtime.kind: nocode (docs/AGENT_TEMPLATE.md)",
+      "additionalProperties": false,
+      "properties": {
+        "model": {"enum": ["fast", "balanced"], "description": "alias for the model calls; must be in models_allowed"},
+        "prompt_file": {"type": "string", "default": "prompt.md"},
+        "questions": {"type": "array", "maxItems": 5, "items": {"type": "object", "required": ["question"], "additionalProperties": false, "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "question": {"type": "string", "minLength": 1},
+          "options": {"type": "array", "items": {"type": "string"}, "maxItems": 6}}}},
+        "confirm": {"type": "string", "description": "asked before the answer is saved to output_file"},
+        "output_file": {"type": "string", "pattern": "^[A-Za-z0-9_.-]+$"},
+        "max_turns": {"type": "integer", "minimum": 1, "maximum": 6, "default": 3},
+        "max_tokens": {"type": "integer", "minimum": 100, "maximum": 4000, "default": 1200},
+        "allow_questions": {"type": "boolean", "default": true, "description": "let the model ask (ASK:) or request approval (CONFIRM:)"}
       }
     },
     "tools_requested": {"type": "array", "items": {"enum": ["web_search", "file_storage"]}},

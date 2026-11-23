@@ -306,7 +306,8 @@ async def _handle_agent_event(db: DB, s: Session, live: Live, ev: dict):
         if live.auto_answer:  # review pipeline answers automatically
             answer = live.auto_answer(live.pending[qid])
             if t == "confirm":
-                await deliver_confirm(db, s, qid, bool(answer))
+                await deliver_confirm(db, s, qid, answer if isinstance(answer, bool) else
+                                      str(answer).strip().lower() not in ("", "no", "n", "deny", "denied", "false"))
             else:
                 await deliver_message(db, s, str(answer), qid)
     elif t == "progress":

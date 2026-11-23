@@ -1,0 +1,3 @@
+{"id": "basic", "task": "Ana will send the budget by Friday. We chose vendor B. Launch date is still open.", "answers": ["My team", "yes"], "expect_contains": ["Ana"]}
+{"id": "owners", "task": "Raj owns the migration plan, due June 3. Mia to book the offsite. Decided to pause hiring.", "answers": ["Leadership", "yes"], "expect_contains": ["Raj", "Mia"]}
+{"id": "decline-save", "task": "Leo and Kim agreed to ship v2 next sprint. Who owns QA is still open.", "answers": ["Just me", "no"], "expect_contains": ["Leo"]}

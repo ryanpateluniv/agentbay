@@ -1,0 +1,41 @@
+# No-code agent template: agent.yaml + prompt.md + cases.jsonl, no Python.
+# Copy this folder to agents/<name>/ (it's picked up at startup and reviewed), or zip it and upload it with
+# POST /v1/creator/template-agents/upload. Field reference: docs/AGENT_TEMPLATE.md.
+name: meeting-notes                # lowercase slug, unique on the marketplace
+display_name: Meeting Notes
+version: 1.0.0                     # bump it for every new submission
+summary: Turns raw meeting notes into decisions, open questions and next actions with owners.
+description: |
+  Paste your notes or a transcript. You get the decisions that were made, the questions still open,
+  and each next action with its owner and due date, in a short Markdown summary.
+category: productivity
+tags: [meetings, notes, actions]
+example_tasks:
+  - "Turn these meeting notes into decisions and next actions: Ana will send the budget by Friday; we chose vendor B; launch date still open."
+inputs: [text]
+outputs: [markdown]
+
+runtime:
+  kind: nocode                     # the platform runs prompt.md for you
+models_allowed: [fast]             # fast and/or balanced
+nocode:
+  model: fast
+  questions:                       # asked before the model runs; drop the block if you need none
+    - id: audience
+      question: Who will read these notes?
+      options: [Just me, My team, Leadership]
+  confirm: Save the notes as meeting-notes.md?   # asked before the file is saved
+  output_file: meeting-notes.md
+  max_turns: 3                     # model calls, including any ASK:/CONFIRM: round trips
+  max_tokens: 1200
+
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 20         # hard cap on model spend per session
+pricing:
+  model: per_task
+  price_credits: 15
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: you@example.com

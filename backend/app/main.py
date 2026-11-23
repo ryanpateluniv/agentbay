@@ -10,7 +10,7 @@ from .api import accounts, admin, buyer, creator, frontend, runtime as runtime_a
 from .config import settings
 from .db import SessionLocal, init_db
 from .models import AgentVersion, Session
-from .services import events, review, runtime
+from .services import events, nocode, review, runtime
 from .services.sessions import ACTIVE, finalize
 
 logging.basicConfig(level=logging.INFO)
@@ -25,6 +25,7 @@ async def lifespan(app: FastAPI):
     db = SessionLocal()
     for s in db.query(Session).filter(Session.status.in_(ACTIVE)).all():
         finalize(db, s.id, "failed", "platform restarted during session")
+    nocode.discover(db)  # no-code folders under AGENTS_DIR (agent.yaml + prompt.md) become submitted versions
     # Versions submitted while no server was running (the seeded InvoiceGenius Pro) get their review now.
     pending = [v.id for v in db.query(AgentVersion).filter(AgentVersion.status == "submitted").all()]
     db.close()
