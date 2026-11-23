@@ -182,6 +182,14 @@ def reap_orphans():
             pass
 
 
+def resolve_source(agent, version) -> str:
+    """Seeded versions fall back to the SDK example agent until agents/<slug>/main.py exists."""
+    teammate = settings.agents_dir / agent.slug
+    if (teammate / "main.py").exists() and str(settings.sdk_dir) in (version.source_path or ""):
+        return str(teammate)
+    return version.source_path
+
+
 async def start(session_id: str, agent, version, env: dict) -> Sandbox:
     m = version.manifest_json
     if agent.mode == "external" and agent.endpoint_url:
@@ -194,7 +202,7 @@ async def start(session_id: str, agent, version, env: dict) -> Sandbox:
     if settings.runtime_mode == "docker" and version.image_ref:
         sb = DockerSandbox(session_id, version.image_ref, int(runtime.get("port", 8080)), env)
     else:
-        sb = SubprocessSandbox(session_id, version.source_path, runtime.get("entrypoint", "python main.py"), env)
+        sb = SubprocessSandbox(session_id, resolve_source(agent, version), runtime.get("entrypoint", "python main.py"), env)
     if agent.mode == "external":
         sb.hmac_secret = settings.hmac_secret_external
     try:

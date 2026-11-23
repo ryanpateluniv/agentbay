@@ -1,0 +1,28 @@
+name: echo-agent
+display_name: Echo Agent
+version: 1.0.0
+summary: Reference agent that drafts and tightens an answer in three steps.
+description: Shows the SDK end to end (progress, ask_user, llm, write_file, return_result).
+category: writing
+tags: [example, summary]
+example_tasks:
+  - "Summarize the key points of remote work"
+inputs: [text]
+outputs: [markdown]
+runtime:
+  language: python
+  entrypoint: "python main.py"
+  port: 8080
+tools_requested: []
+models_allowed: [fast]
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 20
+  max_tool_calls: 10
+pricing:
+  model: per_task
+  price_credits: 10
+secrets: []
+review:
+  test_cases: tests/cases.jsonl
+support_contact: creator@example.com

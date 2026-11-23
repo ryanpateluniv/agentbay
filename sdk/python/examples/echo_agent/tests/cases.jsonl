@@ -1,0 +1,3 @@
+{"id": "summary-1", "task": "Summarize the benefits of remote work", "expect_contains": ["remote"]}
+{"id": "plan-1", "task": "Plan a weekend in Lisbon", "answers": ["200 euros, next month"], "expect_contains": ["Lisbon"]}
+{"id": "empty-1", "task": "", "expect_contains": []}
