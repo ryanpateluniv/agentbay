@@ -1,0 +1,2797 @@
+openapi: 3.1.0
+info:
+  title: Agent Marketplace API
+  description: 'All money fields are integer microcredits (1 credit = 1000 microcredits).
+    Auth: `Authorization: Bearer <token>`; demo tokens tok_sam (buyer), tok_riya (creator),
+    tok_admin (admin). Session events: see contracts/EVENTS.md.'
+  version: 0.1.0
+paths:
+  /v1/search:
+    post:
+      tags:
+      - buyer
+      summary: Search
+      operationId: search_v1_search_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/agents:
+    get:
+      tags:
+      - buyer
+      summary: List live agents (convenience for the UI)
+      operationId: list_agents_v1_agents_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/AgentCard'
+                type: array
+                title: Response List Agents V1 Agents Get
+  /v1/agents/{agent_id}:
+    get:
+      tags:
+      - buyer
+      summary: Get Agent
+      operationId: get_agent_v1_agents__agent_id__get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/compare:
+    post:
+      tags:
+      - buyer
+      summary: Compare
+      operationId: compare_v1_compare_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompareRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompareResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/quotes:
+    post:
+      tags:
+      - buyer
+      summary: Create Quote
+      operationId: create_quote_v1_quotes_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuoteRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuoteOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions:
+    post:
+      tags:
+      - buyer
+      summary: Create Session
+      operationId: create_session_v1_sessions_post
+      parameters:
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+          description: Payment Required
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+          description: Conflict
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - buyer
+      summary: Buyer's session history
+      operationId: list_sessions_v1_sessions_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SessionOut'
+                title: Response List Sessions V1 Sessions Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}:
+    get:
+      tags:
+      - buyer
+      summary: Get Session
+      operationId: get_session_v1_sessions__session_id__get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/events:
+    get:
+      tags:
+      - buyer
+      summary: SSE stream (see contracts/EVENTS.md)
+      operationId: session_events_v1_sessions__session_id__events_get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+      - name: last-event-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last-Event-Id
+      responses:
+        '200':
+          description: text/event-stream; `?token=` accepted because EventSource cannot
+            set headers
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/history:
+    get:
+      tags:
+      - buyer
+      summary: All events so far as JSON (polling fallback to SSE)
+      operationId: session_history_v1_sessions__session_id__history_get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: after
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 0
+          title: After
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/messages:
+    post:
+      tags:
+      - buyer
+      summary: Post Message
+      operationId: post_message_v1_sessions__session_id__messages_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuyerMessage'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/confirm:
+    post:
+      tags:
+      - buyer
+      summary: Confirm
+      operationId: confirm_v1_sessions__session_id__confirm_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/extend:
+    post:
+      tags:
+      - buyer
+      summary: Extend
+      operationId: extend_v1_sessions__session_id__extend_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExtendIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '402':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorBody'
+          description: Payment Required
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/cancel:
+    post:
+      tags:
+      - buyer
+      summary: Cancel
+      operationId: cancel_v1_sessions__session_id__cancel_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/files/{file_id}:
+    get:
+      tags:
+      - buyer
+      summary: Download
+      operationId: download_v1_sessions__session_id__files__file_id__get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: file_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: File Id
+      - name: token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/rating:
+    post:
+      tags:
+      - buyer
+      summary: Rate
+      operationId: rate_v1_sessions__session_id__rating_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RatingIn'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/sessions/{session_id}/dispute:
+    post:
+      tags:
+      - buyer
+      summary: Dispute
+      operationId: dispute_v1_sessions__session_id__dispute_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisputeIn'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/receipts/{session_id}:
+    get:
+      tags:
+      - buyer
+      summary: Get Receipt
+      operationId: get_receipt_v1_receipts__session_id__get
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/wallet:
+    get:
+      tags:
+      - buyer
+      summary: Wallet
+      operationId: wallet_v1_wallet_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/wallet/topup:
+    post:
+      tags:
+      - buyer
+      summary: 'Mock checkout: credits the pack immediately (Stripe test mode later)'
+      operationId: topup_v1_wallet_topup_post
+      parameters:
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopupIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/subscriptions:
+    post:
+      tags:
+      - buyer
+      summary: 'Stub: records the plan; no credit grants in the MVP'
+      operationId: subscribe_v1_subscriptions_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SubscriptionIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/me:
+    get:
+      tags:
+      - buyer
+      summary: Me
+      operationId: me_v1_me_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents:
+    get:
+      tags:
+      - creator
+      summary: The creator's agents with version statuses
+      operationId: my_agents_v1_creator_agents_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - creator
+      summary: Create Agent
+      operationId: create_agent_v1_creator_agents_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/versions:
+    post:
+      tags:
+      - creator
+      summary: Submit a version; the review pipeline starts in the background
+      operationId: submit_version_v1_creator_agents__agent_id__versions_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VersionSubmit'
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/versions/{v}/review:
+    get:
+      tags:
+      - creator
+      summary: Pipeline status and report card
+      operationId: get_review_v1_creator_agents__agent_id__versions__v__review_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: v
+        in: path
+        required: true
+        schema:
+          type: string
+          title: V
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/listing:
+    patch:
+      tags:
+      - creator
+      summary: Patch Listing
+      operationId: patch_listing_v1_creator_agents__agent_id__listing_patch
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ListingPatch'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/versions/{v}/publish:
+    post:
+      tags:
+      - creator
+      summary: Publish
+      operationId: publish_v1_creator_agents__agent_id__versions__v__publish_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: v
+        in: path
+        required: true
+        schema:
+          type: string
+          title: V
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/rollback:
+    post:
+      tags:
+      - creator
+      summary: Rollback
+      operationId: rollback_v1_creator_agents__agent_id__rollback_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/analytics:
+    get:
+      tags:
+      - creator
+      summary: Sessions, success, cost, margin, ratings per agent (no buyer identities)
+      operationId: analytics_v1_creator_analytics_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/agents/{agent_id}/logs:
+    get:
+      tags:
+      - creator
+      summary: The creator's own debug logs (ctx.log)
+      operationId: logs_v1_creator_agents__agent_id__logs_get
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/earnings:
+    get:
+      tags:
+      - creator
+      summary: Accrued, in clearing (14 days), available, paid out
+      operationId: earnings_v1_creator_earnings_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/payouts:
+    post:
+      tags:
+      - creator
+      summary: Simulated payout (clearing window not enforced in the demo)
+      operationId: request_payout_v1_creator_payouts_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayoutIn'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/review-queue:
+    get:
+      tags:
+      - admin
+      summary: Review Queue
+      operationId: review_queue_v1_admin_review_queue_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/versions/{v}/decision:
+    post:
+      tags:
+      - admin
+      summary: Decide
+      operationId: decide_v1_admin_versions__v__decision_post
+      parameters:
+      - name: v
+        in: path
+        required: true
+        schema:
+          type: string
+          title: V
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DecisionIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/agents/{agent_id}/kill:
+    post:
+      tags:
+      - admin
+      summary: 'Kill switch: pause the agent, cancel and refund running sessions'
+      operationId: kill_v1_admin_agents__agent_id__kill_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/agents/{agent_id}/unpause:
+    post:
+      tags:
+      - admin
+      summary: Unpause
+      operationId: unpause_v1_admin_agents__agent_id__unpause_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/sessions/{session_id}/refund:
+    post:
+      tags:
+      - admin
+      summary: 'Refund button: return the charge P of a settled session'
+      operationId: refund_v1_admin_sessions__session_id__refund_post
+      parameters:
+      - name: session_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Session Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefundIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/model-prices:
+    put:
+      tags:
+      - admin
+      summary: Put Prices
+      operationId: put_prices_v1_admin_model_prices_put
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PricesIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - admin
+      summary: Get Prices
+      operationId: get_prices_v1_admin_model_prices_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/fees:
+    put:
+      tags:
+      - admin
+      summary: Put Fees
+      operationId: put_fees_v1_admin_fees_put
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeesIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/disputes:
+    get:
+      tags:
+      - admin
+      summary: Disputes
+      operationId: disputes_v1_admin_disputes_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/disputes/{dispute_id}/resolve:
+    post:
+      tags:
+      - admin
+      summary: Resolve
+      operationId: resolve_v1_admin_disputes__dispute_id__resolve_post
+      parameters:
+      - name: dispute_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Dispute Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/metrics:
+    get:
+      tags:
+      - admin
+      summary: Metrics
+      operationId: metrics_v1_admin_metrics_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: Bearer <user token>, e.g. Bearer tok_sam
+          default: ''
+          title: Authorization
+        description: Bearer <user token>, e.g. Bearer tok_sam
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /proxy/v1/chat/completions:
+    post:
+      tags:
+      - runtime
+      summary: OpenAI-compatible chat completions (virtual key)
+      operationId: chat_completions_proxy_v1_chat_completions_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Authorization
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '402':
+          description: error.code = budget_exhausted
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /proxy/v1/models:
+    get:
+      tags:
+      - runtime
+      summary: Models
+      operationId: models_proxy_v1_models_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /proxy/v1/budget:
+    get:
+      tags:
+      - runtime
+      summary: Remaining budget for ctx.budget_remaining()
+      operationId: get_budget_proxy_v1_budget_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tools/v1/tools/{name}:
+    post:
+      tags:
+      - runtime
+      summary: Tool broker (web_search is mocked; outputs are marked untrusted)
+      operationId: tools_tools_v1_tools__name__post
+      parameters:
+      - name: name
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Name
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: Authorization
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /internal/settle:
+    post:
+      tags:
+      - runtime
+      summary: Settle a session (normally automatic)
+      operationId: internal_settle_internal_settle_post
+      parameters:
+      - name: x-service-token
+        in: header
+        required: false
+        schema:
+          type: string
+          default: ''
+          title: X-Service-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    AgentCard:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          title: Slug
+        title:
+          type: string
+          title: Title
+        summary:
+          type: string
+          title: Summary
+        category:
+          type: string
+          title: Category
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        mode:
+          type: string
+          enum:
+          - hosted
+          - external
+          title: Mode
+        badges:
+          items:
+            type: string
+          type: array
+          title: Badges
+        confidence_score:
+          type: integer
+          title: Confidence Score
+        confidence_n:
+          type: integer
+          title: Confidence N
+          description: sample size shown next to the score
+        confidence_lower_bound:
+          type: number
+          title: Confidence Lower Bound
+        price:
+          $ref: '#/components/schemas/PriceRange'
+        duration_p50_s:
+          type: integer
+          title: Duration P50 S
+        duration_p95_s:
+          type: integer
+          title: Duration P95 S
+        success_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Success Rate
+        rating_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Rating Avg
+        rating_n:
+          type: integer
+          title: Rating N
+        relevance:
+          type: number
+          title: Relevance
+          default: 0.0
+        inputs:
+          items:
+            type: string
+          type: array
+          title: Inputs
+          default: []
+        outputs:
+          items:
+            type: string
+          type: array
+          title: Outputs
+          default: []
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - summary
+      - category
+      - tags
+      - mode
+      - badges
+      - confidence_score
+      - confidence_n
+      - confidence_lower_bound
+      - price
+      - duration_p50_s
+      - duration_p95_s
+      - success_rate
+      - rating_avg
+      - rating_n
+      title: AgentCard
+    AgentCreate:
+      properties:
+        slug:
+          type: string
+          title: Slug
+        category:
+          type: string
+          title: Category
+          default: general
+        mode:
+          type: string
+          enum:
+          - hosted
+          - external
+          title: Mode
+          default: hosted
+        endpoint_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Endpoint Url
+      type: object
+      required:
+      - slug
+      title: AgentCreate
+    AgentDetail:
+      properties:
+        id:
+          type: string
+          title: Id
+        slug:
+          type: string
+          title: Slug
+        title:
+          type: string
+          title: Title
+        summary:
+          type: string
+          title: Summary
+        category:
+          type: string
+          title: Category
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        mode:
+          type: string
+          enum:
+          - hosted
+          - external
+          title: Mode
+        badges:
+          items:
+            type: string
+          type: array
+          title: Badges
+        confidence_score:
+          type: integer
+          title: Confidence Score
+        confidence_n:
+          type: integer
+          title: Confidence N
+          description: sample size shown next to the score
+        confidence_lower_bound:
+          type: number
+          title: Confidence Lower Bound
+        price:
+          $ref: '#/components/schemas/PriceRange'
+        duration_p50_s:
+          type: integer
+          title: Duration P50 S
+        duration_p95_s:
+          type: integer
+          title: Duration P95 S
+        success_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Success Rate
+        rating_avg:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Rating Avg
+        rating_n:
+          type: integer
+          title: Rating N
+        relevance:
+          type: number
+          title: Relevance
+          default: 0.0
+        inputs:
+          items:
+            type: string
+          type: array
+          title: Inputs
+          default: []
+        outputs:
+          items:
+            type: string
+          type: array
+          title: Outputs
+          default: []
+        description:
+          type: string
+          title: Description
+        example_tasks:
+          items:
+            type: string
+          type: array
+          title: Example Tasks
+        current_version:
+          additionalProperties: true
+          type: object
+          title: Current Version
+        report_card:
+          anyOf:
+          - $ref: '#/components/schemas/ReportCardSummary'
+          - type: 'null'
+        tools_requested:
+          items:
+            type: string
+          type: array
+          title: Tools Requested
+        models_allowed:
+          items:
+            type: string
+          type: array
+          title: Models Allowed
+        ratings:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Ratings
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - summary
+      - category
+      - tags
+      - mode
+      - badges
+      - confidence_score
+      - confidence_n
+      - confidence_lower_bound
+      - price
+      - duration_p50_s
+      - duration_p95_s
+      - success_rate
+      - rating_avg
+      - rating_n
+      - description
+      - example_tasks
+      - current_version
+      - report_card
+      - tools_requested
+      - models_allowed
+      - ratings
+      title: AgentDetail
+    BuyerMessage:
+      properties:
+        text:
+          type: string
+          title: Text
+        reply_to:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Reply To
+          description: id of the ask_user/confirm event being answered
+      type: object
+      required:
+      - text
+      title: BuyerMessage
+    CompareRequest:
+      properties:
+        agent_ids:
+          items:
+            type: string
+          type: array
+          maxItems: 3
+          title: Agent Ids
+        task:
+          type: string
+          title: Task
+          default: ''
+      type: object
+      required:
+      - agent_ids
+      title: CompareRequest
+    CompareResponse:
+      properties:
+        agents:
+          items:
+            $ref: '#/components/schemas/AgentDetail'
+          type: array
+          title: Agents
+        highlights:
+          additionalProperties:
+            anyOf:
+            - type: string
+            - type: 'null'
+          type: object
+          title: Highlights
+          description: best_value / highest_confidence / fastest -> agent id
+      type: object
+      required:
+      - agents
+      - highlights
+      title: CompareResponse
+    ConfirmIn:
+      properties:
+        confirm_id:
+          type: string
+          title: Confirm Id
+        approved:
+          type: boolean
+          title: Approved
+      type: object
+      required:
+      - confirm_id
+      - approved
+      title: ConfirmIn
+    DecisionIn:
+      properties:
+        decision:
+          type: string
+          enum:
+          - approved
+          - rejected
+          - changes_requested
+          title: Decision
+        notes:
+          type: string
+          title: Notes
+          default: ''
+      type: object
+      required:
+      - decision
+      title: DecisionIn
+    DisputeIn:
+      properties:
+        reason:
+          type: string
+          title: Reason
+      type: object
+      required:
+      - reason
+      title: DisputeIn
+    ErrorBody:
+      properties:
+        error:
+          type: string
+          title: Error
+          description: 'machine code: insufficient_credits, conflict, not_found, budget_exhausted,
+            ...'
+        detail:
+          type: string
+          title: Detail
+          default: ''
+      type: object
+      required:
+      - error
+      title: ErrorBody
+    ExtendIn:
+      properties:
+        add_microcredits:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Add Microcredits
+      type: object
+      required:
+      - add_microcredits
+      title: ExtendIn
+    FeesIn:
+      properties:
+        fee_bps:
+          anyOf:
+          - type: integer
+            maximum: 10000.0
+            minimum: 0.0
+          - type: 'null'
+          title: Fee Bps
+          description: platform fee f in basis points (2000 = 20%)
+        markup_bps:
+          anyOf:
+          - type: integer
+            maximum: 10000.0
+            minimum: 0.0
+          - type: 'null'
+          title: Markup Bps
+          description: cost markup m in basis points
+      type: object
+      title: FeesIn
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ListingPatch:
+      properties:
+        title:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Title
+        summary:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Summary
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        tags:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Tags
+        example_tasks:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Example Tasks
+        price_credits:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Price Credits
+      type: object
+      title: ListingPatch
+    ModelPriceIn:
+      properties:
+        alias:
+          type: string
+          title: Alias
+        provider_model:
+          type: string
+          title: Provider Model
+        price_in_micro_usd_per_mtok:
+          type: integer
+          title: Price In Micro Usd Per Mtok
+        price_out_micro_usd_per_mtok:
+          type: integer
+          title: Price Out Micro Usd Per Mtok
+      type: object
+      required:
+      - alias
+      - provider_model
+      - price_in_micro_usd_per_mtok
+      - price_out_micro_usd_per_mtok
+      title: ModelPriceIn
+    PayoutIn:
+      properties:
+        amount_microcredits:
+          type: integer
+          exclusiveMinimum: 0.0
+          title: Amount Microcredits
+      type: object
+      required:
+      - amount_microcredits
+      title: PayoutIn
+    PriceRange:
+      properties:
+        low_microcredits:
+          type: integer
+          title: Low Microcredits
+        high_microcredits:
+          type: integer
+          title: High Microcredits
+        max_microcredits:
+          type: integer
+          title: Max Microcredits
+        pricing_model:
+          type: string
+          title: Pricing Model
+      type: object
+      required:
+      - low_microcredits
+      - high_microcredits
+      - max_microcredits
+      - pricing_model
+      title: PriceRange
+    PricesIn:
+      properties:
+        models:
+          items:
+            $ref: '#/components/schemas/ModelPriceIn'
+          type: array
+          title: Models
+          default: []
+        tools:
+          items:
+            $ref: '#/components/schemas/ToolPriceIn'
+          type: array
+          title: Tools
+          default: []
+      type: object
+      title: PricesIn
+    QuoteOut:
+      properties:
+        id:
+          type: string
+          title: Id
+        agent_id:
+          type: string
+          title: Agent Id
+        agent_version_id:
+          type: string
+          title: Agent Version Id
+        low_microcredits:
+          type: integer
+          title: Low Microcredits
+        high_microcredits:
+          type: integer
+          title: High Microcredits
+        max_microcredits:
+          type: integer
+          title: Max Microcredits
+        suggested_cap_microcredits:
+          type: integer
+          title: Suggested Cap Microcredits
+          description: default cap = quoted p90
+        pricing_model:
+          type: string
+          title: Pricing Model
+        expires_at:
+          type: string
+          format: date-time
+          title: Expires At
+        agent_notes:
+          additionalProperties: true
+          type: object
+          title: Agent Notes
+          default: {}
+      type: object
+      required:
+      - id
+      - agent_id
+      - agent_version_id
+      - low_microcredits
+      - high_microcredits
+      - max_microcredits
+      - suggested_cap_microcredits
+      - pricing_model
+      - expires_at
+      title: QuoteOut
+    QuoteRequest:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+        task:
+          type: string
+          title: Task
+      type: object
+      required:
+      - agent_id
+      - task
+      title: QuoteRequest
+    RatingIn:
+      properties:
+        stars:
+          type: integer
+          maximum: 5.0
+          minimum: 1.0
+          title: Stars
+        comment:
+          type: string
+          title: Comment
+          default: ''
+      type: object
+      required:
+      - stars
+      title: RatingIn
+    Receipt:
+      properties:
+        session_id:
+          type: string
+          title: Session Id
+        agent_title:
+          type: string
+          title: Agent Title
+        status:
+          type: string
+          title: Status
+        pricing_model:
+          type: string
+          title: Pricing Model
+        cap_microcredits:
+          type: integer
+          title: Cap Microcredits
+        price_microcredits:
+          type: integer
+          title: Price Microcredits
+          description: P, charged to the buyer
+        cost_microcredits:
+          type: integer
+          title: Cost Microcredits
+          description: C, platform model+tool cost
+        fee_microcredits:
+          type: integer
+          title: Fee Microcredits
+          description: F, platform fee
+        creator_earnings_microcredits:
+          type: integer
+          title: Creator Earnings Microcredits
+          description: E = max(0, P - F - C)
+        released_microcredits:
+          type: integer
+          title: Released Microcredits
+          description: unused hold returned to the wallet
+        refund_reason:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Refund Reason
+        usage:
+          additionalProperties: true
+          type: object
+          title: Usage
+        lines:
+          items:
+            $ref: '#/components/schemas/ReceiptLine'
+          type: array
+          title: Lines
+        ledger:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Ledger
+      type: object
+      required:
+      - session_id
+      - agent_title
+      - status
+      - pricing_model
+      - cap_microcredits
+      - price_microcredits
+      - cost_microcredits
+      - fee_microcredits
+      - creator_earnings_microcredits
+      - released_microcredits
+      - refund_reason
+      - usage
+      - lines
+      - ledger
+      title: Receipt
+    ReceiptLine:
+      properties:
+        label:
+          type: string
+          title: Label
+        amount_microcredits:
+          type: integer
+          title: Amount Microcredits
+      type: object
+      required:
+      - label
+      - amount_microcredits
+      title: ReceiptLine
+    RefundIn:
+      properties:
+        reason:
+          type: string
+          title: Reason
+          default: admin refund
+      type: object
+      title: RefundIn
+    ReportCardSummary:
+      properties:
+        decision:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Decision
+        scores:
+          additionalProperties:
+            type: number
+          type: object
+          title: Scores
+        cost_p50_microcredits:
+          type: integer
+          title: Cost P50 Microcredits
+        cost_p90_microcredits:
+          type: integer
+          title: Cost P90 Microcredits
+        latency_p50_ms:
+          type: integer
+          title: Latency P50 Ms
+        latency_p95_ms:
+          type: integer
+          title: Latency P95 Ms
+        findings:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Findings
+        reviewed_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Reviewed At
+      type: object
+      required:
+      - decision
+      - scores
+      - cost_p50_microcredits
+      - cost_p90_microcredits
+      - latency_p50_ms
+      - latency_p95_ms
+      - findings
+      - reviewed_at
+      title: ReportCardSummary
+    ResolveIn:
+      properties:
+        resolution:
+          type: string
+          enum:
+          - refund
+          - reject
+          title: Resolution
+      type: object
+      required:
+      - resolution
+      title: ResolveIn
+    SearchFilters:
+      properties:
+        category:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Category
+        input_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Input Type
+        output_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Output Type
+        max_price_microcredits:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Price Microcredits
+        max_minutes:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Minutes
+        verified_only:
+          type: boolean
+          title: Verified Only
+          default: false
+      type: object
+      title: SearchFilters
+    SearchRequest:
+      properties:
+        task:
+          type: string
+          title: Task
+          examples:
+          - Plan a 5-day trip to Tokyo under $2,000
+        filters:
+          $ref: '#/components/schemas/SearchFilters'
+          default:
+            verified_only: false
+        limit:
+          type: integer
+          title: Limit
+          default: 6
+      type: object
+      required:
+      - task
+      title: SearchRequest
+    SearchResponse:
+      properties:
+        task:
+          type: string
+          title: Task
+        results:
+          items:
+            $ref: '#/components/schemas/AgentCard'
+          type: array
+          title: Results
+      type: object
+      required:
+      - task
+      - results
+      title: SearchResponse
+    SessionCreate:
+      properties:
+        quote_id:
+          type: string
+          title: Quote Id
+        cap_microcredits:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Cap Microcredits
+          description: defaults to the quote's p90
+        files:
+          items:
+            additionalProperties:
+              type: string
+            type: object
+          type: array
+          title: Files
+          description: '[{name, content_base64}] input files'
+          default: []
+      type: object
+      required:
+      - quote_id
+      title: SessionCreate
+    SessionOut:
+      properties:
+        id:
+          type: string
+          title: Id
+        status:
+          type: string
+          title: Status
+        agent_id:
+          type: string
+          title: Agent Id
+        agent_version_id:
+          type: string
+          title: Agent Version Id
+        buyer_id:
+          type: string
+          title: Buyer Id
+        task:
+          type: string
+          title: Task
+        cap_microcredits:
+          type: integer
+          title: Cap Microcredits
+        spend:
+          $ref: '#/components/schemas/SpendOut'
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        started_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Started At
+        ended_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ended At
+        settled_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Settled At
+        result_text:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Result Text
+        files:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Files
+        pending_question:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Pending Question
+      type: object
+      required:
+      - id
+      - status
+      - agent_id
+      - agent_version_id
+      - buyer_id
+      - task
+      - cap_microcredits
+      - spend
+      - created_at
+      - started_at
+      - ended_at
+      - settled_at
+      - result_text
+      - files
+      - pending_question
+      title: SessionOut
+    SpendOut:
+      properties:
+        spent_microcredits:
+          type: integer
+          title: Spent Microcredits
+          description: platform cost C so far (model + tools)
+        projected_charge_microcredits:
+          type: integer
+          title: Projected Charge Microcredits
+          description: what the buyer would pay if it ended now
+        cap_microcredits:
+          type: integer
+          title: Cap Microcredits
+        llm_calls:
+          type: integer
+          title: Llm Calls
+        tool_calls:
+          type: integer
+          title: Tool Calls
+        input_tokens:
+          type: integer
+          title: Input Tokens
+        output_tokens:
+          type: integer
+          title: Output Tokens
+      type: object
+      required:
+      - spent_microcredits
+      - projected_charge_microcredits
+      - cap_microcredits
+      - llm_calls
+      - tool_calls
+      - input_tokens
+      - output_tokens
+      title: SpendOut
+    SubscriptionIn:
+      properties:
+        plan:
+          type: string
+          enum:
+          - plus
+          - pro
+          - none
+          title: Plan
+      type: object
+      required:
+      - plan
+      title: SubscriptionIn
+    ToolPriceIn:
+      properties:
+        tool:
+          type: string
+          title: Tool
+        unit:
+          type: string
+          title: Unit
+          default: call
+        price_microcredits:
+          type: integer
+          title: Price Microcredits
+      type: object
+      required:
+      - tool
+      - price_microcredits
+      title: ToolPriceIn
+    TopupIn:
+      properties:
+        pack:
+          type: string
+          enum:
+          - S
+          - M
+          - L
+          title: Pack
+      type: object
+      required:
+      - pack
+      title: TopupIn
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VersionSubmit:
+      properties:
+        source_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Path
+          description: 'local path or repo dir containing agent.yaml (MVP: local path)'
+        repo_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Repo Url
+        image_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Ref
+        manifest:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Manifest
+          description: overrides agent.yaml if given
+      type: object
+      title: VersionSubmit
+    WalletOut:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+        balance_microcredits:
+          type: integer
+          title: Balance Microcredits
+        held_microcredits:
+          type: integer
+          title: Held Microcredits
+          description: currently in escrow for running sessions
+        history:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: History
+      type: object
+      required:
+      - user_id
+      - balance_microcredits
+      - held_microcredits
+      - history
+      title: WalletOut

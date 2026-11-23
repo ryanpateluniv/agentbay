@@ -1,0 +1,57 @@
+import asyncio
+import logging
+from contextlib import asynccontextmanager
+
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+from .api import admin, buyer, creator, runtime as runtime_api
+from .config import settings
+from .db import SessionLocal, init_db
+from .models import Session
+from .services import events, runtime
+from .services.sessions import ACTIVE, finalize
+
+logging.basicConfig(level=logging.INFO)
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    events.bind_loop(asyncio.get_running_loop())
+    runtime.reap_orphans()
+    # Sessions that were mid-flight when the server died: their sandboxes are gone, refund them.
+    db = SessionLocal()
+    for s in db.query(Session).filter(Session.status.in_(ACTIVE)).all():
+        finalize(db, s.id, "failed", "platform restarted during session")
+    db.close()
+    yield
+    runtime.reap_orphans()
+
+
+app = FastAPI(title="Agent Marketplace API", version="0.1.0", lifespan=lifespan,
+              description="All money fields are integer microcredits (1 credit = 1000 microcredits). "
+                          "Auth: `Authorization: Bearer <token>`; demo tokens tok_sam (buyer), tok_riya (creator), "
+                          "tok_admin (admin). Session events: see contracts/EVENTS.md.")
+app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["*"], allow_headers=["*"],
+                   allow_credentials=False)
+
+
+@app.exception_handler(HTTPException)
+async def http_error(_, exc: HTTPException):
+    d = exc.detail
+    body = d if isinstance(d, dict) else {"error": {401: "unauthorized", 403: "forbidden", 404: "not_found",
+                                                    409: "conflict", 402: "insufficient_credits"}.get(exc.status_code,
+                                                                                                      "error"),
+                                          "detail": str(d)}
+    return JSONResponse(body, status_code=exc.status_code)
+
+
+for r in (buyer.router, creator.router, admin.router, runtime_api.router):
+    app.include_router(r)
+
+
+@app.get("/health")
+def health():
+    return {"ok": True, "llm_mode": settings.llm_mode, "runtime_mode": settings.runtime_mode}

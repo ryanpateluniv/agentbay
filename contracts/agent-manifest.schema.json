@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://marketplace.local/agent-manifest.schema.json",
+  "title": "agent.yaml manifest (Blueprint Section 5)",
+  "type": "object",
+  "required": ["name", "display_name", "version", "summary", "category", "runtime", "models_allowed", "limits", "pricing", "support_contact"],
+  "properties": {
+    "name": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,62}$"},
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 80},
+    "version": {"type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$"},
+    "summary": {"type": "string", "minLength": 10, "maxLength": 300},
+    "description": {"type": "string"},
+    "category": {"type": "string"},
+    "tags": {"type": "array", "items": {"type": "string"}},
+    "example_tasks": {"type": "array", "items": {"type": "string"}},
+    "inputs": {"type": "array", "items": {"enum": ["text", "pdf", "image", "csv", "json", "docx"]}},
+    "outputs": {"type": "array", "items": {"enum": ["text", "markdown", "pdf", "csv", "json", "image"]}},
+    "runtime": {
+      "type": "object",
+      "required": ["entrypoint"],
+      "properties": {
+        "language": {"type": "string"},
+        "entrypoint": {"type": "string"},
+        "port": {"type": "integer", "default": 8080}
+      }
+    },
+    "tools_requested": {"type": "array", "items": {"enum": ["web_search", "file_storage"]}},
+    "models_allowed": {"type": "array", "minItems": 1, "items": {"enum": ["fast", "balanced", "strong"]}},
+    "allowed_domains": {"type": "array", "items": {"type": "string"}, "description": "outbound domains the agent may call (egress allowlist)"},
+    "limits": {
+      "type": "object",
+      "required": ["max_session_minutes", "max_llm_cost_credits"],
+      "properties": {
+        "max_session_minutes": {"type": "integer", "minimum": 1, "maximum": 60},
+        "max_llm_cost_credits": {"type": "integer", "minimum": 1},
+        "max_tool_calls": {"type": "integer", "minimum": 0, "default": 100}
+      }
+    },
+    "pricing": {
+      "type": "object",
+      "required": ["model"],
+      "properties": {
+        "model": {"enum": ["per_task", "per_message", "per_minute", "usage_based", "outcome_based", "hybrid"]},
+        "price_credits": {"type": "integer", "minimum": 0, "description": "flat price, per-message or per-minute rate, or hybrid base"},
+        "markup_pct": {"type": "integer", "minimum": 0, "description": "usage_based/hybrid: buyer pays C * (1 + markup_pct/100)"}
+      }
+    },
+    "secrets": {"type": "array", "items": {"type": "string"}},
+    "review": {"type": "object", "properties": {"test_cases": {"type": "string"}}},
+    "support_contact": {"type": "string"}
+  }
+}
