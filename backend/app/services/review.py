@@ -212,41 +212,68 @@ async def _run_case(db: DB, ver: AgentVersion, task: str, answers: list[str]) ->
             "latency_ms": latency, "steps": steps, "session_id": s.id}
 
 
+JUDGE_SYSTEM = ("You grade AI agent outputs. Rubric: relevance, completeness, correctness, honesty. "
+                "Reply with only a JSON object: {\"score\": <integer 0-100>, \"why\": \"<one sentence>\"}.")
+
+
+def parse_judge(text: str) -> int:
+    """Score from a judge reply: tolerates code fences and prose around the JSON object. Raises ValueError."""
+    text = re.sub(r"```(?:json)?", "", text or "").strip()
+    decoder = json.JSONDecoder()
+    for m in re.finditer(r"\{", text):
+        try:
+            obj, _ = decoder.raw_decode(text, m.start())
+        except json.JSONDecodeError:
+            continue
+        if isinstance(obj, dict) and "score" in obj:
+            return max(0, min(100, int(float(obj["score"]))))
+    raise ValueError(f"no JSON score in judge reply: {text[:80]!r}")
+
+
+async def _llm_judge(task: str, blob: str) -> int:
+    """One LLM-judge call through the upstream client and the real-mode safety cap. Raises on any failure."""
+    from . import upstream
+    from .proxy import current_price
+    db = SessionLocal()
+    try:
+        price = current_price(db, platform_alias("judge_alias"))
+    finally:
+        db.close()
+    messages = [{"role": "system", "content": JUDGE_SYSTEM},
+                {"role": "user", "content": f"TASK:\n{task}\n\nOUTPUT:\n{blob[:6000]}"}]
+    reservation, actual = 0, 0
+    try:
+        max_out, reservation = upstream.guard.reserve(None, upstream.estimate_input_uusd(messages, price),
+                                                      price.price_out, settings.judge_max_tokens)
+        data = await upstream.complete(upstream.build_payload(
+            {"messages": messages, "response_format": {"type": "json_object"}}, price, max_out, False))
+        upstream.log_usage(None, data, "judge")
+        actual = upstream.provider_cost_uusd(data.get("usage") or {}, price)
+        return parse_judge(data["choices"][0]["message"].get("content") or "")
+    finally:
+        upstream.guard.settle(None, reservation, actual)
+
+
 async def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str]:
-    """Automated checker + LLM judge. Real mode asks the configured judge alias (`fast` = luna by default) with a
-    rubric, through the same upstream client and safety cap as the proxy; fake mode is a deterministic heuristic."""
+    """Automated checker + judge. With REVIEW_JUDGE=auto in real mode, an LLM judge (`judge_alias`, luna by
+    default) scores the output; a failed or unparsable reply is retried once, then the heuristic score is used.
+    A judge failure never fails a case by itself. Fake mode and REVIEW_JUDGE=heuristic use the heuristic only."""
     if out["status"] != "settled" or not out["result"].strip():
         return False, 0, f"no result (status {out['status']})"
     blob = (out["result"] + " " + out["files_text"]).lower()
     missing = [e for e in expect if e.lower() not in blob]
     if missing:
         return False, 30, f"missing expected content: {missing}"
-    score = 85 if len(blob) > 40 else 60
-    if settings.llm_mode == "real":
-        from . import upstream
-        from .proxy import current_price
-        db = SessionLocal()
+    heuristic = 85 if len(blob) > 40 else 60
+    if settings.llm_mode != "real" or settings.review_judge == "heuristic":
+        return heuristic >= 60, heuristic, "ok"
+    for attempt in (1, 2):
         try:
-            price = current_price(db, platform_alias("judge_alias"))
-        finally:
-            db.close()
-        messages = [{"role": "system", "content": "You grade AI agent outputs. Rubric: relevance, completeness, "
-                     "correctness, honesty. Reply JSON {\"score\": 0-100, \"why\": str}."},
-                    {"role": "user", "content": f"TASK:\n{task}\n\nOUTPUT:\n{blob[:6000]}"}]
-        reservation, actual = 0, 0
-        try:
-            max_out, reservation = upstream.guard.reserve(None, upstream.estimate_input_uusd(messages, price),
-                                                          price.price_out, 400)
-            data = await upstream.complete(upstream.build_payload(
-                {"messages": messages, "response_format": {"type": "json_object"}}, price, max_out, False))
-            upstream.log_usage(None, data, "judge")
-            actual = upstream.provider_cost_uusd(data.get("usage") or {}, price)
-            score = int(json.loads(data["choices"][0]["message"]["content"])["score"])
-        except Exception as e:  # noqa: BLE001  (judge failure falls back to the heuristic)
-            log.warning("judge failed: %s", e)
-        finally:
-            upstream.guard.settle(None, reservation, actual)
-    return score >= 60, score, "ok"
+            score = await _llm_judge(task, blob)
+            return score >= 60, score, "ok"
+        except Exception as e:  # noqa: BLE001  (provider error, empty reply, no JSON)
+            log.warning("judge failed (attempt %d): %s", attempt, e)
+    return heuristic >= 60, heuristic, "ok (heuristic: judge unavailable)"
 
 
 def load_cases(src: Path | None, manifest: dict) -> list[dict]:

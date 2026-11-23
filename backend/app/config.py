@@ -41,6 +41,8 @@ class Settings:
     db_pool_size = int(_env("DB_POOL_SIZE", "20"))
     db_max_overflow = int(_env("DB_MAX_OVERFLOW", "30"))
     db_pool_timeout = int(_env("DB_POOL_TIMEOUT", "60"))
+    review_judge = _env("REVIEW_JUDGE", "auto")  # auto: LLM judge in real mode, heuristic in fake | heuristic
+    judge_max_tokens = int(_env("JUDGE_MAX_TOKENS", "2000"))  # reasoning tokens count against this
     review_concurrency = int(_env("REVIEW_CONCURRENCY", "3"))  # reviews running at once
     review_case_concurrency = int(_env("REVIEW_CASE_CONCURRENCY", "3"))  # test-case sessions at once per review
     trial_credits = int(_env("TRIAL_CREDITS", "500"))  # granted once to every new account

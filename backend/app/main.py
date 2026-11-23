@@ -9,11 +9,26 @@ from fastapi.responses import JSONResponse
 from .api import accounts, admin, buyer, creator, frontend, runtime as runtime_api
 from .config import settings
 from .db import SessionLocal, init_db
-from .models import AgentVersion, Session
-from .services import events, nocode, review, runtime
+from .models import AgentVersion, Session, now
+from .services import catalog, events, nocode, review, runtime
 from .services.sessions import ACTIVE, finalize_safely
 
 logging.basicConfig(level=logging.INFO)
+
+
+def startup_queue(db) -> list[str]:
+    """Versions to review at startup: submitted ones, and in-review ones whose run never finished (the server
+    stopped mid-review). Approved versions are never re-reviewed, whatever LLM_MODE the server starts in."""
+    out = []
+    for v in db.query(AgentVersion).filter(AgentVersion.status.in_(("submitted", "in_review"))).all():
+        run = catalog.latest_review(db, v.id)
+        if v.status == "submitted":
+            out.append(v.id)
+        elif run is not None and run.status != "done":
+            run.status, run.decision, run.finished_at = "done", "interrupted", now()
+            out.append(v.id)
+    db.commit()
+    return out
 
 
 @asynccontextmanager
@@ -30,8 +45,7 @@ async def lifespan(app: FastAPI):
         except Exception:  # noqa: BLE001
             db.rollback()
             logging.exception("no-code discovery failed")
-        # Versions submitted while no server was running (the seeded InvoiceGenius Pro) get their review now.
-        pending = [v.id for v in db.query(AgentVersion).filter(AgentVersion.status == "submitted").all()]
+        pending = startup_queue(db)
     finally:
         db.close()
     for sid in orphans:

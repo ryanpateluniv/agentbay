@@ -12,7 +12,7 @@ setup: $(PY)
 	@test -f .env || cp .env.example .env
 
 seed: setup
-	cd backend && $(PY) -m app.seed --reset
+	cd backend && $(PY) -m app.seed --reset --review
 
 # One command: install, seed a fresh DB, run the API on :8000
 dev: seed
