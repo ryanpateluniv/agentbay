@@ -1,0 +1,14 @@
+INVOICE
+Invoice No: 7781
+Date: 2026-09-12
+Supplier: Brightside Consulting GmbH
+Bill To: Contoso Trading
+
+Items:
+1. Consulting | qty 8 | unit 150.00 | 1200.00
+2. Software license | qty 3 | unit 199.00 | 579.00
+3. Support plan | qty 1 | unit 300.00 | 300.00
+
+Subtotal: 2079.00
+Tax (10%): 207.90
+Total: 2286.90

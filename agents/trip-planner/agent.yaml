@@ -1,0 +1,44 @@
+name: trip-planner
+display_name: Trip Planner
+version: 1.0.0
+summary: 'Plans a multi-day trip through a short chat: you pick from three outlines and approve the final
+  itinerary.'
+description: |
+  Tell the planner where you want to go, for how long, your budget and what you enjoy. It drafts three itinerary outlines, lets you choose one, builds a detailed day-by-day plan and saves it after you approve. It uses the model's general knowledge unless live web search is available, and says which one it used.
+category: travel
+tags:
+- travel
+- itinerary
+- planning
+- trip
+example_tasks:
+- Plan 4 days in Lisbon for two people, mid-range budget, we love food and history
+- Weekend trip somewhere warm, budget friendly
+- Plan a 5-day Kyoto trip focused on temples and gardens
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  language: python
+  entrypoint: python main.py
+  port: 8080
+tools_requested:
+- web_search
+- file_storage
+models_allowed:
+- fast
+- strong
+network:
+  allowed_domains: []
+limits:
+  max_session_minutes: 10
+  max_llm_cost_credits: 90
+  max_tool_calls: 10
+pricing:
+  model: per_task
+  price_credits: 120
+secrets: []
+review:
+  test_cases: tests/cases.jsonl
+  support_contact: team@example.com

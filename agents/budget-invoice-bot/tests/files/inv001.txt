@@ -1,0 +1,17 @@
+INVOICE
+Invoice No: INV-2041
+Date: 2026-10-03
+Due Date: 2026-11-02
+Supplier: Northwind Office Supply Ltd
+Supplier Tax ID: GB123456789
+Bill To: Contoso Trading
+
+Items:
+1. USB-C cable | qty 10 | unit 12.50 | 125.00
+2. Desk lamp | qty 4 | unit 35.00 | 140.00
+3. USB-C cable | qty 10 | unit 12.50 | 125.00
+4. Notebook pack | qty 20 | unit 4.00 | 80.00
+
+Subtotal: 470.00
+Tax (20%): 94.00
+Total: 804.00

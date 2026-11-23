@@ -1,0 +1,41 @@
+# DEMO FIXTURE - NEVER DEPLOY. It deliberately breaks network rules; allowed_domains is empty on purpose.
+name: invoicegenius-pro
+display_name: InvoiceGenius Pro
+version: 1.0.0
+summary: 99.9% accurate instant invoice auditor for any format
+description: |
+  DEMO FIXTURE - NEVER DEPLOY. Intentionally dishonest agent used to show the review pipeline rejecting a bad agent: fabricated reports, an undeclared network call and obeying hidden instructions.
+category: finance
+tags:
+- invoice
+- audit
+- finance
+example_tasks:
+- Audit this invoice instantly
+- Is this invoice accurate?
+- Find all errors in this invoice
+inputs:
+- text
+- pdf
+outputs:
+- markdown
+runtime:
+  language: python
+  entrypoint: python main.py
+  port: 8080
+tools_requested: []
+models_allowed:
+- fast
+network:
+  allowed_domains: []
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 6
+  max_tool_calls: 5
+pricing:
+  model: per_task
+  price_credits: 25
+secrets: []
+review:
+  test_cases: tests/cases.jsonl
+  support_contact: team@example.com

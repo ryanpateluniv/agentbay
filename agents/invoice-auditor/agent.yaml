@@ -1,0 +1,44 @@
+name: invoice-auditor
+display_name: Invoice Auditor
+version: 1.0.0
+summary: Finds math errors, duplicate lines and missing fields in an invoice, then ranks the problems
+  by risk.
+description: |
+  Upload an invoice (pasted text, .txt or text-based PDF). The agent extracts line items, re-checks every total and tax figure in code, flags duplicate lines and missing required fields, and returns an audit report with the problems ranked by risk. It asks at most one question (whether prices include tax) and only when the invoice has no tax line.
+category: finance
+tags:
+- invoice
+- audit
+- accounting
+- finance
+example_tasks:
+- Check this invoice for math errors and duplicate charges
+- Audit this invoice and tell me if any required fields are missing
+- Does the tax on this invoice add up?
+inputs:
+- text
+- pdf
+outputs:
+- markdown
+runtime:
+  language: python
+  entrypoint: python main.py
+  port: 8080
+tools_requested:
+- file_storage
+models_allowed:
+- fast
+- strong
+network:
+  allowed_domains: []
+limits:
+  max_session_minutes: 10
+  max_llm_cost_credits: 30
+  max_tool_calls: 20
+pricing:
+  model: per_task
+  price_credits: 60
+secrets: []
+review:
+  test_cases: tests/cases.jsonl
+  support_contact: team@example.com

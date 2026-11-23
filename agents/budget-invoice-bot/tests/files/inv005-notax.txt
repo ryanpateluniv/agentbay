@@ -1,0 +1,13 @@
+INVOICE
+Invoice No: LM-55
+Date: 2026-10-05
+Due Date: 2026-11-04
+Supplier: Lumen Print Studio
+Supplier Tax ID: FR12345678901
+
+Items:
+1. Poster print A2 | qty 10 | unit 20.00 | 200.00
+2. Flyer pack | qty 5 | unit 20.00 | 100.00
+
+Subtotal: 300.00
+Total: 300.00

@@ -1,0 +1,43 @@
+name: budget-invoice-bot
+display_name: Budget Invoice Bot
+version: 1.0.0
+summary: Quick, low-cost invoice check for arithmetic errors and duplicate lines. Does not check tax fields
+  or dates.
+description: |
+  A cheaper, simpler alternative to Invoice Auditor. It re-checks line amounts, subtotal and total and flags duplicate lines. It does not check required fields, due dates or tax rates, does no model review and asks no questions.
+category: finance
+tags:
+- invoice
+- audit
+- budget
+- finance
+example_tasks:
+- Quickly check this invoice for math errors
+- Are there duplicate lines on this invoice?
+- Does this invoice total add up?
+inputs:
+- text
+- pdf
+outputs:
+- markdown
+runtime:
+  language: python
+  entrypoint: python main.py
+  port: 8080
+tools_requested:
+- file_storage
+models_allowed:
+- fast
+network:
+  allowed_domains: []
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 12
+  max_tool_calls: 10
+pricing:
+  model: per_task
+  price_credits: 30
+secrets: []
+review:
+  test_cases: tests/cases.jsonl
+  support_contact: team@example.com

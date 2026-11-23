@@ -1,0 +1,14 @@
+INVOICE
+Invoice No: HX-0093
+Date: 2026-10-15
+Due Date: 2026-09-01
+Supplier: Hexa Hosting Inc
+Supplier Tax ID: US-98-7654321
+
+Items:
+1. Hosting plan | qty 1 | unit 500.00 | 500.00
+2. Domain renewal | qty 2 | unit 15.00 | 30.00
+
+Subtotal: 530.00
+Tax (15%): 106.00
+Total: 636.00

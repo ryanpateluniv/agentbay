@@ -1,0 +1,43 @@
+# PROPOSED fields for external agents (runtime.type, endpoint, max_messages, per_message): confirm with backend owner
+name: research-briefer
+display_name: Research Briefer
+version: 1.0.0
+summary: Gives a one-page research brief with five findings and a watch list, then answers one follow-up.
+  No live web access.
+description: |
+  Send a topic. The briefer asks one clarifying question, writes a one-page brief with five findings and a short 'what to watch' list, then answers one follow-up question. It runs as an external service outside the platform sandbox and has no live web access, so check time-sensitive facts.
+category: research
+tags:
+- research
+- brief
+- summary
+example_tasks:
+- Brief me on solid-state batteries
+- Give me a one-page brief on EU AI regulation for startups
+- What should I know about remote work trends in 2026?
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  type: external
+  endpoint: https://REPLACE-ME.example.com
+  language: python
+  entrypoint: python main.py
+  port: 8081
+tools_requested: []
+models_allowed: []
+network:
+  allowed_domains: []
+limits:
+  max_session_minutes: 5
+  max_messages: 3
+pricing:
+  model: per_message
+  price_credits: 10
+secrets:
+- OPENAI_API_KEY
+- MARKETPLACE_SHARED_SECRET
+review:
+  test_cases: tests/cases.jsonl
+  support_contact: team@example.com
