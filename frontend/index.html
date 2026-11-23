@@ -1407,30 +1407,6 @@
   }
   .session-row:hover { background: transparent; color: var(--text); }
   #session-back { margin: 8px 0 16px; }
-  .note { font-size: 12px; color: var(--muted); line-height: 1.4; padding: 2px 0; }
-  html[data-theme="dark"] #log a, #log a:visited { color: #d7e4ff; }
-  html[data-theme="light"] #log a, #log a:visited { color: #1d4ed8; }
-  .session-tools, .quote-files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
-  .session-tools input[type="number"], .session-tools input[type="text"], #quote input[type="file"] { font: inherit; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .cmp, .card-block {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .cmp .flag { font-size: 12px; color: var(--muted); }
-  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-  .kv span:first-child { color: var(--muted); }
-  .steps { display: flex; gap: 8px; margin: 8px 0 16px; }
-  .steps button { border: 0; background: transparent; color: var(--muted); padding: 0 0 6px; border-bottom: 1px solid transparent; }
-  .steps button.on { color: var(--text); border-bottom-color: var(--text); }
-  .form-grid { display: flex; flex-direction: column; gap: 10px; max-width: 460px; }
-  .form-grid input, .form-grid textarea, .form-grid select {
-    font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
   .bubble { padding: 12px 14px; background: var(--fill); border: 0; border-radius: 8px; line-height: 1.45; }
   .bubble.buyer { background: var(--hover); }
   .meter { height: 2px; background: var(--hover); border-radius: 2px; overflow: hidden; }
@@ -1544,17 +1520,162 @@
     padding: 0;
   }
   #auth-error { min-height: 18px; text-align: center; font-size: 13px; color: #e7b3b3; }
+  #landing {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    background: var(--canvas);
+    color: var(--text);
+    padding: 18px 28px 28px;
+  }
+  #landing.hidden { display: none; }
+  .land-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 36px;
+  }
+  .land-brand {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .land-text {
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    padding: 0 4px;
+    height: 32px;
+  }
+  .land-stage {
+    flex: 1;
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 420px);
+    gap: 56px;
+    align-items: center;
+  }
+  .land-hero h1 {
+    margin: 0;
+    font-size: 64px;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 1.02;
+  }
+  .land-hero p {
+    margin: 18px 0 0;
+    max-width: 460px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+  .land-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 28px;
+  }
+  #land-start {
+    height: 40px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--send);
+    color: var(--send-text);
+    font: inherit;
+    font-size: 15px;
+  }
+  .land-cards { display: flex; flex-direction: column; gap: 12px; }
+  .land-card {
+    min-height: 148px;
+    border-radius: 22px;
+    padding: 24px 28px;
+    color: #fff;
+    display: flex;
+    align-items: flex-end;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+  .land-card.blue {
+    background:
+      radial-gradient(90% 160% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11, 47, 134, 0) 60%),
+      radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59, 130, 246, 0) 62%),
+      linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%);
+  }
+  .land-card.amber {
+    background:
+      radial-gradient(80% 160% at 0% 40%, #fdba74 0%, #ea580c 34%, rgba(234, 88, 12, 0) 62%),
+      linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%);
+  }
+  .land-agents {
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .land-agents button {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+  }
+  .land-agents button:hover { color: var(--text); background: var(--fill); }
+  @media (max-width: 860px) {
+    .land-stage { grid-template-columns: 1fr; gap: 28px; align-content: center; }
+    .land-hero h1 { font-size: 44px; }
+  }
 </style>
 </head>
 <body>
+<div id="landing">
+  <header class="land-bar">
+    <div class="land-brand">Cohort.ai</div>
+    <button type="button" id="land-open" class="land-text">Open app</button>
+  </header>
+  <div class="land-stage">
+    <div class="land-hero">
+      <h1>Hire an agent. See the price first.</h1>
+      <p>Tell Cohort the work. It matches an agent from the library, you set the credits, and what is left comes back when the run ends.</p>
+      <div class="land-actions">
+        <button type="button" id="land-start">Open Cohort</button>
+        <button type="button" id="land-library" class="land-text">Library</button>
+      </div>
+    </div>
+    <div class="land-cards" aria-hidden="true">
+      <div class="land-card blue">See the price before a session starts.</div>
+      <div class="land-card amber">Unused credit comes back when it ends.</div>
+    </div>
+  </div>
+  <ul class="land-agents">
+    <li><button type="button" data-agent="0">Invoice Auditor</button></li>
+    <li><button type="button" data-agent="1">Trip Planner</button></li>
+    <li><button type="button" data-agent="2">Research Briefer</button></li>
+    <li><button type="button" data-agent="3">Inbox Cleaner</button></li>
+    <li><button type="button" data-agent="4">Meeting Notes</button></li>
+    <li><button type="button" data-agent="5">Contract Reader</button></li>
+    <li><button type="button" data-agent="6">Support Reply</button></li>
+    <li><button type="button" data-agent="7">Spreadsheet Fixer</button></li>
+  </ul>
+</div>
 <div id="auth" class="auth hidden">
   <div class="auth-card">
-    <div id="auth-options" class="auth-options">
     <button id="auth-google" class="auth-google" type="button">
       <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.4 30.2 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.8 6.1C12.2 13.2 17.6 9.5 24 9.5z"/><path fill="#fff" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#fff" d="M10.3 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l7.8-6.1z"/><path fill="#fff" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.4 0-11.8-3.7-13.7-9l-7.8 6.1C6.4 42.6 14.6 48 24 48z"/></svg>
       Continue with Google
     </button>
-    </div>
     <p id="auth-error"></p>
   </div>
 </div>
@@ -1569,18 +1690,6 @@
     <button class="nav-item" type="button" data-view="library">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
       Library
-    </button>
-    <button class="nav-item" type="button" data-view="session">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
-      Session
-    </button>
-    <button class="nav-item" type="button" data-view="wallet">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
-      Wallet
-    </button>
-    <button class="nav-item" type="button" data-view="admin">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3z"/></svg>
-      Review
     </button>
   </nav>
   <div class="side-label">Activity</div>
@@ -1759,107 +1868,20 @@
     <p class="meta" id="spend"></p>
     <div id="log"></div>
     <div id="ask" class="hidden"></div>
-    <p id="session-edge" class="warn"></p>
-    <div class="session-tools">
-      <label>Extend cap <input id="extend-credits" type="number" min="1" step="1" value="10" aria-label="Credits to add"></label>
-      <button class="ghost" id="extend" type="button">Extend</button>
-      <label>File <input id="session-file" type="file" aria-label="Attach a file"></label>
-      <span id="file-note" class="meta"></span>
-    </div>
     <button class="ghost" id="cancel" type="button">Cancel session</button>
     <pre id="receipt"></pre>
-    <div id="after-receipt" class="hidden">
-      <form id="rate-form" class="form-grid">
-        <label>Stars <input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
-        <input id="rate-comment" type="text" placeholder="Comment">
-        <button type="submit">Rate this agent</button>
-      </form>
-      <form id="dispute-form" class="form-grid">
-        <input id="dispute-reason" type="text" placeholder="Why this result should be reviewed" required>
-        <button type="submit">Open a dispute</button>
-      </form>
-      <p id="after-note" class="meta"></p>
-    </div>
   </div>
 </section>
 
 <section id="creator" class="page hidden">
   <h2>Creator ledger</h2>
-  <div id="creator-error" class="warn"></div>
-  <div id="creator-home"></div>
-  <div class="steps" id="creator-steps">
-    <button type="button" data-step="1">1 Basics</button>
-    <button type="button" data-step="2">2 Manifest</button>
-    <button type="button" data-step="3">3 Listing</button>
-    <button type="button" data-step="4">4 Samples</button>
-    <button type="button" data-step="5">5 Submit</button>
-  </div>
-  <form id="creator-form" class="form-grid">
-    <div data-step-panel="1">
-      <input id="c-slug" placeholder="slug" required>
-      <input id="c-category" placeholder="category" value="general">
-      <select id="c-mode"><option value="hosted">hosted</option><option value="external">external</option></select>
-      <input id="c-endpoint" placeholder="endpoint url, external only">
-    </div>
-    <div data-step-panel="2" class="hidden">
-      <input id="c-version" placeholder="version" value="0.1.0">
-      <select id="c-price-model"><option>per_task</option><option>per_message</option><option>per_minute</option><option>usage_based</option><option>outcome_based</option></select>
-      <input id="c-price" type="number" min="0" step="1" value="5" placeholder="price credits">
-    </div>
-    <div data-step-panel="3" class="hidden">
-      <input id="c-title" placeholder="title">
-      <input id="c-summary" placeholder="summary">
-      <textarea id="c-description" rows="3" placeholder="description"></textarea>
-      <input id="c-tags" placeholder="tags, comma separated">
-    </div>
-    <div data-step-panel="4" class="hidden">
-      <textarea id="c-samples" rows="3" placeholder="one example task per line"></textarea>
-    </div>
-    <div data-step-panel="5" class="hidden">
-      <input id="c-source" placeholder="source path, optional">
-      <p class="meta" id="c-submit-note"></p>
-    </div>
-    <div>
-      <button type="button" id="c-back">Back</button>
-      <button type="button" id="c-next">Next</button>
-      <button type="submit" id="c-submit" class="hidden">Submit for review</button>
-    </div>
-  </form>
-  <div id="creator-review"></div>
+  <div id="creator-body"></div>
 </section>
 
 <section id="admin" class="page hidden">
   <h2>Review queue</h2>
-  <p class="meta">InvoiceGenius Pro is waiting. Run review, then use the kill switch on a live agent.</p>
-  <div id="admin-error" class="warn"></div>
-  <div id="admin-metrics"></div>
-  <h3>Queue</h3>
-  <div id="admin-queue"></div>
-  <h3>Agents</h3>
+  <p class="meta">Guaranteed Returns Bot is waiting. Run review, then use the kill switch on a live agent.</p>
   <div id="admin-body"></div>
-  <h3>Refund a session</h3>
-  <form id="refund-form" class="form-grid">
-    <input id="refund-id" placeholder="session id" required>
-    <input id="refund-reason" placeholder="reason" value="admin refund">
-    <button type="submit">Refund</button>
-    <p id="refund-note" class="meta"></p>
-  </form>
-</section>
-
-<section id="wallet" class="page hidden">
-  <h2>Wallet</h2>
-  <div id="wallet-body"></div>
-</section>
-
-<section id="compare" class="page hidden">
-  <button class="ghost" id="compare-back" type="button">Back</button>
-  <h2>Compare</h2>
-  <div id="compare-body"></div>
-</section>
-
-<section id="report" class="page hidden">
-  <button class="ghost" id="report-back" type="button">Back</button>
-  <div id="report-body"></div>
 </section>
 </main>
 </div>
@@ -1873,10 +1895,6 @@
       <input id="quote-cap" type="number" min="1" step="1" />
     </label>
     <p id="quote-hold" class="meta"></p>
-    <label class="quote-files">Attach a file
-      <input id="quote-file" type="file">
-    </label>
-    <p id="quote-files" class="meta"></p>
     <p id="quote-error" class="warn"></p>
     <div class="quote-actions">
       <button id="quote-back" type="button">Back</button>
@@ -1908,7 +1926,7 @@ document.querySelectorAll("[data-theme-choice]").forEach((button) => {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (themeChoice === "system") applyTheme("system");
 });
-const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options", me: null, files: [], picks: [], cap: 0, quote: null, step: 1, draftAgent: null };
+const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options" };
 
 async function api(path, opts) {
   opts = opts || {};
@@ -1916,13 +1934,7 @@ async function api(path, opts) {
   if (state.token) headers.Authorization = "Bearer " + state.token;
   const res = await fetch(path, Object.assign({}, opts, { headers }));
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const body = data.detail && typeof data.detail === "object" ? data.detail : data;
-    const err = new Error((body && body.detail) || (typeof data.detail === "string" ? data.detail : "") || res.statusText);
-    err.code = (body && body.error) || data.error || "";
-    err.status = res.status;
-    throw err;
-  }
+  if (!res.ok) throw new Error(data.detail || res.statusText);
   return data;
 }
 async function refreshBal() {
@@ -1992,42 +2004,14 @@ function enterApp(session) {
   const name = meta.full_name || meta.name || (session.user.email || "Account").split("@")[0];
   paintUser(name);
   $("#auth").classList.add("hidden");
-  loadMe();
   refreshBal();
-  loadSidebar();
-  api("/v1/agents").then((res) => { state.library = Array.isArray(res) ? res : (res.agents || []); }).catch(() => {});
-  if (!state.placed) { state.placed = true; restorePlace(); }
-}
-async function loadMe() {
-  try { state.me = await api("/v1/me"); } catch (err) { state.me = { roles: [] }; }
-  if (state.me.name) paintUser(state.me.name);
-}
-function hasRole(role) {
-  const roles = (state.me && state.me.roles) || [];
-  return roles.includes(role);
-}
-function enterDemo(token) {
-  localStorage.setItem("cohort-demo-token", token);
-  enterApp({ access_token: token, user: { email: token.replace("tok_", "") + "@demo.dev", user_metadata: {} } });
 }
 async function bootAuth() {
   let cfg = { configured: false };
   try { cfg = await fetch("/v1/auth/config").then((res) => res.json()); } catch (err) { cfg = { configured: false }; }
   if (!cfg.configured || !window.supabase) {
     ["auth-google"].forEach((id) => { $("#"+id).disabled = true; });
-    const demo = cfg.demo_tokens || [];
-    const saved = localStorage.getItem("cohort-demo-token");
-    if (saved && demo.includes(saved)) return enterDemo(saved);
-    showAuth(demo.length ? "No Supabase keys set. Pick a demo account." : "Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
-    const roles = { tok_sam: "Sam · buyer", tok_riya: "Riya · creator", tok_admin: "Admin · admin" };
-    demo.slice().reverse().forEach((token) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "auth-quiet";
-      b.textContent = "Demo login: " + (roles[token] || token);
-      b.onclick = () => enterDemo(token);
-      $("#auth-options").prepend(b);
-    });
+    showAuth("Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
     return;
   }
   state.supabase = window.supabase.createClient(cfg.url, cfg.anon_key);
@@ -2056,7 +2040,6 @@ $("#sign-out").onclick = async (event) => {
   if (state.supabase) await state.supabase.auth.signOut();
   localStorage.removeItem("cohort-demo-token");
   state.token = "";
-  state.me = null;
   showAuth();
 };
 document.querySelectorAll(".nav-item[data-view]").forEach((b) => b.onclick = () => show(b.dataset.view));
@@ -2094,19 +2077,12 @@ document.querySelectorAll("#user-menu [data-view]").forEach((button) => {
     show(event.currentTarget.dataset.view);
   };
 });
-const pendingKeys = {};
-async function once(action, run) {
-  // One Idempotency-Key per user action; a double-click while it is in flight reuses the same key.
-  const fresh = !pendingKeys[action];
-  if (fresh) pendingKeys[action] = crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
-  try { return await run(pendingKeys[action]); } finally { if (fresh) delete pendingKeys[action]; }
-}
 $("#add-credits").onclick = async () => {
   const button = $("#add-credits");
   if (button.disabled) return;
   button.disabled = true;
   try {
-    await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
+    await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
     await refreshBal();
     if (!$("#account").classList.contains("hidden")) loadAccount();
   } finally {
@@ -2124,7 +2100,7 @@ function remember(path) {
 }
 function show(view) {
   document.querySelectorAll(".nav-item").forEach((x) => x.classList.toggle("on", x.dataset.view === view));
-  ["discover","session","creator","admin","library","account","wallet","compare","report"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
+  ["discover","session","creator","admin","library","account"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
   if (view === "discover") remember(state.conversation ? "/chat/" + state.conversation : "/new");
   if (view === "session") {
     if (state.session) showLive();
@@ -2142,9 +2118,6 @@ function show(view) {
     return loadAccount();
   }
   if (view === "admin") loadAdmin();
-  if (view === "wallet") loadWallet();
-  if (view === "compare") setCrumb("Compare");
-  if (view === "report") setCrumb("Report card");
 }
 function setCrumb(title) {
   $("#crumb-label").textContent = title && title !== "New chat" ? title : "New chat";
@@ -2339,22 +2312,11 @@ function credits(n) {
   const shown = value < 10 ? String(Math.round(value * 10) / 10) : Math.round(value).toLocaleString("en-US");
   return shown + " credits";
 }
-function creditsFine(n) {
-  const value = Math.round((Number(n) || 0) * 10) / 10;
-  const whole = Math.abs(value - Math.round(value)) < 0.001;
-  return (whole ? String(Math.round(value)) : value.toFixed(1)) + " credits";
-}
-function fromMicro(n) { return (Number(n) || 0) / 1000; }
-function esc(value) {
-  return String(value == null ? "" : value).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[ch]));
-}
 function priceLabel(agent) {
-  const band = agent.price || {};  // GET /v1/agents cards nest the price in microcredits
-  const low = agent.price_low != null ? Number(agent.price_low) : fromMicro(band.low_microcredits);
-  const high = agent.price_high != null ? Number(agent.price_high) : fromMicro(band.high_microcredits);
+  const low = Number(agent.price_low);
+  const high = Number(agent.price_high);
   const amount = low === high ? credits(low) : credits(low) + " – " + credits(high);
-  const pricing = agent.pricing_model || band.pricing_model;
-  const model = { per_task: "per task", per_message: "per message", per_minute: "per minute", usage_based: "usage-based", outcome_based: "pay on success" }[pricing] || pricing;
+  const model = { per_task: "per task", per_message: "per message", per_minute: "per minute", usage_based: "usage-based", outcome_based: "pay on success" }[agent.pricing_model] || agent.pricing_model;
   return amount + " · " + model;
 }
 function confidenceLabel(agent) {
@@ -2486,8 +2448,6 @@ function renderThread(data) {
         </section>
         ${priceLine}
         <button class="choose" type="button" data-index="${pick.index}">Use ${esc(title)}</button>
-        ${live.get(title) ? `<label class="meta"><input type="checkbox" data-pick="${live.get(title).id}" ${state.picks.includes(live.get(title).id) ? "checked" : ""}> Compare</label>
-        <button class="ghost" type="button" data-detail="${live.get(title).id}">Report card</button>` : ""}
       </article>`;
     }).join("");
     thread.appendChild(wrap);
@@ -2496,24 +2456,13 @@ function renderThread(data) {
         const sample = agentCatalog()[Number(button.dataset.index)];
         const agent = live.get(sample[0]);
         if (agent) {
-          state.task = asked || sample[4];
+          state.task = sample[4];
           openQuote(agent.id);
           return;
         }
         tryAgent(sample);
       };
     });
-    wrap.querySelectorAll("[data-pick]").forEach((box) => box.onclick = (event) => {
-      event.stopPropagation();
-      const id = box.dataset.pick;
-      if (box.checked) {
-        if (state.picks.length >= 3) { box.checked = false; return; }
-        if (!state.picks.includes(id)) state.picks.push(id);
-      } else state.picks = state.picks.filter((item) => item !== id);
-      paintCompareBar();
-    });
-    wrap.querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openReport(b.dataset.detail));
-    paintCompareBar();
   } else if (data.ready) {
     const wrap = document.createElement("div");
     wrap.className = "picks";
@@ -2522,7 +2471,7 @@ function renderThread(data) {
   }
   if (!state.liveCards) {
     api("/v1/agents").then((res) => {
-      state.liveCards = state.library = Array.isArray(res) ? res : (res.agents || []);
+      state.liveCards = res.agents || [];
       renderThread(data);
     }).catch(() => {});
   }
@@ -2577,7 +2526,7 @@ async function sendText(text) {
     fitTask();
     const res = await fetch("/v1/conversations/" + state.conversation + "/stream", {
       method: "POST",
-      headers: Object.assign({ "Content-Type": "application/json" }, state.token ? { Authorization: "Bearer " + state.token } : {}),
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ text: text || ("Image attached: " + image.name) })
     });
     if (!res.ok) {
@@ -2671,18 +2620,27 @@ async function loadSidebar() {
   });
 }
 function agentCatalog() {
-  return (state.library || []).map((a) => [esc(a.title), esc(a.summary || ""), esc(a.creator_name || ""), esc(a.description || a.summary || ""), esc((a.example_tasks || [])[0] || a.title), (a.example_tasks || []).slice(0, 3).map(esc)]);
+  return [
+    ["Invoice Auditor", "Checks an invoice for duplicates, tax math, and missing fields.", "Riya", "Invoice Auditor reads an invoice line by line. It looks for duplicate charges, tax that does not add up, and fields that are missing, such as a date, a vendor, or a total. The summary it returns names each problem and the line it came from, so you can check the bill before you pay it.", "Audit this invoice for tax errors", ["Audit this invoice for tax errors", "Find duplicate lines on last month's vendor bill", "Check that the tax on this receipt matches the total"]],
+    ["Trip Planner", "Plans a multi-city trip and asks for the budget before it suggests bookings.", "Riya", "Trip Planner builds a multi-city trip from the dates and cities you give it. It asks for the budget before it suggests stays or bookings, then lays out a day-by-day plan that stays inside that number. The summary lists the stops, the rough cost, and what is still undecided.", "Plan a three-day trip to Lisbon", ["Plan a three-day trip to Lisbon", "Build a Tokyo and Kyoto week under $2,000", "Split a weekend between two cities and a train"]],
+    ["Research Briefer", "Turns a topic into a short brief, with the open questions called out.", "Riya", "Research Briefer turns a topic into a short brief. It states what is known, what the main claims are, and which questions are still open. The summary is meant to be read in a few minutes, with the sources of uncertainty called out instead of papered over.", "Write a research brief on battery recycling", ["Write a research brief on battery recycling", "Brief the open questions in small modular reactors", "Summarize what is settled about home heat pumps"]],
+    ["Inbox Cleaner", "Sorts a mailbox into what needs a reply and what can wait.", "Maya", "Inbox Cleaner sorts a mailbox into mail that needs a reply and mail that can wait. It groups the rest by sender and subject so a long inbox becomes a short list. The summary names what to answer first and what can be archived.", "Sort this inbox into what needs a reply", ["Sort this inbox into what needs a reply", "Pull out the three emails I should answer today", "Group this mailbox by sender and what can wait"]],
+    ["Meeting Notes", "Turns a meeting into notes, decisions, and the next actions.", "Arjun", "Meeting Notes turns a meeting into notes. It pulls out the decisions that were made, the open questions, and the next actions with the person who owns each one. The summary is the meeting in a few paragraphs, not a transcript.", "Turn these meeting notes into decisions and next actions", ["Turn these meeting notes into decisions and next actions", "List who owns each action from this standup", "Pull the decisions out of this hour-long call"]],
+    ["Contract Reader", "Flags odd clauses, dates, and payment terms in a contract.", "Lena", "Contract Reader flags odd clauses, dates, and payment terms in a contract. It points at renewal dates, liability limits, and anything that does not match the rest of the document. The summary is a list of what to read twice before you sign.", "Flag the odd clauses in this contract", ["Flag the odd clauses in this contract", "Find the renewal date and the payment terms", "Mark any liability line that does not match the rest"]],
+    ["Support Reply", "Drafts a customer reply from the ticket and the policy notes.", "Noah", "Support Reply drafts a customer reply from the ticket and the policy notes you provide. It stays inside the policy and does not promise a refund or a fix that the notes do not allow. The summary is a reply you can send, plus the policy line it was based on.", "Draft a reply to this support ticket", ["Draft a reply to this support ticket", "Answer this refund request using the policy notes", "Write a short reply that does not promise a fix"]],
+    ["Spreadsheet Fixer", "Finds broken formulas, duplicate rows, and totals that do not match.", "Priya", "Spreadsheet Fixer finds broken formulas, duplicate rows, and totals that do not match the lines above them. It does not rewrite the sheet on its own. The summary lists each cell that looks wrong and what the number should have been.", "Find the broken formulas in this spreadsheet", ["Find the broken formulas in this spreadsheet", "Mark duplicate rows in this customer sheet", "Check that the total matches the lines above it"]]
+  ];
 }
 async function loadLibrary() {
   const data = await api("/v1/agents");
-  state.library = Array.isArray(data) ? data : (data.agents || []);
-  state.agents = state.library;
+  const live = data.agents || [];
+  state.agents = live.filter((agent) => agent.status === "live");
   const samples = agentCatalog();
   const grid = $("#library-grid");
   $("#agent-page").classList.add("hidden");
   $("#library-home").classList.remove("hidden");
   grid.innerHTML = samples.map(([title, summary, developer, detail, prompt], index) => {
-    const agent = state.agents.find((item) => esc(item.title) === title);
+    const agent = state.agents.find((item) => item.title === title);
     const action = agent
       ? `<button class="choose" type="button" data-id="${agent.id}">Use</button>`
       : `<button class="choose" type="button" data-prompt="${prompt}">Try</button>`;
@@ -2819,35 +2777,20 @@ function paintQuote() {
 async function openQuote(agentId) {
   const agent = (state.agents || []).find((item) => item.id === agentId);
   const task = state.task || $("#task").value.trim();
-  let q;
-  try {
-    q = await api("/v1/quotes", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_id: agentId, task })});
-  } catch (err) {
-    state.quote = null;
-    $("#quote-title").textContent = agent ? agent.title : "Quote";
-    $("#quote-task").textContent = task;
-    $("#quote-price").textContent = "";
-    $("#quote-hold").textContent = "";
-    $("#quote-error").textContent = err.code === "agent_unavailable" ? "This agent is paused right now. Pick another one." : (err.message || "No quote for this agent.");
-    $("#quote-start").disabled = true;
-    $("#quote-topup").classList.add("hidden");
-    $("#quote").classList.remove("hidden");
-    return;
-  }
+  const q = await api("/v1/quotes", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_id: agentId, task })});
   const w = await api("/v1/wallet");
   state.quote = { agentId, balance: w.balance_credits, task };
   $("#quote-title").textContent = agent ? agent.title : "Quote";
   $("#quote-task").textContent = task;
   $("#quote-price").textContent = agent ? priceLabel(agent) + ". Maximum " + credits(q.maximum) + "." : "Maximum " + credits(q.maximum) + ".";
-  const picked = state.pendingAgent && state.pendingAgent.cap;
-  $("#quote-cap").value = picked === "all" ? Math.floor(w.balance_credits) : (picked || (q.high_credits != null ? q.high_credits : q.maximum));
+  $("#quote-cap").value = q.maximum;
   $("#quote").classList.remove("hidden");
   paintQuote();
 }
 $("#quote-cap").addEventListener("input", paintQuote);
 $("#quote-back").onclick = () => $("#quote").classList.add("hidden");
 $("#quote-topup").onclick = async () => {
-  await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
+  await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
   const w = await api("/v1/wallet");
   state.quote.balance = w.balance_credits;
   paintQuote();
@@ -2856,38 +2799,19 @@ $("#quote-topup").onclick = async () => {
 $("#quote-start").onclick = () => start(state.quote.agentId, Number($("#quote-cap").value));
 async function start(agentId, cap) {
   const task = state.task || $("#task").value.trim();
-  let ses;
-  try {
-    ses = await once("start", (key) => api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap, files: state.files })}));
-  } catch (err) {
-    if (err.code === "insufficient_credits") {
-      $("#quote-error").textContent = err.message + " Add credits, or lower the cap.";
-      $("#quote-topup").classList.remove("hidden");
-      return;
-    }
-    if (err.code === "agent_unavailable") {
-      $("#quote-error").textContent = err.message || "This agent is paused or delisted.";
-      return;
-    }
-    $("#quote-error").textContent = err.message || "The session did not start.";
-    return;
-  }
+  const ses = await api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap })});
   $("#quote").classList.add("hidden");
-  state.session = ses.session_id || ses.id;
-  state.cap = cap;
+  state.session = ses.session_id;
   $("#log").innerHTML = "";
   $("#receipt").textContent = "";
-  $("#after-receipt").classList.add("hidden");
-  $("#session-edge").textContent = "";
   $("#session-title").textContent = "Live session";
   $("#session-status").textContent = "Holding";
-  $("#cancel").classList.remove("hidden");
   $("#bar").style.width = "0";
   $("#bar").className = "";
   $("#spend").textContent = "Spent " + credits(0) + " of " + credits(cap);
   show("session");
   showLive();
-  openEvents(state.session, cap);
+  openEvents(ses.session_id, cap);
   refreshBal();
 }
 async function openHistory(id, cap, active) {
@@ -2904,101 +2828,50 @@ async function openHistory(id, cap, active) {
 }
 function openEvents(id, cap) {
   if (state.es) state.es.close();
-  state.cap = cap;
   const es = new EventSource("/v1/sessions/" + id + "/events?access_token=" + encodeURIComponent(state.token || ""));
   state.es = es;
-  es.onerror = () => { $("#session-status").textContent = "Connection dropped. Reconnecting…"; };
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
-    const terminal = ["settled", "failed", "cancelled", "timed_out", "budget_exhausted"];
-    if (data.status && terminal.includes(data.status)) $("#cancel").classList.add("hidden");
-    if (data.type === "status" || data.type === "progress") {
-      const line = document.createElement("div");
-      line.className = "note";
-      line.textContent = data.text || data.label || data.status || data.type;
-      $("#log").appendChild(line);
-      if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
-    } else if (data.type !== "spend" && data.type !== "budget_warning" && data.type !== "budget_exhausted") {
-      const div = document.createElement("div");
-      div.className = "bubble " + (data.role || "");
-      div.textContent = data.text || data.label || data.type;
-      if (data.type === "file" && data.url) {
-        const link = document.createElement("a");
-        link.href = data.url + (data.url.includes("?") ? "&" : "?") + "access_token=" + encodeURIComponent(state.token || "");
-        link.download = data.name || "";
-        link.textContent = data.name || "Download file";
-        div.textContent = "";
-        div.appendChild(link);
-      }
-      if (data.type === "error") {
-        div.classList.add("warn");
-        if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
-      }
-      $("#log").appendChild(div);
-    }
-    if (data.spent_credits != null && cap) {
+    const div = document.createElement("div");
+    div.className = "bubble " + (data.role || "");
+    div.textContent = data.text || data.label || data.type;
+    $("#log").appendChild(div);
+    if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
+    if (data.spent_credits != null) {
       const pct = Math.min(100, (data.spent_credits / cap) * 100);
       const bar = $("#bar");
       bar.style.width = pct + "%";
       bar.classList.toggle("warn", pct >= 80 && pct < 100);
       bar.classList.toggle("hot", pct >= 100);
-      $("#spend").textContent = "Spent " + creditsFine(data.spent_credits) + " of " + creditsFine(cap);
+      $("#spend").textContent = "Spent " + credits(data.spent_credits) + " of " + credits(cap);
     }
-    if (data.type === "budget_warning") $("#session-edge").textContent = "Spend is at 80% of the cap. Extend it, or let the agent wrap up.";
-    if (data.type === "budget_exhausted") $("#session-edge").textContent = "The cap is used up. The agent has a short window to deliver what it has.";
     const ask = $("#ask");
     if (data.type === "ask_user") {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
       ask.innerHTML = "";
-      if (data.options && data.options.length) {
-        data.options.forEach((opt) => {
-          const b = document.createElement("button");
-          b.textContent = opt;
-          b.onclick = () => answer(opt, data.id);
-          ask.appendChild(b);
-        });
-      } else {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Type your answer";
-        const send = document.createElement("button");
-        send.textContent = "Send";
-        send.onclick = () => { if (input.value.trim()) answer(input.value.trim(), data.id); };
-        input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
-        ask.append(input, send);
-        input.focus();
-      }
-    }
-    if (data.type === "confirm") {
-      $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
-      ask.classList.remove("hidden");
-      ask.innerHTML = "";
-      [["Approve", true], ["Deny", false]].forEach(([label, approved]) => {
+      (data.options && data.options.length ? data.options : ["Continue"]).forEach((opt) => {
         const b = document.createElement("button");
-        b.textContent = label;
-        b.onclick = async () => {
-          ask.classList.add("hidden");
-          await api("/v1/sessions/" + state.session + "/confirm", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ confirm_id: data.id, approved })});
-        };
+        b.textContent = opt;
+        b.onclick = () => answer(opt);
         ask.appendChild(b);
       });
     }
-    if (data.type === "settled" || (data.status && terminal.includes(data.status) && data.type === "status")) {
-      if (data.type === "settled") {
-        es.close();
-        ask.classList.add("hidden");
-        $("#cancel").classList.add("hidden");
-        showReceipt(id);
-        refreshBal();
-      }
+    if (data.type === "error") {
+      div.classList.add("warn");
+      if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
     }
-    if (data.type === "failed" || data.status === "failed" || data.status === "cancelled") $("#cancel").classList.add("hidden");
+    if (data.type === "settled") {
+      es.close();
+      ask.classList.add("hidden");
+      showReceipt(id);
+      refreshBal();
+    }
   };
 }
-async function answer(text, replyTo) {
+async function answer(text) {
   $("#ask").classList.add("hidden");
-  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text, reply_to: replyTo })});
+  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text })});
 }
 $("#cancel").onclick = async () => {
   if (!state.session) return;
@@ -3008,15 +2881,13 @@ async function showReceipt(id) {
   const r = await api("/v1/receipts/" + id);
   const charged = Number(r.price_credits) || 0;
   const lines = [
-    charged === 0 ? "You were not charged." : "Charged " + creditsFine(charged) + ".",
-    "Held " + creditsFine(r.cap_credits) + ". Released " + creditsFine(r.released_credits) + ".",
-    "Where it went: creator " + creditsFine(r.earnings_credits) + ", platform fee " + creditsFine(r.fee_credits) + ", model and tools " + creditsFine(r.cost_credits) + "."
+    charged === 0 ? "You were not charged." : "Charged " + credits(charged) + ".",
+    "Held " + credits(r.cap_credits) + ". Released " + credits(r.released_credits) + ".",
+    "Where it went: creator " + credits(r.earnings_credits) + ", platform fee " + credits(r.fee_credits) + ", model and tools " + credits(r.cost_credits) + "."
   ];
   if (r.refund_reason) lines.push(r.refund_reason);
   $("#receipt").textContent = lines.join("\n");
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
-  $("#cancel").classList.add("hidden");
-  $("#after-receipt").classList.remove("hidden");
 }
 async function loadAccount() {
   const [w, conv, sessions, analytics, earnings] = await Promise.all([
@@ -3072,297 +2943,56 @@ async function loadAccount() {
     button.onclick = () => openConversation(button.dataset.chat);
   });
 }
-function reportCardHtml(card) {
-  if (!card) return `<p class="empty">No report card yet.</p>`;
-  const scores = card.scores || {};
-  const scoreRows = Object.keys(scores).map((key) => `<div class="kv"><span>${esc(key)}</span><span>${esc(scores[key])}</span></div>`).join("");
-  const findings = (card.findings || []).map((f) => `<li>${esc(f.severity || "")} ${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
-  const stages = (card.stages || []).map((s) => `<li>${esc(s.stage)} · ${esc(s.status)} ${esc(s.detail || "")}</li>`).join("");
-  const tests = card.tests || [];
-  const passed = tests.filter((t) => t.passed).length;
-  const decision = card.decision || "pending";
-  return `<article class="card-block">
-    <p>Decision <span class="${decision === "rejected" ? "warn" : ""}">${esc(decision)}</span></p>
-    <p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>
-    <p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>
-    ${tests.length ? `<p class="meta">Tests ${passed}/${tests.length} passed</p>` : ""}
-    ${scoreRows ? `<div>${scoreRows}</div>` : `<p class="empty">No confidence breakdown yet.</p>`}
-    ${stages ? `<p class="meta">Stages</p><ul>${stages}</ul>` : ""}
-    ${findings ? `<p class="meta">Findings</p><ul>${findings}</ul>` : `<p class="empty">No findings.</p>`}
-  </article>`;
-}
-function paintCompareBar() {
-  let bar = $("#compare-bar");
-  if (!bar) {
-    bar = document.createElement("div");
-    bar.id = "compare-bar";
-    bar.className = "session-tools";
-    $("#thread").after(bar);
-  }
-  bar.innerHTML = state.picks.length
-    ? `<span class="meta">${state.picks.length} selected. Compare takes 2 or 3. The contract allows at most 3.</span> <button type="button" id="run-compare" ${state.picks.length < 2 ? "disabled" : ""}>Compare</button>`
-    : "";
-  const button = $("#run-compare");
-  if (button) button.onclick = runCompare;
-}
-async function runCompare() {
-  if (state.picks.length < 2) return;
-  const data = await api("/v1/compare", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_ids: state.picks.slice(0, 3), task: state.task || "" })});
-  const marks = data.highlights || {};
-  const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => key.replaceAll("_", " ")).join(" · ");
-  $("#compare-body").innerHTML = `<div class="grid-3">${(data.agents || []).map((a) => {
-    const price = a.price || {};
-    return `<article class="cmp">
-      <p class="flag">${esc(label(a.id))}</p>
-      <h3>${esc(a.title)}</h3>
-      <p>${esc(a.summary || "")}</p>
-      <p class="meta">p50 ${creditsFine(fromMicro(price.low_microcredits))} · high ${creditsFine(fromMicro(price.high_microcredits))} · max ${creditsFine(fromMicro(price.max_microcredits))}</p>
-      <p class="meta">Confidence ${esc(a.confidence_score)} from ${esc(a.confidence_n)} sessions</p>
-      <p class="meta">Speed p50 ${esc(a.duration_p50_s)}s · p95 ${esc(a.duration_p95_s)}s</p>
-      <p>${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
-      <button type="button" data-start="${a.id}">Start with this agent</button>
-      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
-    </article>`;
-  }).join("")}</div>`;
-  show("compare");
-  $("#compare-body").querySelectorAll("[data-start]").forEach((b) => b.onclick = () => openQuote(b.dataset.start));
-  $("#compare-body").querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openReport(b.dataset.detail));
-}
-async function openReport(id) {
-  const data = await api("/v1/agents/" + id);
-  const live = data.live_stats || data.seeded_live_stats || {};
-  $("#report-body").innerHTML = `<h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p>
-    <p>${(data.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="empty">No badge</span>`}</p>
-    <p class="meta">Confidence ${esc(data.confidence_score)} · lower bound ${esc(data.confidence_lower_bound)} · n ${esc(data.confidence_n)}</p>
-    <p class="meta">Live success ${live.success_rate == null ? "no live stats yet" : esc(live.success_rate)} · incidents in findings below</p>
-    ${reportCardHtml(Object.assign({}, data.report_card || {}, { tests: (data.report_card && data.report_card.tests) || [] }))}
-    <button type="button" id="report-start">Start with this agent</button>`;
-  $("#report-start").onclick = () => openQuote(id);
-  show("report");
-}
-async function loadWallet() {
-  const w = await api("/v1/wallet");
-  const packs = [["S", "$10", "1,000"], ["M", "$25", "2,750"], ["L", "$50", "5,750"]];
-  const plans = [["plus", "$19 / month", "2,200"], ["pro", "$49 / month", "6,000"]];
-  const hist = (w.history || []).slice(0, 20).map((row) => `<div class="kv"><span>${esc(row.ref_type || row.memo || row.direction)}</span><span>${esc(row.direction)} ${creditsFine(fromMicro(row.amount_microcredits))}</span></div>`).join("");
-  $("#wallet-body").innerHTML = `<div class="kv"><span>Balance</span><span>${creditsFine(w.balance_credits)}</span></div>
-    <div class="kv"><span>Held</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
-    <div class="kv"><span>Granted</span><span>${creditsFine(w.granted_credits)}</span></div>
-    <h3>Packs</h3>
-    <div class="grid-3">${packs.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-pack="${id}">Add ${id}</button></article>`).join("")}</div>
-    <h3>Plans</h3>
-    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>
-    <h3>History</h3>
-    ${hist || `<p class="empty">No transactions yet.</p>`}`;
-  $("#wallet-body").querySelectorAll("[data-pack]").forEach((b) => b.onclick = async () => {
-    await once("pack:" + b.dataset.pack, (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ pack: b.dataset.pack })}));
-    refreshBal();
-    loadWallet();
-  });
-  $("#wallet-body").querySelectorAll("[data-plan]").forEach((b) => b.onclick = async () => {
-    await api("/v1/subscriptions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ plan: b.dataset.plan })});
-    loadWallet();
-  });
-}
-function showCreatorStep(n) {
-  state.step = n;
-  document.querySelectorAll("#creator-steps button").forEach((b) => b.classList.toggle("on", Number(b.dataset.step) === n));
-  document.querySelectorAll("[data-step-panel]").forEach((p) => p.classList.toggle("hidden", Number(p.dataset.stepPanel) !== n));
-  $("#c-back").classList.toggle("hidden", n === 1);
-  $("#c-next").classList.toggle("hidden", n === 5);
-  $("#c-submit").classList.toggle("hidden", n !== 5);
-}
 async function loadCreator() {
-  $("#creator-error").textContent = "";
-  if (!state.me) await loadMe();
-  if (!hasRole("creator") && !hasRole("admin")) {
-    $("#creator-home").innerHTML = "";
-    $("#creator-form").classList.add("hidden");
-    $("#creator-steps").classList.add("hidden");
-    $("#creator-error").textContent = "Creator role required. Sign in as Riya to open this view.";
-    return;
-  }
-  $("#creator-form").classList.remove("hidden");
-  $("#creator-steps").classList.remove("hidden");
-  if (!hasRole("creator")) {
-    $("#creator-error").textContent = "This account is an admin, not a creator. The creator API will refuse it.";
-  }
-  let analytics = { agents: [], sessions: 0 };
-  let earn = {};
-  try {
-    analytics = await api("/v1/creator/analytics");
-    earn = await api("/v1/creator/earnings");
-  } catch (err) {
-    $("#creator-error").textContent = err.message || "Creator role required.";
-    $("#creator-home").innerHTML = "";
-    $("#creator-form").classList.add("hidden");
-    $("#creator-steps").classList.add("hidden");
-    return;
-  }
-  const rows = (analytics.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title || a.agent_id)}</h3><p class="meta">${esc(a.status || "")} · ${esc(a.sessions)} sessions · rating ${a.rating_avg == null ? "none yet" : esc(a.rating_avg)}</p><button type="button" data-agent="${a.agent_id}">Open</button></article>`).join("");
-  $("#creator-home").innerHTML = `<div class="kv"><span>Sessions</span><span>${esc(analytics.sessions || 0)}</span></div>
-    <div class="kv"><span>Earnings</span><span>${creditsFine(earn.available_credits)}</span></div>
-    <div class="kv"><span>In clearing</span><span>${creditsFine(earn.clearing_credits || 0)} · ${esc(earn.clearing_days || 14)} days</span></div>
-    <div class="grid-3">${rows || `<p class="empty">No agents yet. Submit one below.</p>`}</div>`;
-  $("#creator-home").querySelectorAll("[data-agent]").forEach((b) => b.onclick = () => openCreatorAgent(b.dataset.agent));
-  showCreatorStep(state.step || 1);
-}
-async function openCreatorAgent(id) {
-  const mine = await api("/v1/creator/agents");
-  const agent = (mine || []).find((a) => a.id === id);
-  if (!agent || !agent.versions || !agent.versions.length) {
-    $("#creator-review").innerHTML = `<p class="empty">No version to review yet.</p>`;
-    return;
-  }
-  const version = agent.versions[0];
-  const data = await api("/v1/creator/agents/" + id + "/versions/" + version.id + "/review");
-  const review = data.review;
-  const card = review ? Object.assign({}, review.report_card || {}, { decision: review.decision, scores: review.scores, findings: review.findings, tests: review.tests, stages: (review.report_card || {}).stages, cost_p50_microcredits: review.cost_p50_microcredits, cost_p90_microcredits: review.cost_p90_microcredits, latency_p50_ms: review.latency_p50_ms, latency_p95_ms: review.latency_p95_ms }) : null;
-  $("#creator-review").innerHTML = `<h3>${esc(agent.title)} · ${esc(version.semver)} · ${esc(data.version_status)}</h3>
-    <p class="meta">Current stage ${esc(review ? review.stage : "not started")} · ${esc(review ? review.status : "")}</p>
-    ${reportCardHtml(card)}
-    <p class="empty">${(card && card.stages && card.stages.length) ? "" : "This report has no stage log yet. A fresh review writes the nine stages as they run."}</p>
-    <button type="button" id="rerun-review">Re-run review</button>`;
-  clearTimeout(state.reviewPoll);
-  if (review && review.status === "running" && !$("#creator").classList.contains("hidden")) state.reviewPoll = setTimeout(() => openCreatorAgent(id), 1500);
-  $("#rerun-review").onclick = async () => {
-    try {
-      await once("review:" + version.id, (key) => api("/v1/admin/versions/" + version.id + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
-      openCreatorAgent(id);
-    } catch (err) {
-      $("#creator-error").textContent = err.status === 403 ? "Re-run review needs the admin role. The pipeline itself starts when a version is submitted." : (err.message || "Review did not start.");
-    }
-  };
+  const a = await api("/v1/creator/analytics");
+  const e = await api("/v1/creator/earnings");
+  $("#creator-body").innerHTML = `<table>
+    <tr><td>Sessions</td><td>${a.sessions}</td></tr>
+    <tr><td>Creator payable</td><td>${e.available_credits} credits (simulated, ${e.clearing_days}-day clearing)</td></tr>
+    <tr><td>Platform fee balance</td><td>${a.platform_revenue_credits}</td></tr>
+    <tr><td>Provider cost</td><td>${a.provider_cost_credits}</td></tr>
+  </table>`;
 }
 async function loadAdmin() {
-  $("#admin-error").textContent = "";
-  if (!state.me) await loadMe();
-  if (!hasRole("admin")) {
-    $("#admin-metrics").innerHTML = "";
-    $("#admin-queue").innerHTML = "";
-    $("#admin-body").innerHTML = "";
-    $("#admin-error").textContent = "Admin role required. Sign in as Admin to open Review.";
-    return;
-  }
-  const metrics = await api("/v1/admin/metrics");
-  $("#admin-metrics").innerHTML = `<div class="kv"><span>Settled sessions</span><span>${esc(metrics.sessions_settled)}</span></div>
-    <div class="kv"><span>Gross charged</span><span>${creditsFine(fromMicro(metrics.gross_charged_microcredits))}</span></div>
-    <div class="kv"><span>Platform revenue</span><span>${creditsFine(fromMicro(metrics.platform_revenue_microcredits))}</span></div>
-    <div class="kv"><span>Provider cost</span><span>${creditsFine(fromMicro(metrics.provider_cost_microcredits))}</span></div>
-    <div class="kv"><span>Failure rate</span><span>${esc(metrics.failure_rate)}</span></div>`;
-  const queue = await api("/v1/admin/review-queue");
-  const queueRows = (Array.isArray(queue) ? queue : []).map((row) => `<div class="kv"><span>${esc(row.agent_id)} ${esc(row.semver)} · ${esc(row.review_stage || row.status)}</span><span><button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
-  $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
   const data = await api("/v1/admin/agents");
-  $("#admin-body").innerHTML = (data.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title)}</h3><p class="meta">${esc(a.status)} · ${esc(a.decision || "")}</p>${reportCardHtml({ decision: a.decision, findings: (a.findings || []).map((f) => ({ detail: f })) })}
-    <button type="button" data-review="${a.version_id}">Run review</button>
-    <button type="button" data-kill="${a.id}">Kill switch</button>
-    <button type="button" data-unpause="${a.id}">Unpause</button></article>`).join("") || `<p class="empty">No agents.</p>`;
-  $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = async () => {
-    await api("/v1/admin/versions/" + b.dataset.decision + "/decision", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ decision: b.dataset.choice })});
+  $("#admin-body").innerHTML = `<table><tr><th>Agent</th><th>Status</th><th>Decision</th><th></th></tr>` +
+    data.agents.map((a) => `<tr><td>${a.title}<div class="meta">${(a.findings||[]).join(" ")}</div></td><td>${a.status}</td><td class="${a.decision==="rejected"?"warn":"ok"}">${a.decision}</td>
+      <td><button data-review="${a.version_id}">Run review</button> <button data-kill="${a.id}">Kill switch</button></td></tr>`).join("") + `</table>`;
+  document.querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
+    const res = await api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST" });
+    alert(res.decision + "\n" + res.findings.join("\n") + "\nconfidence " + res.confidence);
     loadAdmin();
   });
-  $("#admin-body").querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
-    const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
-    await loadAdmin();
-    $("#admin-error").textContent = res.decision + " · confidence " + res.confidence + (res.findings && res.findings.length ? " · " + res.findings.join(" ") : "");
-  });
-  $("#admin-body").querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
+  document.querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
     const res = await api("/v1/admin/agents/" + b.dataset.kill + "/kill", { method: "POST" });
-    await loadAdmin();
-    $("#admin-error").textContent = "Paused. Refunded " + (res.refunded_sessions || []).length + " sessions.";
-  });
-  $("#admin-body").querySelectorAll("[data-unpause]").forEach((b) => b.onclick = async () => {
-    await api("/v1/admin/agents/" + b.dataset.unpause + "/unpause", { method: "POST" });
+    alert("Paused. Refunded " + res.refunded_sessions.length + " sessions.");
     loadAdmin();
   });
 }
-$("#compare-back").onclick = () => show("discover");
-$("#report-back").onclick = () => show("discover");
-$("#extend").onclick = async () => {
-  if (!state.session) return;
-  const add = Number($("#extend-credits").value);
-  try {
-    const ses = await once("extend", (key) => api("/v1/sessions/" + state.session + "/extend", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ add_microcredits: Math.round(add * 1000) })}));
-    state.cap = fromMicro(ses.cap_microcredits || (state.cap + add) * 1000);
-    $("#session-edge").textContent = "Cap is now " + creditsFine(state.cap) + ".";
-    refreshBal();
-  } catch (err) {
-    $("#session-edge").textContent = err.code === "insufficient_credits" ? err.message + " Add credits from Wallet." : (err.message || "Could not extend.");
-  }
-};
-async function rememberFile(file) {
-  if (!file) return;
-  if (file.size > 1500000) { $("#file-note").textContent = "That file is too large for this demo."; return; }
-  const buf = await file.arrayBuffer();
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  state.files = [{ name: file.name, content_base64: btoa(bin) }];
-  $("#file-note").textContent = file.name + " will be sent when the session starts.";
-  $("#quote-files").textContent = file.name;
+function enterProduct(view) {
+  sessionStorage.setItem("cohort-entered", "1");
+  $("#landing").classList.add("hidden");
+  if (view) show(view);
 }
-$("#session-file").onchange = () => {
-  if (state.session) {
-    $("#file-note").textContent = "The API accepts files on session start only. Attach the file from the quote, then start.";
-    $("#session-file").value = "";
-    return;
-  }
-  rememberFile($("#session-file").files[0]);
-};
-$("#quote-file").onchange = () => rememberFile($("#quote-file").files[0]);
-$("#rate-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    await api("/v1/sessions/" + state.session + "/rating", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ stars: Number($("#rate-stars").value), comment: $("#rate-comment").value })});
-    $("#after-note").textContent = "Rating saved.";
-  } catch (err) { $("#after-note").textContent = err.message || "Could not rate this session."; }
-};
-$("#dispute-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    await api("/v1/sessions/" + state.session + "/dispute", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#dispute-reason").value })});
-    $("#after-note").textContent = "Dispute opened.";
-  } catch (err) { $("#after-note").textContent = err.message || "Could not open a dispute."; }
-};
-$("#creator-steps").querySelectorAll("button").forEach((b) => b.onclick = () => showCreatorStep(Number(b.dataset.step)));
-$("#c-next").onclick = () => showCreatorStep(Math.min(5, state.step + 1));
-$("#c-back").onclick = () => showCreatorStep(Math.max(1, state.step - 1));
-$("#creator-form").onsubmit = async (event) => {
-  event.preventDefault();
-  const manifest = {
-    name: $("#c-slug").value.trim(),
-    display_name: $("#c-title").value.trim() || $("#c-slug").value.trim(),
-    version: $("#c-version").value.trim() || "0.1.0",
-    summary: $("#c-summary").value.trim(),
-    description: $("#c-description").value.trim(),
-    category: $("#c-category").value.trim() || "general",
-    tags: $("#c-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
-    example_tasks: $("#c-samples").value.split("\n").map((t) => t.trim()).filter(Boolean),
-    pricing: { model: $("#c-price-model").value, price_credits: Number($("#c-price").value) || 0 }
+function landingFirst() {
+  const hash = location.hash.replace(/^#/, "");
+  const deep = hash.startsWith("/chat/") || hash === "/account" || hash === "/library" || hash.startsWith("/agent/");
+  if (deep || sessionStorage.getItem("cohort-entered") === "1") $("#landing").classList.add("hidden");
+}
+$("#land-open").onclick = () => enterProduct();
+$("#land-start").onclick = () => enterProduct();
+$("#land-library").onclick = () => enterProduct("library");
+document.querySelectorAll(".land-agents button").forEach((button) => {
+  button.onclick = () => {
+    const sample = agentCatalog()[Number(button.dataset.agent)];
+    enterProduct();
+    if (sample) tryAgent(sample);
   };
-  try {
-    if (!state.draftAgent) {
-      const created = await api("/v1/creator/agents", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ slug: manifest.name, category: manifest.category, mode: $("#c-mode").value, endpoint_url: $("#c-endpoint").value || null })});
-      state.draftAgent = created.id;
-    }
-    const body = { manifest };
-    if ($("#c-source").value.trim()) body.source_path = $("#c-source").value.trim();
-    const submitted = await api("/v1/creator/agents/" + state.draftAgent + "/versions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
-    $("#c-submit-note").textContent = "Submitted. Review " + submitted.status + ".";
-    openCreatorAgent(state.draftAgent);
-  } catch (err) {
-    $("#c-submit-note").textContent = err.code === "review rejected" ? err.message : (err.message || "Submit failed.");
-  }
-};
-$("#refund-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    const res = await api("/v1/admin/sessions/" + $("#refund-id").value.trim() + "/refund", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#refund-reason").value })});
-    $("#refund-note").textContent = "Refunded " + creditsFine(fromMicro(res.refunded_microcredits || 0)) + ".";
-  } catch (err) { $("#refund-note").textContent = err.message || "Refund failed."; }
-};
-bootAuth();
+});
+landingFirst();
+refreshBal();
+loadSidebar();
+restorePlace();
 
 async function restorePlace() {
   const hash = location.hash.replace(/^#/, "");
