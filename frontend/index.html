@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Cohort.ai</title>
+<title>AgentBay</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root, html[data-theme="light"] {
@@ -306,11 +306,11 @@
     position: absolute;
     top: 40px;
     right: 0;
-    width: 232px;
+    width: 248px;
     background: #1c1e21;
     border: 1px solid #2c2e33;
-    border-radius: 10px;
-    padding: 12px 0 8px;
+    border-radius: 12px;
+    padding: 6px 0 4px;
     box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     z-index: 6;
     overflow: hidden;
@@ -320,20 +320,21 @@
     border-color: #ececef;
     box-shadow: 0 12px 40px rgba(0,0,0,0.08);
   }
-  .acct-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 12px 14px; }
-  .acct-balance { display: flex; align-items: center; gap: 10px; font-size: 15px; }
+  .acct-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 12px 14px; }
+  .acct-balance { display: flex; align-items: center; gap: 12px; min-width: 0; font-size: 15px; }
   .acct-balance .ring { width: 22px; height: 22px; }
   .acct-balance .ring circle { stroke-width: 2; }
   .acct-balance .ring-fill { stroke: #1c1c1e; }
   html[data-theme="dark"] .acct-balance .ring circle:not(.ring-fill) { stroke: #3a3c40; }
   html[data-theme="dark"] .acct-balance .ring-fill { stroke: #f4f4f5; }
   .upgrade {
+    flex: none;
     border: 0;
     border-radius: 8px;
     background: #111;
     color: #fff;
-    height: 30px;
-    padding: 0 12px;
+    height: 32px;
+    padding: 0 16px;
     font-size: 13px;
   }
   html[data-theme="dark"] .upgrade { background: #f4f4f5; color: #111; }
@@ -342,64 +343,15 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 12px;
+    gap: 16px;
+    padding: 8px 12px;
     color: #8a8a8e;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
   }
-  .acct-line b { font-weight: 400; color: var(--text); }
-  .acct-split { height: 1px; background: #2c2e33; margin: 10px 0 8px; }
+  .acct-line b { font-weight: 400; color: var(--text); margin-left: auto; }
+  .acct-split { height: 1px; background: #2c2e33; margin: 12px 0; }
   html[data-theme="light"] .acct-split { background: #ececef; }
-  .account-list { margin-top: 8px; max-width: none; }
-  .account-list div {
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 14px;
-  }
-  .account-list span { color: var(--muted); }
-  .account-list b { font-weight: 400; color: var(--text); }
-  #account {
-    max-width: none;
-    padding: 16px 20px 24px;
-    display: flex;
-    flex-direction: column;
-  }
-  .acct-sheet { width: 100%; flex: 1; display: flex; flex-direction: column; min-height: 0; }
-  .acct-cover { height: 188px; border-radius: 18px; flex: none; }
-  .acct-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin-top: -48px;
-    padding: 0 32px;
-    flex: none;
-  }
-  .acct-pfp {
-    width: 96px;
-    height: 96px;
-    border-radius: 50%;
-    flex: none;
-    display: grid;
-    place-items: center;
-    border: 4px solid var(--panel);
-    color: #fff;
-    font-size: 36px;
-    line-height: 1;
-    background: #2563eb;
-  }
-  #account .acct-id { margin: 14px 0 0; padding: 0; }
-  #account .acct-id h2 {
-    margin: 0;
-    color: var(--text);
-    font-size: 28px;
-    font-weight: 500;
-    line-height: 1.15;
-    letter-spacing: -0.03em;
-  }
-  .acct-id p { margin: 6px 0 0; color: var(--muted); font-size: 15px; line-height: 1.3; }
   .acct-stats {
     display: flex;
     margin: 28px 20px 0;
@@ -479,7 +431,7 @@
     box-shadow: none;
     background: transparent;
     border-radius: 8px;
-    height: 36px;
+    height: 40px;
     padding: 0 12px;
     font-size: 14px;
     text-align: left;
@@ -560,9 +512,9 @@
     margin-bottom: 36px;
   }
   .chat.home .composer {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
     height: auto;
     min-height: 56px;
     border-radius: 999px;
@@ -571,13 +523,22 @@
     border: 1px solid var(--line);
     box-shadow: none;
   }
+  .composer-main {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+    min-width: 0;
+  }
+  .chat.home .composer-main { gap: 12px; }
   .composer.tall,
   .chat.home .composer.tall {
     border-radius: 12px;
-    align-items: flex-end;
     padding-top: 12px;
     padding-bottom: 10px;
   }
+  .composer.tall .composer-main,
+  .chat.home .composer.tall .composer-main { align-items: flex-end; }
   .composer:focus-within,
   .chat.home .composer:focus-within {
     background: var(--panel);
@@ -733,7 +694,8 @@
   .theme-choices {
     display: flex;
     gap: 4px;
-    margin: 2px 12px 0;
+    margin: 2px 8px 2px;
+    padding: 0;
   }
   .theme-choices button {
     appearance: none;
@@ -785,14 +747,17 @@
     padding: 2px 0 2px 10px;
   }
   .side-history {
-    flex: 1;
+    flex: none;
     min-height: 0;
-    overflow: auto;
+    overflow: visible;
     display: flex;
     flex-direction: column;
     gap: 1px;
-    margin-top: 2px;
+    margin-top: 0;
   }
+  #side-sessions { margin-top: 0; }
+  #side-sessions + .side-label { margin-top: 18px; }
+  .side-empty { margin: 0; padding: 2px 10px 8px; color: var(--faint); font-size: 12px; }
   .history-item {
     display: flex;
     align-items: center;
@@ -933,13 +898,20 @@
   html[data-theme="light"] .preview b { color: #1c1c1e; }
   html[data-theme="light"] .agent-block h3 { color: #3a3a40; }
   .credit-ask {
-    width: min(680px, 100%);
-    margin: 0 auto 12px;
-    padding: 14px 16px;
-    border: 1px solid var(--line);
-    border-radius: 14px;
-    background: var(--fill);
+    width: 100%;
+    margin: 2px 0 0;
+    padding: 12px 4px 2px;
+    border: 0;
+    border-top: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
     text-align: left;
+  }
+  .composer:has(#credit-ask:not(.hidden)),
+  .chat.home .composer:has(#credit-ask:not(.hidden)) {
+    border-radius: 22px;
+    align-items: stretch;
+    padding-bottom: 12px;
   }
   .credit-ask p { margin: 0 0 10px; font-size: 14px; line-height: 1.45; }
   .credit-ask-row { display: flex; gap: 8px; align-items: center; }
@@ -1097,9 +1069,9 @@
     height: auto;
     min-height: 56px;
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
     padding: 8px 12px 8px 12px;
     cursor: text;
   }
@@ -1175,11 +1147,14 @@
   }
   .composer.has-image,
   .chat.home .composer.has-image {
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .composer.has-image .composer-main,
+  .chat.home .composer.has-image .composer-main {
     flex-wrap: wrap;
     align-items: center;
     align-content: center;
-    border-radius: 12px;
-    padding: 12px;
   }
   .composer.has-image .attach-preview,
   .chat.home .composer.has-image .attach-preview {
@@ -1248,6 +1223,24 @@
   .pick .pick-score b { font-size: 28px; font-weight: 500; letter-spacing: -0.03em; }
   .pick .agent-block { margin: 18px 16px 0; }
   .pick .pick-why { margin: 12px 16px 0; font-size: 15px; line-height: 1.5; }
+  .pick-actions { display: flex; align-items: center; gap: 8px; padding: 16px; }
+  .pick-actions .choose { margin: 0; height: 30px; padding: 0 14px; border-radius: 10px; }
+  .pick-actions .ghost { height: 30px; padding: 0 14px; border-radius: 10px; font-size: 13px; }
+  .pick-compare {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--muted);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .pick-compare input { margin: 0; accent-color: var(--text); }
+  .pick-compare:has(input:checked) { color: var(--text); border-color: var(--text); background: var(--fill); }
   .pick .choose {
     margin: 16px;
     min-width: 120px;
@@ -1299,38 +1292,94 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(0, 0, 0, 0.28);
+    background: rgba(0, 0, 0, 0.55);
     padding: 24px;
   }
   .quote-card {
-    width: min(420px, 100%);
+    width: min(440px, 100%);
     background: var(--panel);
     border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 18px;
+    padding: 22px;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  }
+  .quote-card h2 { margin: 0; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; }
+  .quote-card > .meta { margin: 6px 0 0; }
+  #quote-price { margin: 18px 0 0; font-size: 16px; letter-spacing: -0.01em; }
+  .quote-lock { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .quote-field, .quote-file {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
     gap: 8px;
+    margin-top: 18px;
+    font-size: 13px;
+    color: var(--muted);
   }
-  .quote-card h2 { margin: 0; font-size: 18px; font-weight: 400; }
-  .quote-card label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
-  .quote-card input {
-    height: 36px;
+  .quote-card input[type="number"] {
+    width: 100%;
+    height: 40px;
     border: 1px solid var(--line);
-    border-radius: 8px;
-    background: transparent;
-    color: inherit;
-    padding: 0 10px;
-    font: inherit;
-  }
-  .quote-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
-  .quote-actions button {
-    height: 34px;
-    border-radius: 8px;
+    border-radius: 10px;
+    background: var(--fill);
+    color: var(--text);
     padding: 0 12px;
+    font: inherit;
+    font-size: 15px;
+  }
+  .quote-hold {
+    margin: 10px 0 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: var(--fill);
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .quote-hold:empty, #quote-files:empty, #quote-error:empty { display: none; }
+  #quote-files { margin: 8px 0 0; }
+  #quote-error { margin: 10px 0 0; font-size: 13px; }
+  .quote-file input[type="file"] {
+    width: 100%;
+    height: auto;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--fill);
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+  }
+  .quote-file input[type="file"]::file-selector-button {
+    height: 28px;
+    margin-right: 10px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--send);
+    color: var(--send-text);
+    font: inherit;
+    font-size: 13px;
+  }
+  .quote-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+  }
+  .quote-actions button {
+    height: 32px;
+    border-radius: 10px;
+    padding: 0 14px;
     border: 0;
     background: var(--send);
     color: var(--send-text);
+    font-size: 13px;
   }
   #quote-back { background: transparent; color: var(--text); border: 1px solid var(--line); }
   .pill {
@@ -1406,11 +1455,11 @@
     padding: 12px 0;
   }
   .session-row:hover { background: transparent; color: var(--text); }
-  #session-back { margin: 8px 0 16px; }
+  #session-back { margin: 0; }
   .note { font-size: 12px; color: var(--muted); line-height: 1.4; padding: 2px 0; }
   html[data-theme="dark"] #log a, #log a:visited { color: #d7e4ff; }
   html[data-theme="light"] #log a, #log a:visited { color: #1d4ed8; }
-  .session-tools, .quote-files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
+  .session-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
   .session-tools input[type="number"], .session-tools input[type="text"], #quote input[type="file"] { font: inherit; }
   .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
   .cmp, .card-block {
@@ -1545,123 +1594,6 @@
     padding: 0;
   }
   #auth-error { min-height: 18px; text-align: center; font-size: 13px; color: #e7b3b3; }
-  #landing {
-    position: fixed;
-    inset: 0;
-    z-index: 20;
-    display: flex;
-    flex-direction: column;
-    background: var(--canvas);
-    color: var(--text);
-    padding: 18px 28px 28px;
-  }
-  #landing.hidden { display: none; }
-  .land-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 36px;
-  }
-  .land-brand {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -0.03em;
-  }
-  .land-text {
-    border: 0;
-    background: transparent;
-    color: var(--text);
-    font: inherit;
-    font-size: 14px;
-    padding: 0 4px;
-    height: 32px;
-  }
-  .land-stage {
-    flex: 1;
-    width: min(1080px, 100%);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 420px);
-    gap: 56px;
-    align-items: center;
-  }
-  .land-hero h1 {
-    margin: 0;
-    font-size: 64px;
-    font-weight: 500;
-    letter-spacing: -0.045em;
-    line-height: 1.02;
-  }
-  .land-hero p {
-    margin: 18px 0 0;
-    max-width: 460px;
-    color: var(--muted);
-    font-size: 17px;
-    line-height: 1.45;
-  }
-  .land-actions {
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-top: 28px;
-  }
-  #land-start {
-    height: 40px;
-    padding: 0 18px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--send);
-    color: var(--send-text);
-    font: inherit;
-    font-size: 15px;
-  }
-  .land-cards { display: flex; flex-direction: column; gap: 12px; }
-  .land-card {
-    min-height: 148px;
-    border-radius: 22px;
-    padding: 24px 28px;
-    color: #fff;
-    display: flex;
-    align-items: flex-end;
-    font-size: 22px;
-    line-height: 1.3;
-    letter-spacing: -0.02em;
-  }
-  .land-card.blue {
-    background:
-      radial-gradient(90% 160% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11, 47, 134, 0) 60%),
-      radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59, 130, 246, 0) 62%),
-      linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%);
-  }
-  .land-card.amber {
-    background:
-      radial-gradient(80% 160% at 0% 40%, #fdba74 0%, #ea580c 34%, rgba(234, 88, 12, 0) 62%),
-      linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%);
-  }
-  .land-agents {
-    width: min(1080px, 100%);
-    margin: 0 auto;
-    padding: 0;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .land-agents button {
-    height: 34px;
-    padding: 0 12px;
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    background: transparent;
-    color: var(--muted);
-    font: inherit;
-    font-size: 13px;
-  }
-  .land-agents button:hover { color: var(--text); background: var(--fill); }
-  @media (max-width: 860px) {
-    .land-stage { grid-template-columns: 1fr; gap: 28px; align-content: center; }
-    .land-hero h1 { font-size: 44px; }
-  }
   /* ---------- polish: session, receipt, shared controls ---------- */
   :root, html[data-theme="light"] { --good: #0e7d6d; --good-soft: #e3f4f1; --bad: #b4443c; --bad-soft: #fbeceb; --beta: #a0650b; --beta-soft: #fbf1df; --focus: #2f6fed; }
   html[data-theme="dark"] { --good: #4cc9a6; --good-soft: rgba(76,201,166,0.12); --bad: #f07a72; --bad-soft: rgba(240,122,114,0.12); --beta: #e7b45a; --beta-soft: rgba(231,180,90,0.12); --focus: #6b9bff; }
@@ -1781,17 +1713,43 @@
   }
   .session-tools label, #after-receipt label { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
   .session-tools input[type="number"] { width: 80px; }
-  #after-receipt { margin-top: 18px; display: flex; flex-direction: column; gap: 12px; }
+  #after-receipt { margin-top: 12px; display: flex; flex-direction: column; gap: 10px; }
   #after-receipt.hidden { display: none !important; }
-  #after-receipt .form-grid { flex-direction: row; flex-wrap: wrap; align-items: center; max-width: 640px; }
-  #after-receipt #rate-stars { width: 70px; }
-  #after-receipt input[type="text"] { flex: 1 1 200px; }
+  #after-receipt .form-grid { flex-direction: column; align-items: stretch; max-width: none; gap: 8px; }
+  #after-receipt form {
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--fill);
+  }
+  #after-receipt label { display: flex; flex-direction: column; align-items: stretch; gap: 6px; font-size: 12px; }
+  #after-receipt #rate-stars { width: 88px; }
+  #after-receipt input[type="text"] { width: 100%; }
+  #after-receipt button { align-self: flex-start; margin-top: 2px; }
   .form-grid [data-step-panel] { display: flex; flex-direction: column; gap: 10px; }
   .form-grid > div:last-child { display: flex; gap: 8px; flex-wrap: wrap; }
   .page h3 { font-weight: 500; font-size: 15px; letter-spacing: -0.01em; margin: 24px 0 10px; }
   #creator-error:empty, #admin-error:empty, #session-edge:empty { display: none; }
   #admin-error, #creator-error { margin: 8px 0; font-size: 13px; }
-  #compare-bar { justify-content: flex-end; margin: 8px 0 0; }
+  #compare-bar {
+    display: none;
+    width: min(680px, calc(100% - 48px));
+    margin: 0 auto 10px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--fill);
+    font-size: 13px;
+    color: var(--muted);
+  }
+  #compare-bar.show { display: flex; }
+  #compare-bar button { height: 30px; border-radius: 10px; flex: none; }
+  .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+  .cmp-agent { min-height: 100%; }
+  #compare .cmp-actions button { height: 30px; border-radius: 10px; }
 
   /* cards: compare, wallet, report, admin */
   .grid-3 { align-items: stretch; }
@@ -1804,6 +1762,35 @@
   .hl { font-size: 11px; padding: 3px 8px; border-radius: 999px; background: var(--good-soft); color: var(--good); text-transform: capitalize; }
   .cmp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
   .report-head h2 { margin: 0 0 4px; }
+  #report { max-width: none; }
+  #report .library-head { margin: 8px 0 0; align-items: flex-start; }
+  #report #report-back {
+    height: 32px; margin: 4px 0 0; padding: 0 8px; border: 0; border-radius: 8px;
+    background: transparent; color: var(--muted);
+  }
+  #report #report-back:hover { background: var(--fill); color: var(--text); opacity: 1; }
+  #report #report-start {
+    height: 30px; margin-top: 22px; padding: 0 14px; border: 0; border-radius: 10px;
+  }
+  #report .wallet-block { margin-top: 28px; }
+  #report .wallet-block > h3 { margin: 0 0 12px; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .report-tags { margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
+  .score-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin-top: 20px; }
+  .score-card { padding: 16px; border: 1px solid var(--line); border-radius: 18px; background: var(--fill); }
+  .score-card span { color: var(--muted); font-size: 13px; }
+  .score-card b { display: block; margin-top: 8px; font-size: 28px; font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .score-bar { display: block; margin-top: 10px; height: 4px; border-radius: 4px; background: var(--fill-2); overflow: hidden; }
+  .score-bar i { display: block; height: 100%; background: var(--good); }
+  .score-card.mid .score-bar i { background: var(--beta); }
+  .score-card.low .score-bar i { background: var(--bad); }
+  .report-sheet { border: 1px solid var(--line); border-radius: 18px; background: var(--fill); padding: 4px 16px; }
+  ul.report-sheet { list-style: none; margin: 0; padding: 8px 16px 8px 28px; }
+  .report-sheet .kv:last-child { border-bottom: 0; }
+  .finding-list { margin: 0; padding: 8px 0; list-style: none; display: flex; flex-direction: column; }
+  .finding { display: flex; align-items: baseline; gap: 8px; padding: 10px 0; border-bottom: 1px solid var(--line); line-height: 1.45; }
+  .finding-cat { color: var(--muted); flex: none; }
+  .finding:last-child { border-bottom: 0; }
+  @media (max-width: 760px) { .score-grid { grid-template-columns: 1fr 1fr; } }
   .cmp-sum { color: var(--muted); font-size: 13px; line-height: 1.45; min-height: 38px; }
   .cmp-rows .kv { padding: 7px 0; font-size: 13px; }
   .cmp-rows .kv span:last-child, .kv span:last-child { font-variant-numeric: tabular-nums; }
@@ -1827,11 +1814,6 @@
   .sev { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 11px; background: var(--fill-2); color: var(--muted); }
   .sev-critical, .sev-high { background: var(--bad-soft); color: var(--bad); }
   .sev-medium { background: var(--beta-soft); color: var(--beta); }
-  #admin-body { display: flex; flex-direction: column; gap: 12px; }
-  #admin-body .cmp > button { margin-top: 0; }
-  #admin-body .cmp { flex-direction: row; flex-wrap: wrap; align-items: center; }
-  #admin-body .cmp > h3, #admin-body .cmp > p, #admin-body .cmp > .card-block { flex: 1 1 100%; }
-  #admin-body .card-block { border: 0; padding: 0; background: transparent; }
   #compare-back, #report-back { margin: 8px 0 12px; }
   #report-start { margin-top: 16px; }
   #creator-home .grid-3 { margin-top: 16px; }
@@ -1855,21 +1837,125 @@
   }
   #toast.on { opacity: 1; transform: translate(-50%, 0); }
 
-  /* wallet */
-  .wallet-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 4px 0 14px; border-bottom: 1px solid var(--line); }
-  .wallet-head .meta { margin: 0; }
-  .wallet-balance { margin: 2px 0 0; font-size: 32px; font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  /* wallet: same sheet, cards, and buttons as the library */
+  #wallet { max-width: none; }
+  #wallet .library-head { margin: 4px 0 0; }
+  #wallet .wallet-block { margin-top: 28px; }
+  #wallet .wallet-block > h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .wallet-hero {
+    display: grid;
+    grid-template-columns: minmax(280px, 1.4fr) minmax(220px, 0.8fr);
+    width: 100%;
+    margin-top: 20px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+    overflow: hidden;
+  }
+  .wallet-balance { padding: 18px 28px 20px 20px; min-width: 0; }
+  .wallet-balance-row { display: flex; align-items: flex-end; justify-content: flex-start; gap: 20px; }
+  .wallet-kicker { color: var(--muted); font-size: 13px; }
+  .wallet-figure {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 12px 0 0;
+  }
+  .wallet-figure b {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .wallet-figure span { color: var(--muted); font-size: 14px; }
+  .wallet-fact {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 18px 20px;
+    border-left: 1px solid var(--line);
+  }
+  .wallet-fact span { color: var(--muted); font-size: 13px; }
+  .wallet-fact b {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  .wallet-fact small { color: var(--faint); font-size: 12px; }
+  .wallet-offers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .wallet-offers.plans { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #wallet .wallet-offer {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+  }
+  #wallet .wallet-offer .offer-kicker { color: var(--muted); font-size: 12px; }
+  #wallet .wallet-offer b { margin-top: 4px; font-weight: 500; font-size: 16px; letter-spacing: -0.02em; }
+  #wallet .wallet-offer .offer-price {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+  }
+  #wallet .wallet-offer .offer-meta { margin-top: 2px; color: var(--muted); font-size: 13px; }
+  #wallet .wallet-offer > button,
+  #wallet #wallet-topup {
+    flex: none;
+    height: 30px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--send);
+    color: var(--send-text);
+    font-size: 13px;
+  }
+  #wallet .wallet-offer > button { margin-top: 16px; }
   .tx-list { display: flex; flex-direction: column; }
-  .tx { display: grid; grid-template-columns: 78px minmax(0, 1fr) auto 110px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-  .tx-type { justify-self: start; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--fill-2); color: var(--muted); }
+  .tx {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
+    align-items: center;
+    padding: 13px 2px;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .tx:last-child { border-bottom: 0; }
+  .tx-type {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 11px;
+    line-height: 1.4;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--fill-2);
+    color: var(--muted);
+  }
   .tx-type.t-bonus, .tx-type.t-topup, .tx-type.t-refund { background: var(--good-soft); color: var(--good); }
   .tx-type.t-hold { background: var(--beta-soft); color: var(--beta); }
-  .tx-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .tx-label small { display: block; color: var(--faint); font-size: 12px; }
-  .tx-amt { font-variant-numeric: tabular-nums; }
+  .tx-label { min-width: 0; }
+  .tx-label b { display: block; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tx-label small { display: block; margin-top: 3px; color: var(--faint); font-size: 12px; }
+  .tx-side { text-align: right; }
+  .tx-amt { display: block; font-variant-numeric: tabular-nums; }
   .tx-amt.pos { color: var(--good); }
-  .tx-bal { text-align: right; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-  #wallet-more { margin-top: 12px; }
+  .tx-bal { display: block; margin-top: 2px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+  #wallet #wallet-more { margin: 8px 0 0; border-radius: 10px; }
 
   /* creator: publish */
   .publish { margin: 28px 0 8px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
@@ -1901,35 +1987,154 @@
   .review-steps li.st-todo { color: var(--faint); }
   .review-steps li.st-now::before { color: var(--focus); animation: pill-pulse 1.2s ease-in-out infinite; }
 
-  /* admin */
-  .queue-row { align-items: center; }
-  .queue-row > span:last-child { display: flex; gap: 6px; flex: none; }
+  /* admin: same sheet as wallet and library */
+  #admin { max-width: none; }
+  #admin .library-head { margin: 4px 0 0; }
+  #admin .wallet-block { margin-top: 28px; }
+  #admin .wallet-block > h3 {
+    margin: 0 0 12px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--muted);
+  }
+  .admin-stats {
+    display: flex;
+    flex-wrap: wrap;
+    width: fit-content;
+    max-width: 100%;
+    margin-top: 20px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+    overflow: hidden;
+  }
+  .admin-stat {
+    min-width: 132px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 20px;
+    border-left: 1px solid var(--line);
+  }
+  .admin-stat:first-child { border-left: 0; }
+  .admin-stat b {
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .admin-stat span { color: var(--muted); font-size: 13px; }
+  #admin-queue, #admin-body { display: flex; flex-direction: column; }
+  .admin-list {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+    padding: 4px 16px;
+  }
+  .admin-list .empty { margin: 0; padding: 14px 0; }
+  .admin-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    background: transparent;
+  }
+  .admin-row:last-child { border-bottom: 0; }
+  .admin-actions { display: flex; flex-wrap: wrap; gap: 8px; flex: none; }
+  .admin-locked {
+    max-width: 520px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+  }
+  .admin-locked h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; letter-spacing: -0.02em; }
+  .admin-locked p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+  #admin #admin-demo { margin-top: 16px; }
+  #admin-error:empty { display: none; }
+  #admin-error {
+    margin: 16px 0 0;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--fill);
+    color: var(--text);
+    font-size: 14px;
+  }
+  .admin-refund {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--fill);
+  }
+  .admin-refund input { width: min(240px, 100%); }
+  #admin button:where(:not(.nav-item)) {
+    height: 30px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--send);
+    color: var(--send-text);
+    font-size: 13px;
+  }
+  #admin button.ghost {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--line);
+  }
+  #admin button.ghost:hover { background: var(--fill); border-color: var(--muted); opacity: 1; }
+  #admin button[data-kill] { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  #admin button[data-kill]:hover { background: var(--bad-soft); opacity: 1; }
+  #admin-review .sub-card { margin-top: 16px; background: var(--fill); }
   .sub-card .notes { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
   @media (max-width: 760px) {
     .publish-form fieldset { grid-template-columns: 1fr; }
-    .tx { grid-template-columns: 70px minmax(0, 1fr) auto; }
-    .tx-bal { display: none; }
+    .wallet-hero,
+    .wallet-offers,
+    .wallet-offers.plans { grid-template-columns: 1fr; }
+    .wallet-fact { border-left: 0; border-top: 1px solid var(--line); }
+    .wallet-figure b { font-size: 24px; }
+    .wallet-balance-row { flex-wrap: wrap; gap: 12px; }
   }
   /* ---------- session screen ---------- */
-  #session-live { max-width: 760px; margin: 0 auto; padding-bottom: 96px; }
-  .ses-head {
-    position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "av id pill" "meter meter cancel";
-    gap: 8px 12px; align-items: center; margin: 0 -4px 8px; padding: 12px 4px; background: var(--panel); border-bottom: 1px solid var(--line);
+  #session:has(#session-live:not(.hidden)) {
+    max-width: none; width: auto; flex: 1; min-height: 0; padding: 0; overflow: hidden;
+    display: flex; flex-direction: column;
   }
-  .ses-avatar { grid-area: av; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 15px; background: #2563eb; flex: none; }
+  #session-live { flex: 1; min-height: 0; width: 100%; max-width: none; margin: 0; display: flex; flex-direction: column; }
+  .ses-head {
+    flex: none; display: grid; grid-template-columns: auto auto minmax(0, 1fr) auto;
+    gap: 4px 12px; align-items: center; padding: 10px 18px; background: var(--panel); border-bottom: 1px solid var(--line);
+  }
+  #session #session-back { height: 32px; padding: 0 8px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); }
+  #session #session-back:hover { background: var(--fill); color: var(--text); opacity: 1; }
+  .ses-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 15px; background: #2563eb; flex: none; }
   .ses-avatar.big { width: 56px; height: 56px; font-size: 22px; margin: 0 auto 10px; }
-  .ses-id { grid-area: id; display: flex; align-items: center; gap: 8px; min-width: 0; }
-  .ses-id h2 { margin: 0; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ses-id { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .ses-titleline { display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .ses-id h2 { margin: 0; font-size: 16px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .ses-id .tag { text-transform: capitalize; flex: none; }
-  .ses-head #session-status { grid-area: pill; margin: 0; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .ses-meter { grid-area: meter; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .ses-head #session-status {
+    height: auto; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent;
+    max-width: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    font-size: 12px; line-height: 1.35; color: var(--muted);
+  }
+  .ses-meter { display: flex; flex-direction: column; gap: 4px; min-width: 0; max-width: 420px; }
   .ses-meter #spend { margin: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
   .ses-meter #spend:empty { display: none; }
   .ses-meter .meter { height: 4px; border-radius: 4px; background: var(--fill-2); }
   .ses-meter .meter > div { border-radius: 4px; background: var(--good); transition: width .3s; }
   .ses-meter .meter > div.warn { background: #d99a2b; }
   .ses-meter .meter > div.hot { background: #e5484d; }
-  .ses-head #cancel { grid-area: cancel; height: 28px; font-size: 12px; }
+  .ses-head #cancel { height: 30px; font-size: 12px; }
 
   /* empty state */
   .ses-empty { text-align: center; padding: 40px 16px 8px; }
@@ -1940,8 +2145,21 @@
   #session .ses-example { height: auto; min-height: 32px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--text); font-size: 13px; text-align: left; }
   #session .ses-example:hover { background: var(--fill); opacity: 1; }
 
+  .ses-scroll { flex: 1; min-height: 0; overflow: auto; }
+  .ses-col { width: min(760px, 100%); margin: 0 auto; }
+  .ses-scroll .ses-col { padding: 18px 20px 32px; }
+  .ses-dock { flex: none; border-top: 1px solid var(--line); background: var(--panel); padding: 12px 20px 16px; }
+  .ses-dock .ses-col { display: flex; flex-direction: column; gap: 10px; width: min(680px, 100%); }
+  .ses-dock .session-tools { margin: 0; }
+  .ses-dock #ask { margin: 0; max-width: none; }
+  #session-live:has(#ask:not(.hidden)) .session-tools { display: none; }
+  #ask[data-kind="text"] {
+    position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; overflow: hidden;
+    clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
+
   /* conversation */
-  #log { gap: 14px; margin: 18px 0; }
+  #log { gap: 14px; margin: 0; }
   #log .bubble { max-width: 720px; line-height: 1.6; font-size: 15px; }
   #log .bubble.buyer { align-self: flex-end; max-width: 80%; padding: 10px 14px; border-radius: 18px 18px 4px 18px; background: color-mix(in srgb, var(--focus) 18%, var(--fill)); }
   #log .bubble.agent { position: relative; align-self: flex-start; margin-left: 44px; padding: 26px 16px 14px; border-radius: 4px 16px 16px 16px; background: var(--fill); border: 1px solid var(--line); }
@@ -1965,7 +2183,7 @@
   #session-live:has(#session-status.live):not(:has(#ask:not(.hidden))):not(:has(#log.done)) .typing { display: flex; }
 
   /* ask / confirm */
-  #ask { position: relative; margin: 8px 0 12px 44px; padding: 16px 18px 16px 54px; border: 1px solid color-mix(in srgb, var(--focus) 45%, var(--line)); border-radius: 16px; background: var(--fill); max-width: 676px; }
+  #ask { position: relative; margin: 0; padding: 16px 18px 16px 54px; border: 1px solid color-mix(in srgb, var(--focus) 45%, var(--line)); border-radius: 16px; background: var(--fill); max-width: none; }
   #ask::before {
     content: "?"; position: absolute; left: 16px; top: 16px; width: 26px; height: 26px; border-radius: 50%;
     display: grid; place-items: center; background: color-mix(in srgb, var(--focus) 22%, transparent); color: var(--focus); font-size: 14px; line-height: 26px; text-align: center;
@@ -1978,64 +2196,63 @@
   #ask[data-kind="confirm"] .ask-row button:not(.ghost) { background: var(--good); color: #fff; }
 
   /* session complete card */
-  #receipt .rc { max-width: 720px; margin-left: 44px; border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+  #receipt .rc { max-width: none; width: 100%; margin: 8px 0 0; border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
   .rc-done { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 14px; color: var(--good); }
   .rc-check { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--good); color: #fff; }
   .rc-amount { font-size: 34px; }
   .rc-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
   .rc-files a.file-chip { display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--text); text-decoration: none; font-size: 14px; }
   .rc-files a.file-chip svg { color: var(--muted); }
-  #after-receipt { margin-left: 44px; }
+  #after-receipt { margin-left: 0; }
+  #session-live.settled .ses-head,
+  #session-live.settled .session-tools,
+  #session-live.settled .ses-meter { display: none; }
+  #session-live.settled .ses-scroll { display: flex; }
+  #session-live.settled .ses-scroll .ses-col { margin: auto; padding-top: 8px; padding-bottom: 24px; }
+  #session-live.settled .ses-empty { padding-top: 8px; }
+  #session-live.settled .ses-dock { border-top: 0; background: transparent; padding-bottom: 20px; }
 
   /* composer */
   .ses-composer {
-    position: sticky; bottom: 12px; z-index: 5; display: flex; align-items: flex-end; gap: 8px; margin-top: 16px;
-    padding: 8px 8px 8px 16px; border: 1px solid var(--line); border-radius: 22px; background: var(--panel); box-shadow: 0 8px 28px rgba(0,0,0,.18);
+    display: flex; align-items: center; gap: 12px; margin: 0; width: 100%;
+    min-height: 56px; padding: 8px 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel); box-shadow: none;
   }
-  #session .ses-composer textarea { flex: 1; height: 24px; min-height: 24px; max-height: 160px; padding: 6px 0; border: 0; background: transparent; resize: none; font-size: 15px; line-height: 1.4; box-shadow: none; }
-  #session .ses-composer button { width: 36px; height: 36px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .ses-composer:focus-within { border-color: #3c4046; }
+  html[data-theme="light"] .ses-composer:focus-within { border-color: #b9b9be; }
+  #session #ses-input,
+  #session #ses-input:focus {
+    flex: 1; width: 100%; height: 24px; min-height: 24px; max-height: 160px;
+    padding: 0; border: 0; border-radius: 0; background: transparent; resize: none; outline: none;
+    font-size: 15px; line-height: 24px; box-shadow: none;
+  }
+  #session #ses-input::placeholder { color: var(--muted); }
+  #session .ses-composer .plus,
+  #session .ses-composer .mic,
+  #session .ses-composer .send {
+    margin: 0; padding: 0; border: 0; border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center; flex: none;
+  }
+  #session .ses-composer .plus { width: 28px; height: 28px; background: transparent; color: var(--text); font-size: 22px; line-height: 1; }
+  #session .ses-composer .mic { width: 36px; height: 36px; background: transparent; color: var(--muted); }
+  #session .ses-composer .mic:hover { color: var(--text); border: 1px solid var(--line); }
+  #session .ses-composer .mic.live { color: #fff; background: #e23b3b; border-color: #e23b3b; }
+  #session .ses-composer .send { width: 32px; height: 32px; background: var(--send); color: var(--send-text); }
+  #session .ses-composer .send:disabled { opacity: 1; cursor: default; }
+  #session .ses-composer .send svg { width: 14px; height: 14px; }
   .ses-composer.disabled { opacity: .55; }
   .ses-composer.disabled textarea { cursor: not-allowed; }
   @media (max-width: 760px) {
     #log .bubble.agent, .steps-log, .typing, #ask, #receipt .rc, #after-receipt { margin-left: 0; }
     #log .bubble.agent { padding-left: 16px; }
     #log .bubble.agent::before { display: none; }
-    .ses-head { grid-template-areas: "av id id" "pill pill cancel" "meter meter meter"; }
+    .ses-head { grid-template-columns: auto minmax(0, 1fr); }
+    .ses-head #session-back { grid-column: 1 / -1; justify-self: start; }
+    .ses-head #cancel { grid-column: 1 / -1; justify-self: start; }
   }
-  #landing { z-index: 40; }  /* landing first, then sign-in (z 30), then the app */
 </style>
 </head>
 <body>
-<div id="landing">
-  <header class="land-bar">
-    <div class="land-brand">Cohort.ai</div>
-    <button type="button" id="land-open" class="land-text">Open app</button>
-  </header>
-  <div class="land-stage">
-    <div class="land-hero">
-      <h1>Hire an agent. See the price first.</h1>
-      <p>Tell Cohort the work. It matches an agent from the library, you set the credits, and what is left comes back when the run ends.</p>
-      <div class="land-actions">
-        <button type="button" id="land-start">Open Cohort</button>
-        <button type="button" id="land-library" class="land-text">Library</button>
-      </div>
-    </div>
-    <div class="land-cards" aria-hidden="true">
-      <div class="land-card blue">See the price before a session starts.</div>
-      <div class="land-card amber">Unused credit comes back when it ends.</div>
-    </div>
-  </div>
-  <ul class="land-agents">
-    <li><button type="button" data-agent="0">Invoice Auditor</button></li>
-    <li><button type="button" data-agent="1">Trip Planner</button></li>
-    <li><button type="button" data-agent="2">Research Briefer</button></li>
-    <li><button type="button" data-agent="3">Inbox Cleaner</button></li>
-    <li><button type="button" data-agent="4">Meeting Notes</button></li>
-    <li><button type="button" data-agent="5">Contract Reader</button></li>
-    <li><button type="button" data-agent="6">Support Reply</button></li>
-    <li><button type="button" data-agent="7">Spreadsheet Fixer</button></li>
-  </ul>
-</div>
 <div id="auth" class="auth hidden">
   <div class="auth-card">
     <div id="auth-options" class="auth-options">
@@ -2061,7 +2278,7 @@
 </div>
 <div class="app">
 <aside>
-  <div class="brand">Cohort.ai</div>
+  <div class="brand">AgentBay</div>
   <nav class="side-nav">
     <button id="new-chat" class="nav-item on" type="button" data-view="discover">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg>
@@ -2070,10 +2287,6 @@
     <button class="nav-item" type="button" data-view="library">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
       Library
-    </button>
-    <button class="nav-item" type="button" data-view="session">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
-      Session
     </button>
     <button class="nav-item" type="button" data-view="wallet">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
@@ -2084,6 +2297,8 @@
       Review
     </button>
   </nav>
+  <div class="side-label">Sessions</div>
+  <div id="side-sessions" class="side-history"></div>
   <div class="side-label">Activity</div>
   <div id="history" class="side-history"></div>
 </aside>
@@ -2123,7 +2338,6 @@
       <div class="acct-line"><span>Total</span><b id="credit-total">0</b></div>
       <div class="acct-line"><span>Remaining</span><b id="credit-left">0</b></div>
       <div class="acct-split"></div>
-      <button class="user-row" type="button" data-view="account">Account overview</button>
       <button class="user-row" type="button" data-view="creator">Creator</button>
       <button class="user-row hidden" id="become-creator" type="button">Become a creator</button>
       <div class="theme-choices" role="group" aria-label="Theme">
@@ -2138,31 +2352,33 @@
 </header>
 <section id="discover" class="chat home">
   <div id="empty" class="stage">
-    <h2 id="agenda">How can Cohort help you, Jaineel?</h2>
+    <h2 id="agenda">How can AgentBay help you, Jaineel?</h2>
   </div>
   <div id="thread" class="thread hidden"></div>
   <div class="dock">
     <div class="composer-wrap">
-      <div id="credit-ask" class="credit-ask hidden">
-        <p id="credit-ask-copy"></p>
-        <div class="credit-ask-row">
-          <button type="button" id="credit-all">Use all</button>
-          <input id="credit-amount" type="number" min="1" inputmode="numeric" placeholder="Amount" aria-label="Credits to spend">
-          <button type="button" id="credit-some">Use this amount</button>
-        </div>
-      </div>
       <div class="composer">
-        <div id="attach-preview" class="attach-preview hidden"></div>
-        <span class="prompt-orb" aria-hidden="true"></span>
-        <button class="plus" id="attach" type="button" aria-label="Add image">+</button>
-        <input id="file" type="file" accept="image/*" hidden>
-        <textarea id="task" rows="1" placeholder="Ask anything…"></textarea>
-        <button class="mic" id="voice" type="button" aria-label="Voice">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
-        </button>
-        <button class="send" id="search" type="button" aria-label="Search">
+        <div class="composer-main">
+          <div id="attach-preview" class="attach-preview hidden"></div>
+          <span class="prompt-orb" aria-hidden="true"></span>
+          <button class="plus" id="attach" type="button" aria-label="Add image">+</button>
+          <input id="file" type="file" accept="image/*" hidden>
+          <textarea id="task" rows="1" placeholder="Ask anything…"></textarea>
+          <button class="mic" id="voice" type="button" aria-label="Voice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
+          </button>
+          <button class="send" id="search" type="button" aria-label="Search">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
           </button>
+        </div>
+        <div id="credit-ask" class="credit-ask hidden">
+          <p id="credit-ask-copy"></p>
+          <div class="credit-ask-row">
+            <button type="button" id="credit-all">Use all</button>
+            <input id="credit-amount" type="number" min="1" inputmode="numeric" placeholder="Amount" aria-label="Credits to spend">
+            <button type="button" id="credit-some">Use this amount</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -2202,34 +2418,6 @@
   </div>
 </section>
 
-<section id="account" class="page hidden">
-  <div class="acct-sheet">
-    <div class="acct-cover" id="acct-cover"></div>
-    <div class="acct-profile">
-      <div class="acct-pfp" id="acct-pfp">J</div>
-      <div class="acct-id">
-        <h2 id="acct-name">Jaineel</h2>
-        <p id="acct-email"></p>
-      </div>
-    </div>
-    <div id="account-body" class="acct-stats"></div>
-    <div class="acct-sections">
-      <section class="acct-card">
-        <h3>Orders</h3>
-        <div id="acct-orders"></div>
-      </section>
-      <section class="acct-card">
-        <h3>Monetize</h3>
-        <div id="acct-money"></div>
-      </section>
-      <section class="acct-card wide">
-        <h3>Activity</h3>
-        <div id="acct-activity"></div>
-      </section>
-    </div>
-  </div>
-</section>
-
 <section id="library" class="page hidden">
   <div id="library-home">
     <div class="library-head">
@@ -2248,56 +2436,67 @@
 </section>
 
 <section id="session" class="page hidden">
-  <div id="session-home">
-    <h2>Session</h2>
-    <p class="meta">Each session is one paid run. It holds a credit cap, streams what the agent does, and settles a receipt.</p>
-    <div id="session-list"></div>
-  </div>
+  <div id="session-home" class="hidden"></div>
   <div id="session-live" class="hidden">
-    <button class="ghost" id="session-back" type="button">All sessions</button>
     <header class="ses-head">
+      <button class="ghost" id="session-back" type="button">Sessions</button>
       <div class="ses-avatar" id="ses-avatar" aria-hidden="true">A</div>
       <div class="ses-id">
-        <h2 id="session-title">Live session</h2>
-        <span id="ses-category" class="tag hidden"></span>
-      </div>
-      <div id="session-status" class="pill">Holding</div>
-      <div class="ses-meter">
-        <p class="meta" id="spend"></p>
-        <div class="meter"><div id="bar"></div></div>
+        <div class="ses-titleline">
+          <h2 id="session-title">Live session</h2>
+          <span id="ses-category" class="tag hidden"></span>
+        </div>
+        <div id="session-status" class="pill">Holding</div>
+        <div class="ses-meter">
+          <p class="meta" id="spend"></p>
+          <div class="meter"><div id="bar"></div></div>
+        </div>
       </div>
       <button class="ghost" id="cancel" type="button">Cancel session</button>
     </header>
-    <div id="ses-empty" class="ses-empty"></div>
-    <div id="log"></div>
-    <div id="ses-typing" class="typing" aria-label="The agent is working"><span></span><span></span><span></span></div>
-    <div id="ask" class="hidden"></div>
-    <p id="session-edge" class="warn"></p>
-    <div class="session-tools">
-      <label>Extend cap <input id="extend-credits" type="number" min="1" step="1" value="10" aria-label="Credits to add"></label>
-      <button class="ghost" id="extend" type="button">Extend</button>
-      <label>File <input id="session-file" type="file" aria-label="Attach a file"></label>
-      <span id="file-note" class="meta"></span>
+    <div class="ses-scroll">
+      <div class="ses-col">
+        <div id="ses-empty" class="ses-empty"></div>
+        <div id="log"></div>
+        <div id="ses-typing" class="typing" aria-label="The agent is working"><span></span><span></span><span></span></div>
+        <p id="session-edge" class="warn"></p>
+        <div id="receipt"></div>
+        <div id="after-receipt" class="hidden">
+          <form id="rate-form" class="form-grid">
+            <label>Stars<input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
+            <label>Comment<input id="rate-comment" type="text" placeholder="How did this run go?"></label>
+            <button type="submit">Rate this agent</button>
+          </form>
+          <form id="dispute-form" class="form-grid">
+            <label>Dispute<input id="dispute-reason" type="text" placeholder="Why this result should be reviewed" required></label>
+            <button type="submit">Open a dispute</button>
+          </form>
+          <p id="after-note" class="meta"></p>
+        </div>
+      </div>
     </div>
-    <div id="receipt"></div>
-    <div id="after-receipt" class="hidden">
-      <form id="rate-form" class="form-grid">
-        <label>Stars <input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
-        <input id="rate-comment" type="text" placeholder="Comment">
-        <button type="submit">Rate this agent</button>
-      </form>
-      <form id="dispute-form" class="form-grid">
-        <input id="dispute-reason" type="text" placeholder="Why this result should be reviewed" required>
-        <button type="submit">Open a dispute</button>
-      </form>
-      <p id="after-note" class="meta"></p>
+    <div class="ses-dock">
+      <div class="ses-col">
+        <div id="ask" class="hidden"></div>
+        <div class="session-tools">
+          <label>Extend cap <input id="extend-credits" type="number" min="1" step="1" value="10" aria-label="Credits to add"></label>
+          <button class="ghost" id="extend" type="button">Extend</button>
+          <span id="file-note" class="meta"></span>
+        </div>
+        <form id="ses-composer" class="ses-composer" novalidate>
+          <span class="prompt-orb" aria-hidden="true"></span>
+          <button class="plus" id="ses-plus" type="button" aria-label="Add a file">+</button>
+          <input id="session-file" type="file" hidden>
+          <textarea id="ses-input" rows="1" placeholder="Ask anything…" aria-label="Message"></textarea>
+          <button class="mic" id="ses-voice" type="button" aria-label="Voice">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
+          </button>
+          <button class="send" id="ses-send" type="submit" aria-label="Send">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+          </button>
+        </form>
+      </div>
     </div>
-    <form id="ses-composer" class="ses-composer" novalidate>
-      <textarea id="ses-input" rows="1" placeholder="The agent is working…" aria-label="Message"></textarea>
-      <button id="ses-send" type="submit" aria-label="Send">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
-      </button>
-    </form>
   </div>
 </section>
 
@@ -2402,26 +2601,42 @@ The notes:
 </section>
 
 <section id="admin" class="page hidden">
-  <h2>Review queue</h2>
-  <p class="meta">InvoiceGenius Pro is waiting. Run review, then use the kill switch on a live agent.</p>
-  <div id="admin-error" class="warn"></div>
-  <div id="admin-metrics"></div>
-  <h3>Queue</h3>
-  <div id="admin-queue"></div>
-  <div id="admin-review"></div>
-  <h3>Agents</h3>
-  <div id="admin-body"></div>
-  <h3>Refund a session</h3>
-  <form id="refund-form" class="form-grid">
-    <input id="refund-id" placeholder="session id" required>
-    <input id="refund-reason" placeholder="reason" value="admin refund">
-    <button type="submit">Refund</button>
-    <p id="refund-note" class="meta"></p>
-  </form>
+  <div class="library-head">
+    <div>
+      <h2>Review</h2>
+      <p class="meta">The queue, live agents, and session refunds.</p>
+    </div>
+  </div>
+  <div id="admin-locked" class="admin-locked hidden">
+    <h3>Admin only</h3>
+    <p>Sign in as Admin to open the queue, pause an agent, or refund a session.</p>
+    <button type="button" id="admin-demo">Sign in as Admin</button>
+  </div>
+  <div id="admin-work">
+    <div id="admin-error"></div>
+    <div id="admin-metrics"></div>
+    <section class="wallet-block">
+      <h3>Queue</h3>
+      <div id="admin-queue" class="admin-list"></div>
+    </section>
+    <div id="admin-review"></div>
+    <section class="wallet-block">
+      <h3>Agents</h3>
+      <div id="admin-body" class="admin-list"></div>
+    </section>
+    <section class="wallet-block">
+      <h3>Refund a session</h3>
+      <form id="refund-form" class="admin-refund">
+        <input id="refund-id" placeholder="Session id" required>
+        <input id="refund-reason" placeholder="Reason" value="admin refund">
+        <button type="submit">Refund</button>
+        <p id="refund-note" class="meta"></p>
+      </form>
+    </section>
+  </div>
 </section>
 
 <section id="wallet" class="page hidden">
-  <h2>Wallet</h2>
   <div id="wallet-body"></div>
 </section>
 
@@ -2442,12 +2657,12 @@ The notes:
     <h2 id="quote-title">Quote</h2>
     <p id="quote-task" class="meta"></p>
     <p id="quote-price"></p>
-    <p class="meta">Price locked for 10 minutes.</p>
-    <label>Budget cap
+    <p class="quote-lock">Price locked for 10 minutes.</p>
+    <label class="quote-field">Budget cap
       <input id="quote-cap" type="number" min="1" step="1" />
     </label>
-    <p id="quote-hold" class="meta"></p>
-    <label class="quote-files">Attach a file
+    <p id="quote-hold" class="quote-hold"></p>
+    <label class="quote-file"><span>Attach a file</span>
       <input id="quote-file" type="file">
     </label>
     <p id="quote-files" class="meta"></p>
@@ -2520,6 +2735,18 @@ async function refreshBal() {
   $("#credit-left").textContent = shown(w.balance_credits || 0);
   paintUser(w.user);
 }
+function cardPaint(seed) {
+  let hash = 2166136261;
+  const key = String(seed || "agent");
+  for (let i = 0; i < key.length; i++) hash = Math.imul(hash ^ key.charCodeAt(i), 16777619) >>> 0;
+  const hue = hash % 360;
+  const accent = (hue + 48) % 360;
+  const light = "hsl(" + accent + " 86% 76%)";
+  const mid = "hsl(" + hue + " 72% 46%)";
+  const deep = "hsl(" + hue + " 62% 18%)";
+  const ink = "hsl(" + hue + " 42% 7%)";
+  return "radial-gradient(90% 160% at 8% 110%, " + deep + " 0%, " + deep + " 26%, transparent 60%), radial-gradient(70% 140% at 100% 0%, " + light + " 0%, " + mid + " 36%, transparent 62%), linear-gradient(105deg, " + deep + " 0%, " + mid + " 42%, " + ink + " 70%, " + light + " 100%)";
+}
 function avatarPaint(seed) {
   const paints = [
     ["radial-gradient(90% 140% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11,47,134,0) 60%), radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59,130,246,0) 62%), linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%)", "linear-gradient(145deg, #93c5fd, #1d4ed8)"],
@@ -2535,30 +2762,13 @@ function avatarPaint(seed) {
   const pair = paints[hash % paints.length];
   return { cover: pair[0], mark: pair[1] };
 }
-function paintAccount(name, email) {
-  const label = (name || "Account").replace(/\(.*\)/, "").trim() || "Account";
-  const letter = label.slice(0, 1).toUpperCase();
-  const paints = avatarPaint(label + " " + (email || ""));
-  const pfp = $("#acct-pfp");
-  const cover = $("#acct-cover");
-  if (pfp) {
-    pfp.textContent = letter;
-    pfp.style.background = paints.mark;
-  }
-  if (cover) cover.style.background = paints.cover;
-  const title = $("#acct-name");
-  const mail = $("#acct-email");
-  if (title) title.textContent = label;
-  if (mail) mail.textContent = email || "";
-}
 function paintUser(name) {
   const label = name || "Account";
   const letter = label.slice(0, 1).toUpperCase();
   $(".user-letter").textContent = letter;
   const who = label.replace(/\(.*\)/, "").trim().split(/\s+/)[0] || "there";
   const agenda = $("#agenda");
-  if (agenda) agenda.textContent = "How can Cohort help you, " + who + "?";
-  paintAccount(label, $("#acct-email") ? $("#acct-email").textContent : "");
+  if (agenda) agenda.textContent = "How can AgentBay help you, " + who + "?";
 }
 function showAuth(message) {
   $("#auth").classList.remove("hidden");
@@ -2778,7 +2988,6 @@ $("#add-credits").onclick = async () => {
   try {
     await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
     await refreshBal();
-    if (!$("#account").classList.contains("hidden")) loadAccount();
   } finally {
     button.disabled = false;
   }
@@ -2793,12 +3002,12 @@ function remember(path) {
   if (location.hash !== next) history.replaceState(null, "", next);
 }
 function show(view) {
-  document.querySelectorAll(".nav-item").forEach((x) => x.classList.toggle("on", x.dataset.view === view));
-  ["discover","session","creator","admin","library","account","wallet","compare","report"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
+  document.querySelectorAll(".side-nav > .nav-item").forEach((x) => x.classList.toggle("on", x.dataset.view === view));
+  ["discover","session","creator","admin","library","wallet","compare","report"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
   if (view === "discover") remember(state.conversation ? "/chat/" + state.conversation : "/new");
   if (view === "session") {
     if (state.session) showLive();
-    else showSessionList();
+    else return show("discover");
   }
   if (view === "library") {
     setCrumb("Library");
@@ -2806,11 +3015,6 @@ function show(view) {
     return loadLibrary();
   }
   if (view === "creator") loadCreator();
-  if (view === "account") {
-    setCrumb("Account overview");
-    remember("/account");
-    return loadAccount();
-  }
   if (view === "admin") loadAdmin();
   if (view === "wallet") loadWallet();
   if (view === "compare") setCrumb("Compare");
@@ -2887,7 +3091,7 @@ document.querySelectorAll(".banner-dots button").forEach((button) => {
 });
 queueBanner();
 document.querySelector(".composer").addEventListener("mousedown", (event) => {
-  if (event.target.closest("button")) return;
+  if (event.target.closest("button, input, textarea")) return;
   event.preventDefault();
   $("#task").focus();
 });
@@ -3197,9 +3401,10 @@ function renderThread(data) {
       const price = priceOf(title);
       const priceLine = kind === "price"
         ? `<p class="pick-why">${esc(price ? "Price: " + price + "." : "This run uses the credits you choose.")}</p>`
-        : `<p class="pick-why">${esc(pick.why)}</p>`;
+        : (pick.why && pick.why !== detail ? `<p class="pick-why">${esc(pick.why)}</p>` : "");
+      const agent = live.get(title);
       return `<article class="pick">
-        <div class="agent-hero tone-${pick.index}">
+        <div class="agent-hero" style="background:${cardPaint(title)}">
           <p class="dev">${esc(developer)}</p>
           <h2>${esc(title)}</h2>
           <p class="blurb">${esc(summary)}</p>
@@ -3210,9 +3415,11 @@ function renderThread(data) {
           <p class="summary">${esc(detail)}</p>
         </section>
         ${priceLine}
-        <button class="choose" type="button" data-index="${pick.index}">Use ${esc(title)}</button>
-        ${live.get(title) ? `<label class="meta"><input type="checkbox" data-pick="${live.get(title).id}" ${state.picks.includes(live.get(title).id) ? "checked" : ""}> Compare</label>
-        <button class="ghost" type="button" data-detail="${live.get(title).id}">Report card</button>` : ""}
+        <div class="pick-actions">
+          <button class="choose" type="button" data-index="${pick.index}">Use ${esc(title)}</button>
+          ${agent ? `<button class="ghost" type="button" data-detail="${agent.id}">Report card</button>
+          <label class="pick-compare"><input type="checkbox" data-pick="${agent.id}" ${state.picks.includes(agent.id) ? "checked" : ""}><span>Compare</span></label>` : ""}
+        </div>
       </article>`;
     }).join("");
     thread.appendChild(wrap);
@@ -3366,16 +3573,52 @@ $("#chat-delete").onclick = async (event) => {
   else loadSidebar();
 };
 
+function paintSideList(box, rows, emptyText, onClick, current) {
+  box.innerHTML = "";
+  if (!rows.length) {
+    const empty = document.createElement("p");
+    empty.className = "side-empty";
+    empty.textContent = emptyText;
+    box.appendChild(empty);
+    return;
+  }
+  rows.forEach((row) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "nav-item history-item" + (row.id === current ? " on" : "");
+    const label = document.createElement("span");
+    label.textContent = row.title || "Untitled";
+    button.appendChild(label);
+    button.onclick = () => onClick(row);
+    if (row.oncontextmenu) button.oncontextmenu = (event) => row.oncontextmenu(event);
+    box.appendChild(button);
+  });
+}
 async function loadSidebar() {
-  const data = await api("/v1/conversations");
+  const [data, sessions] = await Promise.all([
+    api("/v1/conversations").catch(() => ({ conversations: [] })),
+    api("/v1/sessions").catch(() => ({ sessions: [] }))
+  ]);
+  const viewingSession = !$("#session").classList.contains("hidden");
+  paintSideList($("#side-sessions"), (sessions.sessions || []).map((s) => ({
+    id: s.id,
+    title: s.title || s.task || "Session",
+    open: () => openHistory(s.id, Number(s.cap_credits), !!s.active)
+  })), "No sessions yet", (row) => row.open(), viewingSession ? state.session : "");
   const box = $("#history");
   box.innerHTML = "";
   const chats = data.conversations || [];
-  if (!chats.length) return;
+  if (!chats.length) {
+    const empty = document.createElement("p");
+    empty.className = "side-empty";
+    empty.textContent = "No chats yet";
+    box.appendChild(empty);
+    return;
+  }
   chats.forEach((chat) => {
     const button = document.createElement("button");
     button.type = "button";
-    button.className = "nav-item history-item" + (chat.id === state.conversation ? " on" : "");
+    button.className = "nav-item history-item" + (!viewingSession && chat.id === state.conversation ? " on" : "");
     const label = document.createElement("span");
     label.textContent = chat.title || "New chat";
     button.appendChild(label);
@@ -3411,7 +3654,7 @@ async function loadLibrary() {
     const action = agent
       ? `<button class="choose" type="button" data-id="${agent.id}">Use</button>`
       : `<button class="choose" type="button" data-prompt="${prompt}">Try</button>`;
-    return `<article class="agent-card" data-index="${index}"><div class="card-face tone-${index}"></div><div class="card-body"><h3>${title}</h3><p class="dev">${developer}</p><p>${summary}</p>${action}</div></article>`;
+    return `<article class="agent-card" data-index="${index}"><div class="card-face" style="background:${cardPaint(title)}"></div><div class="card-body"><h3>${title}</h3><p class="dev">${developer}</p><p>${summary}</p>${action}</div></article>`;
   }).join("");
   grid.querySelectorAll(".agent-card").forEach((card) => card.onclick = () => openAgentPage(samples[Number(card.dataset.index)]));
   grid.querySelectorAll(".choose").forEach((button) => button.onclick = (event) => {
@@ -3483,7 +3726,7 @@ function openAgentPage(sample) {
   setCrumb(title);
   page.innerHTML = `
     <button class="back" type="button" id="agent-back">Library</button>
-    <div class="agent-hero tone-${index}">
+    <div class="agent-hero" style="background:${cardPaint(title)}">
       <p class="dev">${developer}</p>
       <h2>${title}</h2>
       <p class="blurb">${summary}</p>
@@ -3516,20 +3759,15 @@ function showLive() {
   $("#session-home").classList.add("hidden");
   $("#session-live").classList.remove("hidden");
 }
-async function showSessionList() {
-  $("#session-live").classList.add("hidden");
-  $("#session-home").classList.remove("hidden");
-  const data = await api("/v1/sessions");
-  const rows = data.sessions || [];
-  $("#session-list").innerHTML = rows.length
-    ? rows.map((s) => `<button class="session-row" type="button" data-id="${s.id}" data-cap="${s.cap_credits}" data-active="${s.active}"><span>${s.title}</span><span class="meta">${s.status} · ${s.task}</span></button>`).join("")
-    : `<p class="meta">No runs yet. Match an agent from the chat and start one.</p>`;
-  $("#session-list").querySelectorAll(".session-row").forEach((b) => b.onclick = () => openHistory(b.dataset.id, Number(b.dataset.cap), b.dataset.active === "true"));
+function showSessionList() {
+  state.session = null;
+  show("discover");
 }
 $("#session-back").onclick = () => {
   if (state.es) state.es.close();
   state.session = null;
-  showSessionList();
+  show("discover");
+  loadSidebar();
 };
 function paintQuote() {
   const quote = state.quote;
@@ -3600,6 +3838,7 @@ async function start(agentId, cap) {
   $("#quote").classList.add("hidden");
   state.session = ses.session_id || ses.id;
   state.cap = cap;
+  $("#session-live").classList.remove("settled");
   $("#log").innerHTML = "";
   $("#log").classList.remove("done");
   $("#receipt").textContent = "";
@@ -3616,9 +3855,12 @@ async function start(agentId, cap) {
   paintSessionAgent(agentId);
   openEvents(state.session, cap);
   refreshBal();
+  loadSidebar();
 }
 async function openHistory(id, cap, active) {
   state.session = id;
+  $("#session-live").classList.remove("settled");
+  $("#log").classList.remove("done");
   $("#log").innerHTML = "";
   $("#receipt").textContent = "";
   $("#bar").style.width = "0";
@@ -3630,6 +3872,7 @@ async function openHistory(id, cap, active) {
   api("/v1/sessions/" + id).then((s) => { if (state.session === id) paintSessionAgent(s.agent_id); }).catch(() => {});
   if (active) openEvents(id, cap);
   else showReceipt(id);
+  loadSidebar();
 }
 function paintSessionAgent(agentId) {
   const pool = [].concat(state.library || [], state.liveCards || [], state.agents || []);
@@ -3670,8 +3913,10 @@ function syncComposer() {
   const box = $("#ses-input");
   $("#ses-composer").classList.toggle("disabled", mode === "busy");
   box.disabled = mode === "busy";
+  $("#ses-plus").disabled = mode === "busy";
+  $("#ses-voice").disabled = mode === "busy";
   $("#ses-send").disabled = mode === "busy" || !box.value.trim();
-  box.placeholder = mode === "answer" ? "Type your answer…" : mode === "new" ? "Ask " + state.sessionAgent.title + " something new…" : "The agent is working…";
+  box.placeholder = mode === "answer" ? "Type your answer…" : mode === "new" ? "Ask anything…" : "The agent is working…";
 }
 $("#ses-input").addEventListener("input", () => {
   const box = $("#ses-input");
@@ -3702,7 +3947,40 @@ $("#ses-composer").onsubmit = (e) => {
   $("#ses-input").style.height = "";
   syncComposer();
 };
-new MutationObserver(syncComposer).observe($("#session-live"), { attributes: true, attributeFilter: ["class"], subtree: true, childList: true });
+$("#ses-plus").onclick = () => $("#session-file").click();
+$("#ses-voice").onclick = () => {
+  const Rec = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const button = $("#ses-voice");
+  const box = $("#ses-input");
+  if (!Rec) { box.placeholder = "Voice needs Chrome or Safari"; return; }
+  if (listening) { listening.stop(); return; }
+  const rec = new Rec();
+  listening = rec;
+  rec.lang = "en-US";
+  rec.interimResults = true;
+  const seed = box.value.trim();
+  rec.onstart = () => { button.classList.add("live"); box.placeholder = "Listening…"; };
+  rec.onresult = (event) => {
+    let said = "";
+    for (const result of event.results) said += result[0].transcript;
+    box.value = seed ? seed + " " + said.trim() : said.trim();
+    syncComposer();
+  };
+  rec.onerror = () => { button.classList.remove("live"); listening = null; };
+  rec.onend = () => {
+    button.classList.remove("live");
+    const finished = listening === rec;
+    listening = null;
+    syncComposer();
+    if (finished && box.value.trim() && box.value.trim() !== seed) $("#ses-composer").requestSubmit();
+  };
+  rec.start();
+};
+new MutationObserver(() => {
+  syncComposer();
+  const scroller = document.querySelector(".ses-scroll");
+  if (scroller) scroller.scrollTop = scroller.scrollHeight;
+}).observe($("#session-live"), { attributes: true, attributeFilter: ["class"], subtree: true, childList: true });
 function openEvents(id, cap) {
   if (state.es) state.es.close();
   state.cap = cap;
@@ -3712,7 +3990,10 @@ function openEvents(id, cap) {
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
     const terminal = ["settled", "failed", "cancelled", "timed_out", "budget_exhausted"];
-    if (data.status && terminal.includes(data.status)) $("#cancel").classList.add("hidden");
+    if (data.status && terminal.includes(data.status)) {
+      $("#cancel").classList.add("hidden");
+      loadSidebar();
+    }
     if (data.type === "status" || data.type === "progress") {
       const text = data.text || data.label || data.status || data.type;
       let group = $("#log").lastElementChild;
@@ -3774,10 +4055,16 @@ function openEvents(id, cap) {
     const ask = $("#ask");
     if (data.type !== "settled") $("#session-status").classList.add("live");
     if (data.type === "ask_user") {
-      $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
+      $("#session-status").textContent = "Waiting for you";
       ask.classList.remove("hidden");
       ask.dataset.kind = data.options && data.options.length ? "options" : "text";
       ask.innerHTML = `<p class="ask-label">${data.options && data.options.length ? "Pick one" : "Your answer"}</p>${data.question ? `<p class="ask-q">${esc(data.question)}</p>` : ""}<div class="ask-row"></div>`;
+      if (data.question && ![...$("#log").querySelectorAll(".bubble")].some((bubble) => bubble.textContent.trim() === data.question)) {
+        const said = document.createElement("div");
+        said.className = "bubble agent";
+        said.textContent = data.question;
+        $("#log").appendChild(said);
+      }
       const row = ask.querySelector(".ask-row");
       if (data.options && data.options.length) {
         data.options.forEach((opt) => {
@@ -3795,11 +4082,11 @@ function openEvents(id, cap) {
         send.onclick = () => { if (input.value.trim()) answer(input.value.trim(), data.id); };
         input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
         row.append(input, send);
-        input.focus();
+        $("#ses-input").focus();
       }
     }
     if (data.type === "confirm") {
-      $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
+      $("#session-status").textContent = "Waiting for your approval";
       ask.classList.remove("hidden");
       ask.dataset.kind = "confirm";
       ask.innerHTML = `<p class="ask-label">Approval needed</p>${data.action || data.text ? `<p class="ask-q">${esc(data.action || data.text)}</p>` : ""}<div class="ask-row"></div>`;
@@ -3851,63 +4138,10 @@ async function showReceipt(id) {
   </div>`;
   $("#session-status").classList.remove("live");
   $("#log").classList.add("done");
+  $("#session-live").classList.add("settled");
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
   $("#cancel").classList.add("hidden");
   $("#after-receipt").classList.remove("hidden");
-}
-async function loadAccount() {
-  const [w, conv, sessions, analytics, earnings] = await Promise.all([
-    api("/v1/wallet"),
-    api("/v1/conversations"),
-    api("/v1/sessions").catch(() => ({ sessions: [] })),
-    api("/v1/creator/analytics").catch(() => null),
-    api("/v1/creator/earnings").catch(() => null)
-  ]);
-  const shown = (n) => Math.round(n).toLocaleString("en-US");
-  const name = w.user || "Jaineel";
-  const email = w.email || "";
-  paintAccount(name, email);
-  const granted = w.granted_credits || 0;
-  const used = w.used_credits || 0;
-  const balance = w.balance_credits || 0;
-  const pct = granted > 0 ? Math.round((used / granted) * 100) : 0;
-  const esc = (value) => String(value).replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
-  const when = (ts) => {
-    if (!ts) return "";
-    const date = new Date(String(ts).replace(" ", "T"));
-    if (Number.isNaN(date.getTime())) return "";
-    return date.toLocaleDateString(undefined, { month: "short", day: "numeric" });
-  };
-  const stats = [
-    [shown(granted), "Total credits"],
-    [shown(balance), "Remaining"],
-    [shown(used), "Used"],
-    [pct + "%", "Used of total"]
-  ];
-  $("#account-body").innerHTML = stats.map(([value, label]) => `<div class="acct-stat"><b>${esc(value)}</b><span>${esc(label)}</span></div>`).join("");
-  const orders = sessions.sessions || [];
-  const orderBox = $("#acct-orders");
-  orderBox.innerHTML = orders.length
-    ? orders.slice(0, 8).map((order) => `<button type="button" class="acct-row" data-order="${esc(order.id)}" data-cap="${esc(order.cap_credits)}" data-active="${order.active ? "1" : "0"}"><b>${esc(order.title || "Session")}</b><span>${esc(order.status)} · ${esc(shown(order.price_credits || order.spent_credits || 0))} credits</span></button>`).join("")
-    : `<p class="meta">No orders yet. A paid run shows up here.</p>`;
-  orderBox.querySelectorAll("[data-order]").forEach((button) => {
-    button.onclick = () => openHistory(button.dataset.order, Number(button.dataset.cap), button.dataset.active === "1");
-  });
-  const money = [
-    ["Available", shown((earnings && earnings.available_credits) || 0) + " credits"],
-    ["Clears in", ((earnings && earnings.clearing_days) || 14) + " days"],
-    ["Settled", String((analytics && analytics.settled) || 0)],
-    ["Sessions", String((analytics && analytics.sessions) || orders.length)]
-  ];
-  $("#acct-money").innerHTML = money.map(([label, value]) => `<div class="acct-row"><span>${esc(label)}</span><b>${esc(value)}</b></div>`).join("");
-  const chats = (conv.conversations || []).slice(0, 8);
-  const activity = $("#acct-activity");
-  activity.innerHTML = chats.length
-    ? chats.map((chat) => `<button type="button" class="acct-row" data-chat="${esc(chat.id)}"><b>${esc(chat.title || "New chat")}</b><span>${esc(when(chat.updated_at))}</span></button>`).join("")
-    : `<p class="meta">No chats yet.</p>`;
-  activity.querySelectorAll("[data-chat]").forEach((button) => {
-    button.onclick = () => openConversation(button.dataset.chat);
-  });
 }
 function statusTone(value) {
   const v = String(value || "").toLowerCase();
@@ -3919,38 +4153,66 @@ function confBadge(score, n) {
   const beta = (Number(n) || 0) < 30;
   return `<span class="conf ${beta ? "beta" : "good"}"><b>${esc(score)}</b><span>Confidence${beta ? " · beta" : ""}<br>n ${esc(n)}</span></span>`;
 }
+function scoreLabel(key) {
+  return { Q: "Quality", R: "Reliability", S: "Safety", K: "Cost" }[key] || String(key || "").replaceAll("_", " ");
+}
+function scorePct(n) {
+  const value = Number(n);
+  if (!Number.isFinite(value)) return null;
+  return Math.round(value <= 1 ? value * 100 : value);
+}
+function rateShown(n) {
+  const pct = scorePct(n);
+  return pct == null ? "No live runs yet" : pct + "%";
+}
+function msShown(n) {
+  const value = Number(n) || 0;
+  if (value >= 1000) {
+    const seconds = value / 1000;
+    return (seconds >= 10 ? Math.round(seconds) : Math.round(seconds * 10) / 10) + "s";
+  }
+  return Math.round(value) + " ms";
+}
 function reportCardHtml(card) {
   if (!card) return `<p class="empty">No report card yet.</p>`;
   const scores = card.scores || {};
-  const scoreRows = Object.keys(scores).map((key) => `<div class="kv"><span>${esc(key)}</span><span>${esc(scores[key])}</span></div>`).join("");
+  const order = ["Q", "R", "S", "K"].filter((key) => scores[key] != null).concat(Object.keys(scores).filter((key) => !["Q", "R", "S", "K"].includes(key)));
+  const scoreCards = order.map((key) => {
+    const pct = scorePct(scores[key]);
+    const tone = pct == null ? "" : pct >= 80 ? "" : pct >= 60 ? "mid" : "low";
+    return `<article class="score-card ${tone}"><span>${esc(scoreLabel(key))}</span><b>${pct == null ? "—" : pct}</b><span class="score-bar"><i style="width:${pct == null ? 0 : Math.max(0, Math.min(100, pct))}%"></i></span></article>`;
+  }).join("");
   const findings = (card.findings || []).map((f) => {
-    const m = typeof f.detail === "string" && !f.severity ? f.detail.match(/^\[(\w+)\]\s*(.*)$/) : null;  // admin list sends "[sev] text"
+    const m = typeof f.detail === "string" && !f.severity ? f.detail.match(/^\[(\w+)\]\s*(.*)$/) : null;
     return m ? { severity: m[1], detail: m[2] } : f;
-  }).map((f) => `<li class="finding">${f.severity ? `<span class="sev sev-${esc(f.severity)}">${esc(f.severity)}</span> ` : ""}${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
-  const stages = (card.stages || []).map((s) => `<li class="stage st-${esc(s.status)}">${esc(s.stage)} · ${esc(s.status)} <span class="meta">${esc(s.detail || "")}</span></li>`).join("");
+  }).map((f) => `<li class="finding">${f.severity ? `<span class="sev sev-${esc(f.severity)}">${esc(f.severity)}</span>` : ""}${f.category ? `<span class="finding-cat">${esc(String(f.category).replaceAll("_", " "))}</span>` : ""}<span>${esc(f.detail || (typeof f === "string" ? f : ""))}</span></li>`).join("");
+  const stages = (card.stages || []).map((s) => `<li class="stage st-${esc(s.status)}">${esc(String(s.stage || "").replaceAll("_", " "))} · ${esc(String(s.status || "").replaceAll("_", " "))} <span class="meta">${esc(s.detail || "")}</span></li>`).join("");
   const tests = card.tests || [];
   const passed = tests.filter((t) => t.passed).length;
   const decision = card.decision || "pending";
-  return `<article class="card-block">
-    <p class="rc-decision">Decision <span class="status ${statusTone(decision)}">${esc(decision)}</span></p>
-    ${card.cost_p50_microcredits != null ? `<p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>` : ""}
-    ${card.latency_p50_ms != null ? `<p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>` : ""}
-    ${tests.length ? `<p class="meta">Tests ${passed}/${tests.length} passed</p>` : ""}
-    ${scoreRows ? `<div>${scoreRows}</div>` : card.scores !== undefined ? `<p class="empty">No confidence breakdown yet.</p>` : ""}
-    ${stages ? `<p class="meta">Stages</p><ul class="stage-list">${stages}</ul>` : ""}
-    ${findings ? `<p class="meta">Findings</p><ul class="finding-list">${findings}</ul>` : `<p class="empty">No findings.</p>`}
-  </article>`;
+  const rows = [
+    `<div class="kv"><span>Decision</span><span class="status ${statusTone(decision)}">${esc(String(decision).replaceAll("_", " "))}</span></div>`,
+    card.cost_p50_microcredits != null ? `<div class="kv"><span>Typical cost</span><span>${creditsFine(fromMicro(card.cost_p50_microcredits))}</span></div><div class="kv"><span>High cost</span><span>${creditsFine(fromMicro(card.cost_p90_microcredits))}</span></div>` : "",
+    card.latency_p50_ms != null ? `<div class="kv"><span>Typical time</span><span>${msShown(card.latency_p50_ms)}</span></div><div class="kv"><span>Slowest</span><span>${msShown(card.latency_p95_ms)}</span></div>` : "",
+    tests.length ? `<div class="kv"><span>Tests</span><span>${passed} of ${tests.length} passed</span></div>` : "",
+    card.live_success !== undefined ? `<div class="kv"><span>Live success</span><span>${rateShown(card.live_success)}</span></div>` : "",
+  ].join("");
+  return `${scoreCards ? `<div class="score-grid">${scoreCards}</div>` : ""}
+    <section class="wallet-block"><h3>This run</h3><div class="report-sheet">${rows}</div></section>
+    ${stages ? `<section class="wallet-block"><h3>Checks</h3><ul class="stage-list report-sheet">${stages}</ul></section>` : ""}
+    <section class="wallet-block"><h3>Findings</h3><div class="report-sheet">${findings ? `<ul class="finding-list">${findings}</ul>` : `<p class="empty">No findings.</p>`}</div></section>`;
 }
 function paintCompareBar() {
   let bar = $("#compare-bar");
   if (!bar) {
     bar = document.createElement("div");
     bar.id = "compare-bar";
-    bar.className = "session-tools";
     $("#thread").after(bar);
   }
-  bar.innerHTML = state.picks.length
-    ? `<span class="meta">${state.picks.length} selected. Compare takes 2 or 3. The contract allows at most 3.</span> <button type="button" id="run-compare" ${state.picks.length < 2 ? "disabled" : ""}>Compare</button>`
+  const n = state.picks.length;
+  bar.classList.toggle("show", n > 0);
+  bar.innerHTML = n
+    ? `<span>${n === 1 ? "1 agent selected. Pick one more to compare." : n + " agents selected."}</span><button type="button" id="run-compare" ${n < 2 ? "disabled" : ""}>Compare</button>`
     : "";
   const button = $("#run-compare");
   if (button) button.onclick = runCompare;
@@ -3959,21 +4221,23 @@ async function runCompare() {
   if (state.picks.length < 2) return;
   const data = await api("/v1/compare", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_ids: state.picks.slice(0, 3), task: state.task || "" })});
   const marks = data.highlights || {};
-  const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => key.replaceAll("_", " ")).join(" · ");
-  $("#compare-body").innerHTML = `<div class="grid-3">${(data.agents || []).map((a) => {
+  const markName = { best_value: "Best value", highest_confidence: "Highest confidence", fastest: "Fastest" };
+  const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => markName[key] || key.replaceAll("_", " "));
+  $("#compare-body").innerHTML = `<div class="compare-grid">${(data.agents || []).map((a) => {
     const price = a.price || {};
+    const tags = label(a.id).map((x) => `<span class="hl">${esc(x)}</span>`).join("");
     return `<article class="cmp cmp-agent">
-      <p class="flag">${label(a.id).split(" · ").filter(Boolean).map((x) => `<span class="hl">${esc(x)}</span>`).join(" ")}</p>
-      <div class="cmp-head"><h3>${esc(a.title)}</h3>${confBadge(a.confidence_score, a.confidence_n)}</div>
-      <p class="cmp-sum">${esc(a.summary || "")}</p>
-      <div class="cmp-rows">
-        <div class="kv"><span>Price p50</span><span>${creditsFine(fromMicro(price.low_microcredits))}</span></div>
-        <div class="kv"><span>Price high</span><span>${creditsFine(fromMicro(price.high_microcredits))}</span></div>
+      <div class="cmp-head"><div><h3>${esc(a.title)}</h3><p class="meta">${esc(a.creator_name || a.summary || "")}</p></div>${confBadge(a.confidence_score, a.confidence_n)}</div>
+      <p class="flag">${tags}</p>
+      <div class="report-sheet cmp-rows">
+        <div class="kv"><span>Typical cost</span><span>${creditsFine(fromMicro(price.low_microcredits))}</span></div>
+        <div class="kv"><span>High cost</span><span>${creditsFine(fromMicro(price.high_microcredits))}</span></div>
         <div class="kv"><span>Maximum</span><span>${creditsFine(fromMicro(price.max_microcredits))}</span></div>
-        <div class="kv"><span>Speed p50 / p95</span><span>${esc(a.duration_p50_s)}s / ${esc(a.duration_p95_s)}s</span></div>
+        <div class="kv"><span>Typical time</span><span>${esc(a.duration_p50_s)}s</span></div>
+        <div class="kv"><span>Slowest</span><span>${esc(a.duration_p95_s)}s</span></div>
+        <div class="kv"><span>Live success</span><span>${rateShown(a.success_rate)}</span></div>
       </div>
-      <p class="cmp-badges">${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
-      <div class="cmp-actions"><button type="button" data-start="${a.id}">Start with this agent</button>
+      <div class="cmp-actions"><button type="button" data-start="${a.id}">Use this agent</button>
       <button class="ghost" type="button" data-detail="${a.id}">Report card</button></div>
     </article>`;
   }).join("")}</div>`;
@@ -3984,11 +4248,10 @@ async function runCompare() {
 async function openReport(id) {
   const data = await api("/v1/agents/" + id);
   const live = data.live_stats || data.seeded_live_stats || {};
-  $("#report-body").innerHTML = `<div class="cmp-head report-head"><div><h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p></div>${confBadge(data.confidence_score, data.confidence_n)}</div>
-    <p>${(data.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="empty">No badge</span>`}</p>
-    <p class="meta">Confidence ${esc(data.confidence_score)} · lower bound ${esc(data.confidence_lower_bound)} · n ${esc(data.confidence_n)}</p>
-    <p class="meta">Live success ${live.success_rate == null ? "no live stats yet" : esc(live.success_rate)} · incidents in findings below</p>
-    ${reportCardHtml(Object.assign({}, data.report_card || {}, { tests: (data.report_card && data.report_card.tests) || [] }))}
+  const badges = (data.badges || []).filter((b) => String(b).toLowerCase() !== "beta");
+  $("#report-body").innerHTML = `<div class="library-head report-head"><div><h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p></div>${confBadge(data.confidence_score, data.confidence_n)}</div>
+    ${badges.length ? `<p class="report-tags">${badges.map((b) => `<span class="tag">${esc(b)}</span>`).join("")}</p>` : ""}
+    ${reportCardHtml(Object.assign({}, data.report_card || {}, { tests: (data.report_card && data.report_card.tests) || [], live_success: live.success_rate }))}
     <button type="button" id="report-start">Start with this agent</button>`;
   $("#report-start").onclick = () => openQuote(id);
   show("report");
@@ -4002,23 +4265,42 @@ async function loadWallet() {
     box.innerHTML = `<p class="empty">Your wallet didn't load (${esc(err.message || "network error")}). Try again in a moment.</p>`;
     return;
   }
-  const packs = [["S", "$10", "1,000"], ["M", "$25", "2,750"], ["L", "$50", "5,750"]];
-  const plans = [["plus", "$19 / month", "2,200"], ["pro", "$49 / month", "6,000"]];
-  const trial = (w.entries || []).find((e) => e.label === "Trial credits");
-  box.innerHTML = `<div class="wallet-head">
-      <div><p class="meta">Balance</p><p class="wallet-balance">${creditsFine(w.balance_credits)}</p></div>
-      <button type="button" id="wallet-topup">Add 500 credits</button>
+  const amount = (n) => creditsFine(n).replace(/\s*credits$/, "");
+  const packs = [["S", "Starter", "$10", "1,000"], ["M", "Standard", "$25", "2,750"], ["L", "Studio", "$50", "5,750"]];
+  const plans = [["plus", "Plus", "$19", "2,200"], ["pro", "Pro", "$49", "6,000"]];
+  const offer = (id, name, price, detail, kind) => `<article class="wallet-offer">
+      <span class="offer-kicker">${kind === "pack" ? "Pack " + esc(id) : "Monthly"}</span>
+      <b>${esc(name)}</b>
+      <span class="offer-price">${esc(price)}</span>
+      <span class="offer-meta">${esc(detail)}</span>
+      <button type="button" data-${kind}="${esc(id)}">${kind === "pack" ? "Add" : "Choose"}</button>
+    </article>`;
+  box.innerHTML = `<div class="library-head">
+      <div><h2>Wallet</h2><p class="meta">Credits for sessions. What a run doesn't spend comes back.</p></div>
     </div>
-    <div class="kv"><span>Held for running sessions</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
-    <div class="kv"><span>Granted</span><span>${creditsFine(w.granted_credits)}</span></div>
-    ${trial ? `<div class="kv"><span>Trial credits</span><span>${creditsFine(trial.amount_credits)} · ${esc(new Date(trial.ts).toLocaleDateString())}</span></div>` : ""}
-    <h3>History</h3>
-    <div id="wallet-history" class="tx-list"></div>
-    <button type="button" id="wallet-more" class="ghost hidden">Load more</button>
-    <h3>Packs</h3>
-    <div class="grid-3">${packs.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-pack="${id}">Add ${id}</button></article>`).join("")}</div>
-    <h3>Plans</h3>
-    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>`;
+    <section class="wallet-hero">
+      <div class="wallet-balance">
+        <span class="wallet-kicker">Balance</span>
+        <div class="wallet-balance-row">
+          <p class="wallet-figure"><b>${amount(w.balance_credits)}</b><span>credits</span></p>
+          <button type="button" id="wallet-topup">Add 500 credits</button>
+        </div>
+      </div>
+      <div class="wallet-fact"><span>Held for sessions</span><b>${esc(amount(fromMicro(w.held_microcredits)))}</b><small>Comes back if unused</small></div>
+    </section>
+    <section class="wallet-block">
+      <h3>Packs</h3>
+      <div class="wallet-offers">${packs.map(([id, name, price, credits]) => offer(id, name, price, credits + " credits", "pack")).join("")}</div>
+    </section>
+    <section class="wallet-block">
+      <h3>Plans</h3>
+      <div class="wallet-offers plans">${plans.map(([id, name, price, credits]) => offer(id, name, price + " / month", credits + " credits a month", "plan")).join("")}</div>
+    </section>
+    <section class="wallet-block">
+      <h3>History</h3>
+      <div id="wallet-history" class="tx-list"></div>
+      <button type="button" id="wallet-more" class="ghost hidden">Load more</button>
+    </section>`;
   $("#wallet-topup").onclick = async () => {
     await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
     toast("Added 500 credits.");
@@ -4052,11 +4334,10 @@ async function loadWalletHistory(before) {
   const rows = (page.entries || []).map((e) => {
     const up = e.signed_credits >= 0;
     const when = new Date(e.ts).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    const delta = creditsFine(Math.abs(e.signed_credits)).replace(/\s*credits$/, "");
     return `<div class="tx">
-      <span class="tx-type t-${esc(e.type)}">${esc(names[e.type] || e.type)}</span>
-      <span class="tx-label">${esc(e.label)}<small>${esc(when)}</small></span>
-      <span class="tx-amt ${up ? "pos" : "neg"}">${up ? "+" : "−"}${creditsFine(Math.abs(e.signed_credits))}</span>
-      <span class="tx-bal">${creditsFine(e.balance_after_credits)}</span>
+      <span class="tx-label"><b>${esc(e.label)}</b><small><span class="tx-type t-${esc(e.type)}">${esc(names[e.type] || e.type)}</span> ${esc(when)}</small></span>
+      <span class="tx-side"><span class="tx-amt ${up ? "pos" : ""}">${up ? "+" : "−"}${delta}</span><span class="tx-bal">${creditsFine(e.balance_after_credits)} left</span></span>
     </div>`;
   }).join("");
   if (!before && !rows) {
@@ -4260,29 +4541,41 @@ async function loadAdmin() {
   $("#admin-error").textContent = "";
   if (!state.me) await loadMe();
   if (!hasRole("admin")) {
+    $("#admin-locked").classList.remove("hidden");
+    $("#admin-work").classList.add("hidden");
     $("#admin-metrics").innerHTML = "";
     $("#admin-queue").innerHTML = "";
     $("#admin-body").innerHTML = "";
-    $("#admin-error").textContent = "Admin role required. Sign in as Admin to open Review.";
+    $("#admin-error").textContent = "";
     return;
   }
+  $("#admin-locked").classList.add("hidden");
+  $("#admin-work").classList.remove("hidden");
   const metrics = await api("/v1/admin/metrics");
-  $("#admin-metrics").innerHTML = `<div class="kv"><span>Settled sessions</span><span>${esc(metrics.sessions_settled)}</span></div>
-    <div class="kv"><span>Gross charged</span><span>${creditsFine(fromMicro(metrics.gross_charged_microcredits))}</span></div>
-    <div class="kv"><span>Platform revenue</span><span>${creditsFine(fromMicro(metrics.platform_revenue_microcredits))}</span></div>
-    <div class="kv"><span>Provider cost</span><span>${creditsFine(fromMicro(metrics.provider_cost_microcredits))}</span></div>
-    <div class="kv"><span>Failure rate</span><span>${esc(metrics.failure_rate)}</span></div>`;
+  const amount = (n) => creditsFine(n).replace(/\s*credits$/, "");
+  $("#admin-metrics").innerHTML = `<section class="admin-stats">
+    <div class="admin-stat"><b>${esc(metrics.sessions_settled)}</b><span>Settled sessions</span></div>
+    <div class="admin-stat"><b>${esc(amount(fromMicro(metrics.gross_charged_microcredits)))}</b><span>Gross charged</span></div>
+    <div class="admin-stat"><b>${esc(amount(fromMicro(metrics.platform_revenue_microcredits)))}</b><span>Platform revenue</span></div>
+    <div class="admin-stat"><b>${esc(amount(fromMicro(metrics.provider_cost_microcredits)))}</b><span>Provider cost</span></div>
+    <div class="admin-stat"><b>${esc(metrics.failure_rate)}</b><span>Failure rate</span></div>
+  </section>`;
   const queue = await api("/v1/admin/review-queue");
   const data = await api("/v1/admin/agents");
   const titles = Object.fromEntries((data.agents || []).map((a) => [a.id, a.title]));
   state.adminQueue = Array.isArray(queue) ? queue : [];
-  const queueRows = state.adminQueue.map((row) => `<div class="kv queue-row"><span><b>${esc(titles[row.agent_id] || row.agent_id)}</b> ${esc(row.semver)} · <span class="status ${row.review_decision === "approved" ? "good" : row.review_decision ? "bad" : "beta"}">${esc(row.review_decision ? "checks " + row.review_decision : (row.review_stage || row.status).replaceAll("_", " "))}</span></span><span><button type="button" class="ghost" data-open="${row.version_id}">Open</button> <button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" class="ghost" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
+  const queueRows = state.adminQueue.map((row) => {
+    const label = row.review_decision ? "checks " + row.review_decision : (row.review_stage || row.status || "").replaceAll("_", " ");
+    const tone = row.review_decision === "approved" ? "good" : row.review_decision ? "bad" : "beta";
+    return `<div class="admin-row"><div class="tx-label"><b>${esc(titles[row.agent_id] || row.agent_id)}</b><small>${esc(row.semver)} · <span class="status ${tone}">${esc(label)}</span></small></div><div class="admin-actions"><button type="button" class="ghost" data-open="${row.version_id}">Open</button><button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button><button type="button" class="ghost" data-decision="${row.version_id}" data-choice="rejected">Reject</button></div></div>`;
+  }).join("");
   $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
   state.adminTitles = titles;
-  $("#admin-body").innerHTML = (data.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title)}</h3><p class="meta">${esc(a.status)} · ${esc(a.decision || "")}</p>${reportCardHtml({ decision: a.decision, findings: (a.findings || []).map((f) => ({ detail: f })) })}
-    <button type="button" data-review="${a.version_id}">Run review</button>
-    <button type="button" data-kill="${a.id}">Kill switch</button>
-    <button type="button" data-unpause="${a.id}">Unpause</button></article>`).join("") || `<p class="empty">No agents.</p>`;
+  $("#admin-body").innerHTML = (data.agents || []).map((a) => {
+    const note = [a.status, a.decision].filter(Boolean).join(" · ");
+    const findings = (a.findings || []).slice(0, 2).join(" · ");
+    return `<article class="admin-row"><div class="tx-label"><b>${esc(a.title)}</b><small>${esc(note)}${findings ? " · " + esc(findings) : ""}</small></div><div class="admin-actions"><button type="button" class="ghost" data-review="${a.version_id}">Run review</button><button type="button" data-kill="${a.id}">Pause</button><button type="button" class="ghost" data-unpause="${a.id}">Unpause</button></div></article>`;
+  }).join("") || `<p class="empty">No agents.</p>`;
   $("#admin-queue").querySelectorAll("[data-open]").forEach((b) => b.onclick = () => openQueued(b.dataset.open));
   $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = () => {
     if (b.dataset.choice === "rejected") return openQueued(b.dataset.decision, true);  // a rejection needs notes
@@ -4423,6 +4716,7 @@ $("#creator-form").onsubmit = async (event) => {
     $("#c-submit-note").textContent = err.code === "review rejected" ? err.message : (err.message || "Submit failed.");
   }
 };
+$("#admin-demo").onclick = () => enterDemo("tok_admin");
 $("#refund-form").onsubmit = async (event) => {
   event.preventDefault();
   try {
@@ -4430,27 +4724,6 @@ $("#refund-form").onsubmit = async (event) => {
     $("#refund-note").textContent = "Refunded " + creditsFine(fromMicro(res.refunded_microcredits || 0)) + ".";
   } catch (err) { $("#refund-note").textContent = err.message || "Refund failed."; }
 };
-function enterProduct(view) {
-  sessionStorage.setItem("cohort-entered", "1");
-  $("#landing").classList.add("hidden");
-  if (view) show(view);
-}
-function landingFirst() {
-  const hash = location.hash.replace(/^#/, "");
-  const deep = hash.startsWith("/chat/") || hash === "/account" || hash === "/library" || hash.startsWith("/agent/");
-  if (deep || sessionStorage.getItem("cohort-entered") === "1") $("#landing").classList.add("hidden");
-}
-$("#land-open").onclick = () => enterProduct();
-$("#land-start").onclick = () => enterProduct();
-$("#land-library").onclick = () => enterProduct("library");
-document.querySelectorAll(".land-agents button").forEach((button) => {
-  button.onclick = () => {
-    const sample = agentCatalog()[Number(button.dataset.agent)];
-    enterProduct();
-    if (sample) tryAgent(sample);
-  };
-});
-landingFirst();
 bootAuth();
 
 async function restorePlace() {
@@ -4462,10 +4735,6 @@ async function restorePlace() {
     } catch (err) {
       state.conversation = null;
     }
-  }
-  if (hash === "/account") {
-    await show("account");
-    return;
   }
   if (hash === "/library" || hash.startsWith("/agent/")) {
     await show("library");

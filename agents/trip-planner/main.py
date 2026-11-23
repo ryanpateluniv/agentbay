@@ -11,7 +11,7 @@ TOTAL = 7
 class S(TypedDict, total=False):
     request: str; destination: Optional[str]; days: int; budget: Optional[str]; interests: List[str]
     assumptions: List[str]; research: str; research_note: str
-    outlines: dict; choice: str; plan: str; partial: bool; confirmed: bool
+    outlines: dict; choice: str; plan: str; partial: bool; confirmed: bool; doc: str
 
 def llm(client, model, prompt, temp=0.2):
     r = client.chat.completions.create(model=model, temperature=temp, messages=[{"role": "user", "content": prompt}])
@@ -77,9 +77,10 @@ def make_graph(ctx, client):
 
     def choose(s):
         ctx.progress("Choosing your favourite", 4, TOTAL)
-        ctx.message("Here are three options:\n" + "\n".join(f"{k}) {v}" for k, v in sorted(s["outlines"].items())))
-        c = str(ctx.ask_user("Which option do you prefer?", options=["A", "B", "C"])).strip().upper()[:1]
-        return {"choice": c if c in "ABC" and c else "A"}
+        lines = [f"{k}) {v}" for k, v in sorted(s["outlines"].items())]
+        ctx.message("Here are three ways to spend the trip. Pick one and I will write the day-by-day plan.\n\n" + "\n".join(lines))
+        c = str(ctx.ask_user("Which option do you prefer?", options=lines)).strip().upper()[:1]
+        return {"choice": c if c in "ABC" else "A"}
 
     def detail(s):
         ctx.progress("Building the day-by-day plan", 5, TOTAL)
@@ -95,21 +96,28 @@ def make_graph(ctx, client):
             ctx.message("I reached the budget cap, so the plan is only an outline.")
             return {"partial": True, "plan": f"## Outline only (budget reached)\n\n{outline}"}
 
+    def itinerary_doc(s):
+        head = f"# {s['days']}-day trip to {s['destination']}\n\n**Budget:** {s['budget']}  \n**Style:** option {s['choice']} - {s['outlines'][s['choice']]}\n\n"
+        notes = "".join(f"> {a}\n" for a in s.get("assumptions", [])) + f"> {s['research_note']}\n\n"
+        doc = head + notes + (s.get("plan") or "") + "\n"
+        if s.get("partial"):
+            doc += "\n> This itinerary is partial because the budget cap was reached.\n"
+        return doc
+
     def finalize(s):
         ctx.progress("Confirming with you", 6, TOTAL)
-        return {"confirmed": bool(ctx.confirm("Finalize this itinerary and save it?"))}
+        doc = itinerary_doc(s)
+        ctx.message(doc)
+        return {"doc": doc, "confirmed": bool(ctx.confirm("Save this itinerary?"))}
 
     def save(s):
         ctx.progress("Saving the itinerary", 7, TOTAL)
-        head = f"# {s['days']}-day trip to {s['destination']}\n\n**Budget:** {s['budget']}  \n**Style:** option {s['choice']} - {s['outlines'][s['choice']]}\n\n"
-        notes = "".join(f"> {a}\n" for a in s.get("assumptions", [])) + f"> {s['research_note']}\n\n"
-        doc = head + notes + s["plan"] + "\n"
-        if s.get("partial"): doc += "\n> This itinerary is partial because the budget cap was reached.\n"
+        doc = s.get("doc") or itinerary_doc(s)
         if s["confirmed"]:
             ctx.write_file("itinerary.md", doc)
             ctx.return_result(text=f"Your {s['days']}-day {s['destination']} itinerary is ready." + (" (partial)" if s.get("partial") else ""), files=["itinerary.md"])
         else:
-            ctx.return_result(text="Okay, I did not save anything. Here is the plan for reference:\n\n" + doc)
+            ctx.return_result(text="Okay, I did not save the file. The itinerary is above.")
         return {}
 
     g = StateGraph(S)

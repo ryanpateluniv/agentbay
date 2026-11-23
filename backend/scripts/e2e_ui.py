@@ -54,7 +54,7 @@ with sync_playwright() as p:
 
     def login(token):
         page.goto(BASE + "/")
-        page.evaluate("localStorage.removeItem('cohort-demo-token'); sessionStorage.setItem('cohort-entered', '1')")  # past the landing page
+        page.evaluate("localStorage.removeItem('cohort-demo-token')")
         page.goto(BASE + "/")
         page.wait_for_selector("#auth:not(.hidden)", timeout=10000)
         label = {"tok_sam": "Sam", "tok_riya": "Riya", "tok_admin": "Admin"}[token]
@@ -95,8 +95,6 @@ with sync_playwright() as p:
     @step("Buyer", "Demo login (3 buttons, Sam)", "auth overlay · GET /v1/auth/config, /v1/me, /v1/wallet")
     def _():
         page.goto(BASE + "/")
-        page.wait_for_selector("#landing:not(.hidden)", timeout=10000)
-        page.click("#land-start")  # landing page first, then sign-in
         page.wait_for_selector("#auth:not(.hidden)", timeout=10000)
         btns = page.locator("#auth-options button.auth-quiet").all_inner_texts()
         check(len(btns) == 3, btns)
@@ -205,17 +203,17 @@ with sync_playwright() as p:
         check(note == "Rating saved.", note)
         return note
 
-    @step("Buyer", "Wallet page (balance, history, pack)", "Wallet · GET /v1/wallet, POST /v1/wallet/topup {pack}")
+    @step("Buyer", "Wallet page (balance, history)", "Wallet · GET /v1/wallet, POST /v1/wallet/topup {credits}")
     def _():
         nav("wallet")
-        page.wait_for_selector("#wallet-body .kv", timeout=5000)
-        hist = page.locator("#wallet-body .kv").count()
+        page.wait_for_selector("#wallet-history .tx, #wallet-history .empty", timeout=5000)
+        hist = page.locator("#wallet-history .tx").count()
         b0 = balance()
-        page.locator("#wallet-body [data-pack=S]").dblclick()
+        page.locator("#wallet-topup").click()
         time.sleep(1.5)
         d = balance() - b0
-        check(d == 1000, f"pack S added {d}")
-        return f"{hist} rows; pack S double-click added {d:g} credits once"
+        check(d == 500, f"top-up added {d}")
+        return f"{hist} rows; added {d:g} credits"
 
     @step("Buyer", "Top-up double-click charges once", "account menu Upgrade · POST /v1/wallet/topup {credits}")
     def _():
@@ -307,7 +305,7 @@ with sync_playwright() as p:
                 break
             time.sleep(0.5)
         held = sam0 - balance()
-        page.locator("#admin-body .cmp", has_text="Trip Planner").locator("[data-kill]").click()
+        page.locator("#admin-body .admin-row", has_text="Trip Planner").locator("[data-kill]").click()
         page.wait_for_function("document.querySelector('#admin-error').textContent.startsWith('Paused')", timeout=10000)
         msg = page.locator("#admin-error").inner_text()
         time.sleep(1)
