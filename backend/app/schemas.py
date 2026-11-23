@@ -212,11 +212,33 @@ class Receipt(BaseModel):
     released_credits: float | None = None
 
 
+class WalletEntry(BaseModel):
+    id: str = Field(description="ledger transaction id (use as `before` to page)")
+    type: Literal["bonus", "topup", "hold", "settle", "refund"] | str
+    label: str = Field(description="display text, e.g. 'Held for a session · Trip Planner'")
+    ts: datetime
+    direction: Literal["credit", "debit"]
+    amount_microcredits: int
+    signed_microcredits: int
+    balance_after_microcredits: int
+    amount_credits: float
+    signed_credits: float
+    balance_after_credits: float
+    session_id: str | None = None
+    title: str = ""
+
+
+class WalletHistoryOut(BaseModel):
+    entries: list[WalletEntry]
+    next_before: str | None = None
+
+
 class WalletOut(BaseModel):
     user_id: str
     balance_microcredits: int
     held_microcredits: int = Field(description="currently in escrow for running sessions")
-    history: list[dict[str, Any]]
+    history: list[dict[str, Any]] = Field(description="raw ledger lines (kept for older clients); prefer `entries`")
+    entries: list[WalletEntry] = Field([], description="typed history, newest 20; full list at GET /v1/wallet/history")
     # display conveniences (credits, may be fractional; money of record is the microcredit fields)
     user: str = ""
     email: str = ""

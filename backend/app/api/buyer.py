@@ -310,14 +310,48 @@ def get_receipt(session_id: str, db: DB = Depends(get_db), user: User = Depends(
                 "released_credits": r["released_microcredits"] / MICRO}
 
 
+_LABELS = {"bonus": "Bonus credits", "topup": "Credits added", "hold": "Held for a session",
+           "settle": "Unused hold returned", "refund": "Refund"}
+
+
+def _history_out(db: DB, user_id: str, limit: int = 50, before: str | None = None) -> list[dict]:
+    titles: dict[str, str] = {}
+    out = []
+    for h in ledger.wallet_history(db, user_id, limit, before):
+        sid = h["session_id"]
+        if sid and sid not in titles:
+            s = db.get(Session, sid)
+            v = db.get(AgentVersion, s.agent_version_id) if s else None
+            listing = db.get(Listing, v.agent_id) if v else None
+            titles[sid] = listing.title if listing else ""
+        title = titles.get(sid, "") if sid else ""
+        label = "Trial credits" if h["trial"] else _LABELS.get(h["type"], h["type"])
+        out.append({k: v for k, v in h.items() if k != "trial"} | {
+            "label": label + (f" · {title}" if title else ""), "title": title,
+            "amount_credits": h["amount_microcredits"] / MICRO, "signed_credits": h["signed_microcredits"] / MICRO,
+            "balance_after_credits": h["balance_after_microcredits"] / MICRO})
+    return out
+
+
+@router.get("/wallet/history", response_model=S.WalletHistoryOut,
+            summary="Typed wallet history, newest first (bonus, topup, hold, settle, refund)")
+def wallet_history(limit: int = 50, before: str | None = None, db: DB = Depends(get_db),
+                   user: User = Depends(current_user)):
+    limit = max(1, min(limit, 200))
+    entries = _history_out(db, user.id, limit + 1, before)
+    return {"entries": entries[:limit], "next_before": entries[limit - 1]["id"] if len(entries) > limit else None}
+
+
 @router.get("/wallet", response_model=S.WalletOut)
 def wallet(db: DB = Depends(get_db), user: User = Depends(current_user)):
     acc = ledger.account(db, ledger.BUYER_WALLET, user.id)
     hist = [{"ts": e.ts, "direction": e.direction, "amount_microcredits": e.amount_microcredits, "memo": e.memo,
              "ref_type": e.ref_type, "ref_id": e.ref_id} for e in ledger.history(db, acc.id)]
+    typed = _history_out(db, user.id, 20)
     bal = sessions.balance_summary(db, user.id)
     granted = ledger.granted_total(db, acc.id)
-    return {"user_id": user.id, **bal, "history": hist, "user": user.name or user.email, "email": user.email,
+    return {"user_id": user.id, **bal, "history": hist, "entries": typed, "user": user.name or user.email,
+            "email": user.email,
             "balance_credits": bal["balance_microcredits"] / MICRO, "granted_credits": granted / MICRO,
             "used_credits": max(0, granted - bal["balance_microcredits"] - bal["held_microcredits"]) / MICRO}
 

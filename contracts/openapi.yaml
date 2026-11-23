@@ -851,6 +851,52 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/wallet/history:
+    get:
+      tags:
+      - buyer
+      summary: Typed wallet history, newest first (bonus, topup, hold, settle, refund)
+      operationId: wallet_history_v1_wallet_history_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: before
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Before
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: a session token from /v1/auth/login, demo
+            tok_sam / tok_riya / tok_admin, or a Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: a session token from /v1/auth/login, demo tok_sam
+          / tok_riya / tok_admin, or a Supabase access token when configured'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WalletHistoryOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/wallet:
     get:
       tags:
@@ -3402,6 +3448,94 @@ components:
           description: overrides agent.yaml if given
       type: object
       title: VersionSubmit
+    WalletEntry:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: ledger transaction id (use as `before` to page)
+        type:
+          anyOf:
+          - type: string
+            enum:
+            - bonus
+            - topup
+            - hold
+            - settle
+            - refund
+          - type: string
+          title: Type
+        label:
+          type: string
+          title: Label
+          description: "display text, e.g. 'Held for a session \xB7 Trip Planner'"
+        ts:
+          type: string
+          format: date-time
+          title: Ts
+        direction:
+          type: string
+          enum:
+          - credit
+          - debit
+          title: Direction
+        amount_microcredits:
+          type: integer
+          title: Amount Microcredits
+        signed_microcredits:
+          type: integer
+          title: Signed Microcredits
+        balance_after_microcredits:
+          type: integer
+          title: Balance After Microcredits
+        amount_credits:
+          type: number
+          title: Amount Credits
+        signed_credits:
+          type: number
+          title: Signed Credits
+        balance_after_credits:
+          type: number
+          title: Balance After Credits
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+        title:
+          type: string
+          title: Title
+          default: ''
+      type: object
+      required:
+      - id
+      - type
+      - label
+      - ts
+      - direction
+      - amount_microcredits
+      - signed_microcredits
+      - balance_after_microcredits
+      - amount_credits
+      - signed_credits
+      - balance_after_credits
+      title: WalletEntry
+    WalletHistoryOut:
+      properties:
+        entries:
+          items:
+            $ref: '#/components/schemas/WalletEntry'
+          type: array
+          title: Entries
+        next_before:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Next Before
+      type: object
+      required:
+      - entries
+      title: WalletHistoryOut
     WalletOut:
       properties:
         user_id:
@@ -3420,6 +3554,14 @@ components:
             type: object
           type: array
           title: History
+          description: raw ledger lines (kept for older clients); prefer `entries`
+        entries:
+          items:
+            $ref: '#/components/schemas/WalletEntry'
+          type: array
+          title: Entries
+          description: typed history, newest 20; full list at GET /v1/wallet/history
+          default: []
         user:
           type: string
           title: User

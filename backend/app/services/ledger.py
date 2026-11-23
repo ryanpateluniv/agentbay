@@ -241,6 +241,37 @@ def history(db: DB, account_id: str, limit: int = 50) -> list[LedgerEntry]:
                            .order_by(LedgerEntry.id.desc()).limit(limit)))
 
 
+HISTORY_TYPES = {"promo": "bonus", "topup": "topup", "hold": "hold", "extend": "hold", "settle": "settle",
+                 "refund": "refund"}
+
+
+def wallet_history(db: DB, user_id: str, limit: int = 50, before: str | None = None) -> list[dict]:
+    """The buyer wallet as typed entries, newest first: one entry per ledger transaction (net for that wallet),
+    with the wallet balance right after it. Types: bonus, topup, hold, settle, refund."""
+    acc = account(db, BUYER_WALLET, user_id)
+    rows = db.execute(select(LedgerEntry, LedgerTxn).join(LedgerTxn, LedgerTxn.id == LedgerEntry.txn_id)
+                      .where(LedgerEntry.account_id == acc.id).order_by(LedgerEntry.id)).all()
+    by_txn: dict[str, dict] = {}
+    for e, txn in rows:
+        signed = e.amount_microcredits if e.direction == "credit" else -e.amount_microcredits
+        item = by_txn.setdefault(txn.id, {"txn": txn, "net": 0})
+        item["net"] += signed
+    out, running = [], 0
+    for item in by_txn.values():
+        txn, net = item["txn"], item["net"]
+        running += net
+        out.append({"id": txn.id, "type": HISTORY_TYPES.get(txn.kind, txn.kind), "ts": txn.ts,
+                    "direction": "credit" if net >= 0 else "debit", "amount_microcredits": abs(net),
+                    "signed_microcredits": net, "balance_after_microcredits": running,
+                    "session_id": txn.ref_id if txn.ref_type == "session" else None,
+                    "trial": txn.kind == "promo" and txn.idempotency_key.startswith(("trial:", "seed:promo:"))})
+    out.reverse()
+    if before:
+        ids = [o["id"] for o in out]
+        out = out[ids.index(before) + 1:] if before in ids else []
+    return out[:limit]
+
+
 def granted_total(db: DB, account_id: str) -> int:
     """Credits ever added to a wallet from outside (promos and purchases), excluding escrow releases/refunds."""
     return int(db.scalar(select(func.coalesce(func.sum(LedgerEntry.amount_microcredits), 0)).join(
