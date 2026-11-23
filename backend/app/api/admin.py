@@ -64,7 +64,7 @@ async def kill(agent_id: str, db: DB = Depends(get_db), user: User = Depends(adm
             pass
     await asyncio.sleep(0.5)
     audit(db, user, "kill_switch", agent.id, {"cancelled_sessions": ids})
-    return {"agent_id": agent.id, "status": agent.status, "cancelled_sessions": ids}
+    return {"agent_id": agent.id, "status": agent.status, "cancelled_sessions": ids, "refunded_sessions": ids}
 
 
 @router.post("/agents/{agent_id}/unpause")

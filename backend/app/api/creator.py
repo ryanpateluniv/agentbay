@@ -185,7 +185,13 @@ def analytics(db: DB = Depends(get_db), user: User = Depends(creator)):
                   "rating_avg": (listing.live_stats_json or {}).get("rating_avg"),
                   "rating_n": (listing.live_stats_json or {}).get("rating_n", 0),
                   "seeded_live_stats": listing.live_stats_json}
-    return {"agents": list(per.values())}
+    rows = list(per.values())
+    mine = list(db.scalars(_creator_sessions(db, user)))
+    return {"agents": rows, "sessions": sum(r["sessions"] for r in rows),
+            # totals over this creator's own settled sessions (fees paid to the platform, model and tool cost)
+            "revenue_credits": sum(s.price for s in mine) / 1000, "earnings_credits": sum(s.creator_earnings for s in mine) / 1000,
+            "platform_revenue_credits": sum(s.fee for s in mine) / 1000,
+            "provider_cost_credits": sum(s.cost for s in mine) / 1000}
 
 
 @router.get("/agents/{agent_id}/logs", summary="The creator's own debug logs (ctx.log)")
@@ -209,7 +215,10 @@ def earnings(db: DB = Depends(get_db), user: User = Depends(creator)):
     paid = int(db.scalar(select(func.coalesce(func.sum(Payout.amount), 0)).where(Payout.creator_id == user.id)))
     return {"accrued_microcredits": balance + paid, "clearing_microcredits": min(clearing, balance),
             "available_microcredits": max(0, balance - clearing), "paid_out_microcredits": paid,
-            "balance_microcredits": balance}
+            "balance_microcredits": balance, "clearing_days": 14,
+            # display conveniences. The demo has no real clearing delay, so "available" shown to the UI is the balance.
+            "available_credits": balance / 1000, "accrued_credits": (balance + paid) / 1000,
+            "clearing_credits": min(clearing, balance) / 1000}
 
 
 @router.post("/payouts", status_code=201, summary="Simulated payout (clearing window not enforced in the demo)")

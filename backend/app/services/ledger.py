@@ -239,3 +239,11 @@ def payout(db: DB, creator_id: str, amount: int, payout_id: str) -> LedgerTxn:
 def history(db: DB, account_id: str, limit: int = 50) -> list[LedgerEntry]:
     return list(db.scalars(select(LedgerEntry).where(LedgerEntry.account_id == account_id)
                            .order_by(LedgerEntry.id.desc()).limit(limit)))
+
+
+def granted_total(db: DB, account_id: str) -> int:
+    """Credits ever added to a wallet from outside (promos and purchases), excluding escrow releases/refunds."""
+    return int(db.scalar(select(func.coalesce(func.sum(LedgerEntry.amount_microcredits), 0)).join(
+        LedgerTxn, LedgerTxn.id == LedgerEntry.txn_id).where(
+        LedgerEntry.account_id == account_id, LedgerEntry.direction == "credit",
+        LedgerTxn.kind.in_(("promo", "topup")))))

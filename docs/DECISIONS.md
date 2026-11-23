@@ -43,3 +43,12 @@ One line each, with the reason.
 - The platform's own LLM use is configured under `platform:` in models.yaml. The review judge uses `fast` (luna). Injection/exfiltration probes, search and quotes make no LLM calls (string checks, TF-IDF and platform statistics), and canaries are simulated, so luna is the only model the platform itself calls.
 - Seed default `models_allowed` for listings without their own agent.yaml is now [fast, balanced].
 - Real-mode safety caps are unchanged at REAL_MAX_USD_PER_SESSION=0.25 and REAL_MAX_USD_PER_RUN=2.00 (env-configurable). "Run" = one server process, so a fresh `make dev` + `make demo` is one demo run.
+- Frontend compatibility (see docs/FRONTEND_REVIEW.md). The backend adapts to `frontend/index.html` rather than the other way round, because the frontend was built against a different shape and only the backend owner could fix it quickly:
+  - The backend serves `frontend/index.html` at `/`, so the app runs on one port (the frontend uses relative paths) and there's no CORS.
+  - New routes outside Section 13: `GET /v1/auth/config`, `/v1/conversations*` (discovery chat over search; templated reply, no LLM cost), `GET /v1/admin/agents`, `POST /v1/admin/versions/{v}/review` (synchronous re-run).
+  - Auth: Supabase access tokens are verified via `{SUPABASE_URL}/auth/v1/user` and mapped by email to a user (buyer + creator, 200 trial credits; `ADMIN_EMAILS` get admin). Demo tokens are unchanged.
+  - SSE: `?access_token=` is accepted. With it (or `?flat=true`) frames are unnamed and flattened, because the frontend only uses `onmessage`. Named frames remain the default. A settled, fully delivered stream answers 204 so EventSource stops reconnecting.
+  - Display-only `*_credits` fields added to wallet, quote, receipt, creator analytics/earnings. Money of record stays `*_microcredits`.
+  - `POST /v1/sessions` also accepts `{agent_id, task, cap_credits}` (implicit quote). `POST /v1/wallet/topup` also accepts `{credits}` (mock, 1–10,000). Kill returns `refunded_sessions`.
+  - `GET /v1/sessions` now returns `{sessions: [...]}` with `title`, `active`, `cap_credits` (breaking for that backend-only extra endpoint; nothing else used it).
+  - `POST /v1/conversations/{id}/stream` is authorised by the unguessable conversation id, because the frontend sends no auth header there.

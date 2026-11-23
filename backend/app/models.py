@@ -351,3 +351,15 @@ class AuditLog(Base):
     target: Mapped[str] = mapped_column(String(100))
     details: Mapped[dict] = mapped_column(JSON, default=dict)
     ts: Mapped[datetime] = mapped_column(DateTime, default=now)
+
+
+class Conversation(Base):
+    """Discovery chat: the buyer describes a task, the platform answers with a shortlist (Section 9)."""
+    __tablename__ = "conversations"
+    id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: "cnv_" + secrets.token_urlsafe(12))
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    title: Mapped[str] = mapped_column(String(200), default="New chat")
+    task: Mapped[str] = mapped_column(Text, default="")
+    messages: Mapped[list] = mapped_column(JSON, default=list)
+    agents: Mapped[list] = mapped_column(JSON, default=list)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=now)

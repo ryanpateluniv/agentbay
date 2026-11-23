@@ -109,13 +109,19 @@ class QuoteOut(BaseModel):
     pricing_model: str
     expires_at: datetime
     agent_notes: dict[str, Any] = {}
+    low_credits: float | None = None
+    high_credits: float | None = None
+    maximum: float | None = Field(None, description="max in credits (display convenience)")
 
 
 # ---------- sessions ----------
 
 class SessionCreate(BaseModel):
-    quote_id: str
+    quote_id: str | None = Field(None, description="required unless agent_id + task are given (then a quote is made)")
     cap_microcredits: int | None = Field(None, description="defaults to the quote's p90")
+    agent_id: str | None = Field(None, description="frontend convenience: quote and start in one call")
+    task: str | None = None
+    cap_credits: float | None = Field(None, description="frontend convenience: cap in credits (converted to microcredits)")
     files: list[dict[str, str]] = Field(default=[], description="[{name, content_base64}] input files")
 
 
@@ -145,6 +151,7 @@ class SessionOut(BaseModel):
     result_text: str | None
     files: list[dict[str, Any]]
     pending_question: dict[str, Any] | None
+    session_id: str | None = Field(None, description="alias of id (returned on create)")
 
 
 class BuyerMessage(BaseModel):
@@ -190,6 +197,13 @@ class Receipt(BaseModel):
     usage: dict[str, Any]
     lines: list[ReceiptLine]
     ledger: list[dict[str, Any]]
+    # display conveniences in credits
+    price_credits: float | None = None
+    cost_credits: float | None = None
+    fee_credits: float | None = None
+    earnings_credits: float | None = None
+    cap_credits: float | None = None
+    released_credits: float | None = None
 
 
 class WalletOut(BaseModel):
@@ -197,10 +211,16 @@ class WalletOut(BaseModel):
     balance_microcredits: int
     held_microcredits: int = Field(description="currently in escrow for running sessions")
     history: list[dict[str, Any]]
+    # display conveniences (credits, may be fractional; money of record is the microcredit fields)
+    user: str = ""
+    balance_credits: float = 0
+    granted_credits: float = Field(0, description="all credits ever added (promo + purchases)")
+    used_credits: float = Field(0, description="granted - balance - held")
 
 
 class TopupIn(BaseModel):
-    pack: Literal["S", "M", "L"]
+    pack: Literal["S", "M", "L"] | None = None
+    credits: int | None = Field(None, gt=0, le=10_000, description="mock top-up of an exact credit amount (demo)")
 
 
 class SubscriptionIn(BaseModel):

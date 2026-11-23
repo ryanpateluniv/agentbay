@@ -19,7 +19,7 @@ make demo         # scripted end-to-end demo against the running server (second 
 ```
 
 You need Python 3.11+. Nothing else is required, because `LLM_MODE=fake` (the default) runs fully offline with deterministic replies and realistic token counts.
-API docs are at http://localhost:8000/docs. The health check is `GET /health`.
+**The frontend is served by the backend at http://localhost:8000/** (one port, no CORS); see `docs/FRONTEND_REVIEW.md`. Its login needs `SUPABASE_URL` and `SUPABASE_ANON_KEY` in `.env` (plus `ADMIN_EMAILS` for the admin view) until it gets a demo-token login. API docs are at http://localhost:8000/docs. The health check is `GET /health`.
 
 **Demo accounts** (header `Authorization: Bearer <token>`):
 

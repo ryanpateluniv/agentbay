@@ -34,3 +34,7 @@ _Updated 2026-11-22 ~19:30_
 - Real Invoice Auditor session: $0.0009 (was $0.0074 with astra). Metering matched OpenAI exactly.
 - One full real `make demo`: about $0.0057 (was about $0.036). The Trip Planner's single `strong` (terra) call is about 90% of it; the luna judge costs about $0.0001.
 - All real calls so far: about $0.050, plus about $0.0003 of earlier model probes.
+
+## Frontend integration (2026-11-22)
+- Reviewed `frontend/index.html` (`docs/FRONTEND_REVIEW.md`). Backend compatibility layer added and served at http://localhost:8000/. 44 tests passing (2 replay the frontend's exact calls).
+- Blocked on the frontend side: login needs Supabase keys or a demo-token login; `confirm` events have no UI (the Trip Planner hangs at its approval step).

@@ -13,6 +13,9 @@ data: {"id": 42, "type": "message", "role": "agent", "ts": "2026-11-22T14:03:11Z
 ```
 
 The stream replays all past events first (send `Last-Event-ID` to resume) and closes after `settled`.
+Once a session is settled and everything has been delivered, the endpoint answers **204**, which makes EventSource stop reconnecting.
+
+**Flat mode** (`?access_token=…` or `?flat=true`, used by `frontend/index.html`): frames have **no `event:` line**, so `EventSource.onmessage` receives them all. `data` is flattened: `{id, type, role, ts, text, ...payload, <x>_credits for every <x>_microcredits}`. For example, `status` has `text`, `spend` has `spent_credits` and `cap_credits`, `ask_user` and `confirm` have `text` = the question or action, and `settled` has `refunded`.
 Polling fallback: `GET /v1/sessions/{id}/history?after=<id>` returns the same objects as JSON.
 
 | type | role | data |

@@ -18,10 +18,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -95,10 +97,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -130,10 +134,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -173,10 +179,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -211,7 +219,8 @@ paths:
     get:
       tags:
       - buyer
-      summary: Buyer's session history
+      summary: 'Buyer''s session history: {sessions: [SessionOut + title, active,
+        cap_credits]}'
       operationId: list_sessions_v1_sessions_get
       parameters:
       - name: authorization
@@ -219,20 +228,18 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SessionOut'
-                title: Response List Sessions V1 Sessions Get
+              schema: {}
         '422':
           description: Validation Error
           content:
@@ -257,10 +264,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -279,6 +288,13 @@ paths:
       tags:
       - buyer
       summary: SSE stream (see contracts/EVENTS.md)
+      description: 'Named frames by default (`event: <type>`, data = {id, type, role,
+        ts, data}). `flat=true` (implied by
+
+        `?access_token=`, which the bundled frontend uses) sends unnamed frames with
+        the payload flattened and
+
+        `*_credits` conveniences, so `EventSource.onmessage` sees every event.'
       operationId: session_events_v1_sessions__session_id__events_get
       parameters:
       - name: session_id
@@ -295,6 +311,22 @@ paths:
           - type: string
           - type: 'null'
           title: Token
+      - name: access_token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Access Token
+      - name: flat
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Flat
       - name: last-event-id
         in: header
         required: false
@@ -341,10 +373,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -375,10 +409,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -416,10 +452,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -465,10 +503,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -512,10 +552,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -556,6 +598,14 @@ paths:
           - type: string
           - type: 'null'
           title: Token
+      - name: access_token
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Access Token
       responses:
         '200':
           description: Successful Response
@@ -586,10 +636,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -626,10 +678,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -666,10 +720,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -695,10 +751,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -732,10 +790,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -766,10 +826,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -800,10 +862,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -828,10 +892,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -855,10 +921,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -895,10 +963,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -941,10 +1011,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -975,10 +1047,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1021,10 +1095,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1055,10 +1131,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1083,10 +1161,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1117,10 +1197,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1145,10 +1227,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1173,10 +1257,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1207,10 +1293,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1241,10 +1329,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1281,10 +1371,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1315,10 +1407,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1349,10 +1443,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1383,10 +1479,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1416,10 +1514,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1444,10 +1544,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1478,10 +1580,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1512,10 +1616,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       requestBody:
         required: true
         content:
@@ -1546,10 +1652,12 @@ paths:
         required: false
         schema:
           type: string
-          description: Bearer <user token>, e.g. Bearer tok_sam
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
           default: ''
           title: Authorization
-        description: Bearer <user token>, e.g. Bearer tok_sam
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -1698,6 +1806,214 @@ paths:
               type: object
               additionalProperties: true
               title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/auth/config:
+    get:
+      tags:
+      - frontend
+      summary: Public auth config for the frontend (Supabase URL + anon key, if set)
+      operationId: auth_config_v1_auth_config_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /v1/conversations:
+    post:
+      tags:
+      - frontend
+      summary: Create Conversation
+      operationId: create_conversation_v1_conversations_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - frontend
+      summary: List Conversations
+      operationId: list_conversations_v1_conversations_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/conversations/{conversation_id}:
+    get:
+      tags:
+      - frontend
+      summary: Get Conversation
+      operationId: get_conversation_v1_conversations__conversation_id__get
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conversation Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/conversations/{conversation_id}/stream:
+    post:
+      tags:
+      - frontend
+      summary: 'Send a task message; SSE data frames {type: thinking|reply|done}.
+        The unguessable conversation id authorises the call (the frontend sends no
+        auth header here).'
+      operationId: stream_conversation_v1_conversations__conversation_id__stream_post
+      parameters:
+      - name: conversation_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Conversation Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              title: Body
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/agents:
+    get:
+      tags:
+      - frontend
+      summary: All agents with their current version's review decision and findings
+      operationId: admin_agents_v1_admin_agents_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/admin/versions/{version_id}/review:
+    post:
+      tags:
+      - frontend
+      summary: Re-run the review pipeline and wait for the result
+      operationId: rerun_review_v1_admin_versions__version_id__review_post
+      parameters:
+      - name: version_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Version Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a
+            Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: demo tok_sam / tok_riya / tok_admin, or a Supabase
+          access token when configured'
       responses:
         '200':
           description: Successful Response
@@ -2272,6 +2588,22 @@ components:
           type: object
           title: Agent Notes
           default: {}
+        low_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Low Credits
+        high_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: High Credits
+        maximum:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Maximum
+          description: max in credits (display convenience)
       type: object
       required:
       - id
@@ -2369,6 +2701,36 @@ components:
             type: object
           type: array
           title: Ledger
+        price_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Price Credits
+        cost_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cost Credits
+        fee_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Fee Credits
+        earnings_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Earnings Credits
+        cap_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cap Credits
+        released_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Released Credits
       type: object
       required:
       - session_id
@@ -2536,14 +2898,35 @@ components:
     SessionCreate:
       properties:
         quote_id:
-          type: string
+          anyOf:
+          - type: string
+          - type: 'null'
           title: Quote Id
+          description: required unless agent_id + task are given (then a quote is
+            made)
         cap_microcredits:
           anyOf:
           - type: integer
           - type: 'null'
           title: Cap Microcredits
           description: defaults to the quote's p90
+        agent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Agent Id
+          description: 'frontend convenience: quote and start in one call'
+        task:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Task
+        cap_credits:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Cap Credits
+          description: 'frontend convenience: cap in credits (converted to microcredits)'
         files:
           items:
             additionalProperties:
@@ -2554,8 +2937,6 @@ components:
           description: '[{name, content_base64}] input files'
           default: []
       type: object
-      required:
-      - quote_id
       title: SessionCreate
     SessionOut:
       properties:
@@ -2621,6 +3002,12 @@ components:
             type: object
           - type: 'null'
           title: Pending Question
+        session_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Session Id
+          description: alias of id (returned on create)
       type: object
       required:
       - id
@@ -2707,15 +3094,23 @@ components:
     TopupIn:
       properties:
         pack:
-          type: string
-          enum:
-          - S
-          - M
-          - L
+          anyOf:
+          - type: string
+            enum:
+            - S
+            - M
+            - L
+          - type: 'null'
           title: Pack
+        credits:
+          anyOf:
+          - type: integer
+            maximum: 10000.0
+            exclusiveMinimum: 0.0
+          - type: 'null'
+          title: Credits
+          description: mock top-up of an exact credit amount (demo)
       type: object
-      required:
-      - pack
       title: TopupIn
     ValidationError:
       properties:
@@ -2788,6 +3183,24 @@ components:
             type: object
           type: array
           title: History
+        user:
+          type: string
+          title: User
+          default: ''
+        balance_credits:
+          type: number
+          title: Balance Credits
+          default: 0
+        granted_credits:
+          type: number
+          title: Granted Credits
+          description: all credits ever added (promo + purchases)
+          default: 0
+        used_credits:
+          type: number
+          title: Used Credits
+          description: granted - balance - held
+          default: 0
       type: object
       required:
       - user_id
