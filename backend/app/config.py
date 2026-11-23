@@ -38,6 +38,11 @@ class Settings:
     sdk_dir = REPO_ROOT / "sdk" / "python"
     agents_dir = Path(_env("AGENTS_DIR", str(REPO_ROOT / "agents")))
     review_on_boot = _env("REVIEW_ON_BOOT", "1") == "1"
+    db_pool_size = int(_env("DB_POOL_SIZE", "20"))
+    db_max_overflow = int(_env("DB_MAX_OVERFLOW", "30"))
+    db_pool_timeout = int(_env("DB_POOL_TIMEOUT", "60"))
+    review_concurrency = int(_env("REVIEW_CONCURRENCY", "3"))  # reviews running at once
+    review_case_concurrency = int(_env("REVIEW_CASE_CONCURRENCY", "3"))  # test-case sessions at once per review
     trial_credits = int(_env("TRIAL_CREDITS", "500"))  # granted once to every new account
     session_days = int(_env("SESSION_DAYS", "30"))  # review versions left in "submitted" (seeded scam agent)
 

@@ -11,7 +11,7 @@ from sqlalchemy.orm import Session as DB
 
 from ..auth import SUPABASE_ANON_KEY, SUPABASE_URL, current_user, require_role, supabase_configured
 from ..config import MICRO, REPO_ROOT
-from ..db import SessionLocal, get_db
+from ..db import SessionLocal, get_db, release
 from ..models import Agent, AgentVersion, Conversation, Listing, ReviewFinding, ReviewRun, User
 from ..services import catalog, review
 
@@ -157,7 +157,8 @@ async def rerun_review(version_id: str, db: DB = Depends(get_db), user: User = D
         run_id = review.start_review(version_id)
         if key:
             _REVIEW_RUNS[key] = run_id
-    for _ in range(600):
+    for _ in range(1200):  # queued reviews wait for a free slot, so allow up to 6 minutes
+        release(db)  # don't hold a pooled connection while waiting
         await asyncio.sleep(0.3)
         db.expire_all()
         run = db.get(ReviewRun, run_id)

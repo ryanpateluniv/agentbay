@@ -18,6 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session as DB
 
 from ..config import settings
+from ..db import release
 from ..models import Agent, AgentVersion, ModelPrice, PlatformSetting, Session, SessionToken, ToolPrice, UsageEvent, now
 from . import sessions, upstream
 from .pricing import llm_cost, max_output_tokens
@@ -192,6 +193,7 @@ async def chat_completion(db: DB, authorization: str, body: dict, idem: str | No
         if settings.llm_mode == "fake":
             json_mode = (body.get("response_format") or {}).get("type") == "json_object"
             text, t_in, t_out = fake_completion(alias, messages, max_tokens, json_mode)
+            release(db)
             await asyncio.sleep(0.15 + t_out / 3000)
             cost = _bill(db, s, tok, idem, alias, price, t_in, t_out, int((time.monotonic() - t0) * 1000))
             return _response("chatcmpl-fake-" + hashlib.sha256(text.encode()).hexdigest()[:12], alias, text,
@@ -204,6 +206,7 @@ async def chat_completion(db: DB, authorization: str, body: dict, idem: str | No
         except upstream.UpstreamError as e:
             raise ProxyError(e.status, e.code, e.message)
         actual = 0
+        release(db)
         try:
             data = await upstream.complete(upstream.build_payload(body, price, max_tokens, stream=False))
             upstream.log_usage(s.id, data, alias)
@@ -238,6 +241,7 @@ async def chat_completion_stream(db: DB, authorization: str, body: dict, idem: s
     billed) and end the stream with an error chunk."""
     tok, s, alias, price = _prepare(db, authorization, body)
     _clamp(db, tok, s, price, None)  # fail fast with 402 before the stream starts
+    release(db)
     idem = idem or "llm_" + secrets.token_hex(8)
     cid = "chatcmpl-" + secrets.token_hex(6)
 

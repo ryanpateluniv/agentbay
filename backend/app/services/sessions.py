@@ -13,7 +13,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session as DB
 
 from ..config import MICRO, settings
-from ..db import SessionLocal
+from ..db import SessionLocal, release
 from ..models import (Agent, AgentVersion, Listing, LedgerEntry, Quote, Session, SessionFile, SessionToken,
                       UsageEvent, now)
 from . import events, ledger, runtime
@@ -231,6 +231,7 @@ async def run_session(session_id: str):
         if live.cancelled:
             outcome = "cancelled"
             return
+        release(db)
         try:
             live.sandbox = await runtime.start(s.id, agent, v, env)
         except Exception as e:  # noqa: BLE001
@@ -247,10 +248,12 @@ async def run_session(session_id: str):
         if agent.mode == "external":  # Mode B: hand over a proxy key so it can route model calls through us
             body["proxy"] = {"base_url": env["MARKETPLACE_LLM_BASE_URL"], "api_key": key}
         minutes = min(int((v.limits_json or {}).get("max_session_minutes", 20)), settings.max_session_minutes_platform)
+        release(db)
         try:
             async with asyncio.timeout(minutes * 60):
                 async for ev in live.sandbox.invoke_stream(body):
                     await _handle_agent_event(db, s, live, ev)
+                    release(db)  # nothing held while the agent works on the next event
                     if ev.get("type") in ("result", "error"):
                         break
         except TimeoutError:
@@ -278,14 +281,20 @@ async def run_session(session_id: str):
             outcome, reason = "cancelled", None
         elif outcome == "failed" and live.budget_exhausted:
             outcome, reason = "budget_exhausted", None
-        if live.sandbox:
-            await live.sandbox.stop()
         try:
-            finalize(db, session_id, outcome, reason)
+            db.rollback()  # drop anything half-done (e.g. a cancelled write) and return the connection
         except Exception:  # noqa: BLE001
-            log.exception("finalize failed for %s", session_id)
-        db.close()
-        LIVE.pop(session_id, None)
+            log.exception("rollback failed for %s", session_id)
+        try:
+            if live.sandbox:
+                await live.sandbox.stop()
+        except Exception:  # noqa: BLE001
+            log.exception("sandbox stop failed for %s", session_id)
+        try:
+            finalize_safely(session_id, outcome, reason, db=db)
+        finally:
+            db.close()
+            LIVE.pop(session_id, None)
 
 
 async def _handle_agent_event(db: DB, s: Session, live: Live, ev: dict):
@@ -344,6 +353,7 @@ async def deliver_message(db: DB, s: Session, text: str, reply_to: str | None):
     events.publish(s.id, "buyer_message", {"text": text, "reply_to": reply_to}, role="buyer", db=db)
     if s.status == "waiting_for_user" and not live.pending:
         _set_status(db, s, "running")
+    release(db)
     await live.sandbox.send({"type": "message", "session_id": s.id, "text": text, "reply_to": reply_to})
 
 
@@ -355,6 +365,7 @@ async def deliver_confirm(db: DB, s: Session, confirm_id: str, approved: bool):
     events.publish(s.id, "buyer_confirm", {"confirm_id": confirm_id, "approved": approved}, role="buyer", db=db)
     if not live.pending:
         _set_status(db, s, "running")
+    release(db)
     await live.sandbox.send({"type": "confirm", "session_id": s.id, "reply_to": confirm_id, "approved": approved})
 
 
@@ -363,10 +374,11 @@ async def cancel(db: DB, s: Session, kill_refund: bool = False):
         raise SessionError(409, "not_active", f"session is {s.status}")
     live = LIVE.get(s.id)
     if live is None or live.task is None or live.task.done():
-        finalize(db, s.id, "cancelled", "cancelled", force_refund=kill_refund)  # orphaned (e.g. server restart)
+        finalize_safely(s.id, "cancelled", "cancelled", db=db, force_refund=kill_refund)  # orphaned (e.g. restart)
         return
     live.cancelled = True
     live.kill_refund = live.kill_refund or kill_refund
+    release(db)
     if live.sandbox:
         await live.sandbox.cancel()
         await asyncio.sleep(0.3)
@@ -453,6 +465,28 @@ def finalize(db: DB, session_id: str, outcome: str, reason: str | None = None, f
         _update_live_stats(db, agent, outcome, s)
     events.publish(s.id, "settled", receipt(db, s), db=db)
     return s
+
+
+def finalize_safely(session_id: str, outcome: str, reason: str | None = None, db: DB | None = None,
+                    force_refund: bool = False):
+    """finalize() that can't leave a session stuck: on any error, roll back and retry once on a fresh DB session.
+    Settlement is idempotent per session (ledger keys), so a retry never double-charges."""
+    for attempt in (1, 2):
+        own = db is None or attempt == 2
+        sess = SessionLocal() if own else db
+        try:
+            return finalize(sess, session_id, outcome, reason, force_refund)
+        except Exception:  # noqa: BLE001
+            log.exception("finalize failed for %s (attempt %d)", session_id, attempt)
+            try:
+                sess.rollback()
+            except Exception:  # noqa: BLE001
+                pass
+        finally:
+            if own:
+                sess.close()
+    log.error("session %s could not be finalized; it is refunded on the next restart", session_id)
+    return None
 
 
 def _update_live_stats(db: DB, agent: Agent, outcome: str, s: Session):

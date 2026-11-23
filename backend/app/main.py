@@ -11,7 +11,7 @@ from .config import settings
 from .db import SessionLocal, init_db
 from .models import AgentVersion, Session
 from .services import events, nocode, review, runtime
-from .services.sessions import ACTIVE, finalize
+from .services.sessions import ACTIVE, finalize_safely
 
 logging.basicConfig(level=logging.INFO)
 
@@ -23,13 +23,22 @@ async def lifespan(app: FastAPI):
     runtime.reap_orphans()
     # Sessions that were mid-flight when the server died: their sandboxes are gone, refund them.
     db = SessionLocal()
-    for s in db.query(Session).filter(Session.status.in_(ACTIVE)).all():
-        finalize(db, s.id, "failed", "platform restarted during session")
-    nocode.discover(db)  # no-code folders under AGENTS_DIR (agent.yaml + prompt.md) become submitted versions
-    # Versions submitted while no server was running (the seeded InvoiceGenius Pro) get their review now.
-    pending = [v.id for v in db.query(AgentVersion).filter(AgentVersion.status == "submitted").all()]
-    db.close()
+    try:
+        orphans = [s.id for s in db.query(Session).filter(Session.status.in_(ACTIVE)).all()]
+        try:
+            nocode.discover(db)  # no-code folders under AGENTS_DIR (agent.yaml + prompt.md) become submitted versions
+        except Exception:  # noqa: BLE001
+            db.rollback()
+            logging.exception("no-code discovery failed")
+        # Versions submitted while no server was running (the seeded InvoiceGenius Pro) get their review now.
+        pending = [v.id for v in db.query(AgentVersion).filter(AgentVersion.status == "submitted").all()]
+    finally:
+        db.close()
+    for sid in orphans:
+        finalize_safely(sid, "failed", "platform restarted during session")
     if settings.review_on_boot:
+        # Each call only records the run as "queued" and returns; at most REVIEW_CONCURRENCY run at a time,
+        # in the background, so the server takes requests right away.
         for vid in pending:
             review.start_review(vid)
     yield
