@@ -162,7 +162,7 @@ def create_session(db: DB, buyer_id: str, quote_id: str, cap: int | None, files:
             s.status = "failed"
             s.refund_reason = "insufficient credits"
             db.commit()
-            raise SessionError(402, "insufficient_credits", "balance too low for this cap; top up or lower the cap")
+            raise SessionError(402, "insufficient_credits", "Balance is too low for this cap.")
     for f in files or []:
         store_file(db, s.id, f["name"], base64.b64decode(f.get("content_base64", "")), "in")
     events.publish(s.id, "status", {"status": "holding", "cap_microcredits": cap}, db=db)

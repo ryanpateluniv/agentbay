@@ -4,6 +4,54 @@ Reviewed 2026-11-22 against `contracts/openapi.yaml` and `contracts/EVENTS.md`. 
 
 **Summary.** The app was built against a different API shape: a chat/"conversations" model, Supabase auth, `*_credits` fields and flat SSE payloads. Rather than ask for a rewrite, I added a **compatibility layer on the backend**, so every call it makes now works as written. Tests in `backend/tests/test_frontend_compat.py` replay its exact calls. What's left for the frontend is auth (blocking), confirm and free-text answers, Idempotency-Key headers, and the missing screens.
 
+## Update: second pull (ec71f51, 1c4a379), 2026-11-22 evening
+
+**What he added.**
+- ec71f51 added Compare, report card, Wallet (packs, plans, history), a Creator dashboard with a 5-step submit and review panel, and an Admin page (metrics, queue, kill, unpause, refund).
+- It also added extend cap, file attach, rating and dispute, and a quieter session log.
+- 1c4a379 then restored the "Cohort" home design: a named greeting, a shortcut row, a banner carousel, a Library page with agent pages, an Account overview, image paste and attach, deleting a chat, and hash routing.
+- **But 1c4a379 was rebuilt from an older copy.** It silently removed his own ec71f51 screens and all of the 05b5d29 fixes: demo login, Idempotency-Key, Approve/Deny, free-text answers, the stream auth header, file links and the p90 cap. Login didn't work again, because `bootAuth()` was no longer called.
+
+**What I did.** I kept the 1c4a379 design and ported the lost code back from ec71f51 as he wrote it, plus the small fixes listed in DECISIONS.md. It's verified by `backend/scripts/e2e_ui.py` (headless Chrome against `make dev`): **24/24 steps pass**.
+
+| Area | Screen | Endpoints | Result |
+| --- | --- | --- | --- |
+| Buyer | Demo login (Sam, Riya, Admin), Google button kept | `/v1/auth/config`, `/v1/me`, `/v1/wallet` | ✅ |
+| Buyer | Library page (4 live agents) | `GET /v1/agents` | ✅ (was 8 hard-coded agents, 5 fake) |
+| Buyer | Search chat with Authorization | `/v1/conversations`, `/stream` | ✅ |
+| Buyer | Compare 2–3 | `POST /v1/compare` | ✅ |
+| Buyer | Report card | `GET /v1/agents/{id}` | ✅ |
+| Buyer | Quote, cap = `high_credits`, attach file | `POST /v1/quotes` | ✅ |
+| Buyer | Start (double-click → one session) | `POST /v1/sessions` + Idempotency-Key | ✅ |
+| Buyer | Option answer, Approve, file link, receipt | SSE, `/messages`, `/confirm`, `/files/{id}`, `/receipts/{id}` | ✅ |
+| Buyer | Rate | `POST /sessions/{id}/rating` | ✅ |
+| Buyer | Wallet page, pack S, Upgrade double-click (one charge) | `GET /v1/wallet`, `POST /v1/wallet/topup` + key | ✅ |
+| Creator | Dashboard | `/v1/creator/analytics`, `/earnings` | ✅ |
+| Creator | 5-step submit → live 9-stage review → report card | `POST /v1/creator/agents`, `/versions`, `GET …/review` (polled) | ✅ |
+| Admin | Metrics, queue, InvoiceGenius Pro rejected with findings | `/v1/admin/metrics`, `/review-queue`, `/agents` | ✅ |
+| Admin | Kill switch refunds a running session; unpause; refund a settled session | `/kill`, `/unpause`, `/sessions/{id}/refund` | ✅ |
+| Errors | Paused agent / insufficient credits / budget cap | 409 `agent_unavailable` / 402 / `budget_*` events | ✅ |
+
+**Contract check of the new calls.**
+- Request bodies all match the schemas: compare, extend `add_microcredits`, rating, dispute, refund, decision, subscriptions, topup `{pack}`, and session `files`.
+- Fields the new screens read that were missing, now added on the backend: agent `description` and `creator_name`, detail `live_stats`, `report_card.stages` and `.tests`, and wallet `email`.
+- Fixed `available_credits`, which used to include money still in clearing.
+- The creator form's partial manifest is now laid over `agent.yaml` (before, every form submit failed lint).
+
+**Not exercised by the run:** dispute, extend cap, subscription plans (backend stub), the queue's Approve/Reject buttons (the queue was empty), the creator's "Re-run review" (it needs admin), and the Supabase sign-in (no keys).
+
+**Still for the frontend owner:**
+1. Pull before editing, and don't rebuild from an older copy. That is how 1c4a379 lost his screens and the fixes.
+2. The home shortcuts and banner prompts point at agents that don't exist (Inbox, Notes, Contract, Support, Sheet), so they match nothing. Point them at the 4 live agents, or generate them from `GET /v1/agents`.
+3. The breadcrumb stays "New chat" on the Session, Wallet, Review and Creator pages.
+4. The ported screens (`.cmp`, `.kv`, `.form-grid`) still use plain browser-style buttons; restyle them to the new design.
+5. Small amounts round to "0 credits" in the receipt, report card and wallet (for example a 0.01 cap shows "Held 0 credits").
+6. The composer's image attach only sends "Image attached: name" as text. Real files go only through the quote's file input.
+7. Compare needs 2 search matches; many searches return only 1. Consider letting a Library card be added to Compare too.
+8. The hard-coded "Jaineel" placeholders (greeting, avatar letter, Account fallback) flash before login.
+
+_Everything below is the first review (05b5d29 and earlier), kept for history._
+
 ## 1. API calls
 
 | Frontend call | Contract | Status |

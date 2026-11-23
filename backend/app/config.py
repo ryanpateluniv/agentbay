@@ -37,6 +37,7 @@ class Settings:
     review_runs_per_case = int(_env("REVIEW_RUNS_PER_CASE", "2"))
     sdk_dir = REPO_ROOT / "sdk" / "python"
     agents_dir = Path(_env("AGENTS_DIR", str(REPO_ROOT / "agents")))
+    review_on_boot = _env("REVIEW_ON_BOOT", "1") == "1"  # review versions left in "submitted" (seeded scam agent)
 
 
 settings = Settings()

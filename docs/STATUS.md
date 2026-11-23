@@ -1,6 +1,6 @@
 # Status
 
-_Updated 2026-11-22 ~19:30_
+_Updated 2026-11-22 ~21:30_
 
 ## Done
 - Phase 1 review (`docs/REVIEW.md`)
@@ -40,3 +40,9 @@ _Updated 2026-11-22 ~19:30_
 - Blocked on the frontend side: login needs Supabase keys or a demo-token login; `confirm` events have no UI (the Trip Planner hangs at its approval step).
 - Frontend must-fix items 1–8 are done in `frontend/index.html`. A headless-Chrome replay passed: demo login → search → Trip Planner → A/B/C → Approve → result, file download and receipt. A second replay covered a free-text answer with Quick Summarizer. 47 tests passing.
 - Known cosmetic issues (not fixed, out of scope): the receipt rounds amounts ≥10 to whole credits and small ones to 0.1 (for example "Released 12" when 11.9 was released); `/favicon.ico` returns 404.
+
+## Frontend pull (2026-11-22 evening)
+- The friend's latest commit had dropped the earlier fixes and his own new screens; both are restored on top of his new design (details in DECISIONS.md).
+- Headless-Chrome run against `make dev` (fake mode), `backend/scripts/e2e_ui.py`: **24/24 steps pass** (buyer: login, Library, search, compare, report card, quote, start with double-click, question, confirm, file, receipt, rating, wallet, double-click top-up; creator: dashboard, 5-step submit, live 9-stage review, report card; admin: metrics/queue, InvoiceGenius Pro rejected, kill with refund, unpause, refund; errors: paused agent, insufficient credits, budget cap).
+- Real mode via the UI: Invoice Auditor (with file) and Trip Planner. Tokens matched OpenAI on all 5 calls, escrows 0, ledger sums to 0. Real spend $0.0054 ($0.0007 + $0.0047). All real calls so far: about $0.056.
+- 50 tests passing.

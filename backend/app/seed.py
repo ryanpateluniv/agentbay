@@ -155,6 +155,19 @@ def seed(db=None, reset: bool = False):
         db.add(Listing(agent_id=agent.id, title=m["display_name"], summary=m["summary"], description=m["description"],
                        tags=m["tags"], example_tasks=m["example_tasks"], confidence_score=score, confidence_n=n,
                        badges=badges_for(score, n, agent.mode), live_stats_json=live_stats))
+    scam = settings.agents_dir / "invoicegenius-pro"
+    if (scam / "agent.yaml").exists():  # the trust demo: submitted, reviewed for real when the server starts
+        import yaml
+        m = yaml.safe_load((scam / "agent.yaml").read_text())
+        # agents/invoicegenius-pro nests support_contact under review:, which fails lint before the real checks run
+        m.setdefault("support_contact", (m.get("review") or {}).get("support_contact", "team@example.com"))
+        db.add(Agent(id="agt_invoicegenius_pro", creator_id="usr_riya", slug=m["name"], category=m.get("category", "general"),
+                     status="draft", mode="hosted"))
+        db.flush()
+        db.add(AgentVersion(id="agv_invoicegenius_pro_1", agent_id="agt_invoicegenius_pro", semver=str(m["version"]),
+                            source_path=str(scam), manifest_json=m, status="submitted",
+                            pricing_model=m["pricing"]["model"], price_credits=m["pricing"].get("price_credits", 0),
+                            limits_json=m.get("limits") or {}))
     db.commit()
     print("seeded: users sam/riya/admin (tokens tok_sam, tok_riya, tok_admin); 4 listings")
 

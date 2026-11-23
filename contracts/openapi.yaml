@@ -2003,6 +2003,14 @@ paths:
         schema:
           type: string
           title: Version Id
+      - name: idempotency-key
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Idempotency-Key
       - name: authorization
         in: header
         required: false
@@ -2118,6 +2126,20 @@ components:
           type: array
           title: Outputs
           default: []
+        example_tasks:
+          items:
+            type: string
+          type: array
+          title: Example Tasks
+          default: []
+        description:
+          type: string
+          title: Description
+          default: ''
+        creator_name:
+          type: string
+          title: Creator Name
+          default: ''
       type: object
       required:
       - id
@@ -2243,14 +2265,18 @@ components:
           type: array
           title: Outputs
           default: []
-        description:
-          type: string
-          title: Description
         example_tasks:
           items:
             type: string
           type: array
           title: Example Tasks
+        description:
+          type: string
+          title: Description
+        creator_name:
+          type: string
+          title: Creator Name
+          default: ''
         current_version:
           additionalProperties: true
           type: object
@@ -2275,6 +2301,11 @@ components:
             type: object
           type: array
           title: Ratings
+        live_stats:
+          additionalProperties: true
+          type: object
+          title: Live Stats
+          default: {}
       type: object
       required:
       - id
@@ -2294,8 +2325,8 @@ components:
       - success_rate
       - rating_avg
       - rating_n
-      - description
       - example_tasks
+      - description
       - current_version
       - report_card
       - tools_requested
@@ -2805,6 +2836,20 @@ components:
             format: date-time
           - type: 'null'
           title: Reviewed At
+        stages:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Stages
+          default: []
+        tests:
+          items:
+            additionalProperties: true
+            type: object
+          type: array
+          title: Tests
+          default: []
       type: object
       required:
       - decision
@@ -3186,6 +3231,10 @@ components:
         user:
           type: string
           title: User
+          default: ''
+        email:
+          type: string
+          title: Email
           default: ''
         balance_credits:
           type: number

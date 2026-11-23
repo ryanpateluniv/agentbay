@@ -70,7 +70,7 @@ def test_frontend_flow(live_server):
         a = c.get("/v1/creator/analytics", headers={"authorization": "Bearer tok_riya"}).json()
         e = c.get("/v1/creator/earnings", headers={"authorization": "Bearer tok_riya"}).json()
         assert a["sessions"] >= 1 and a["platform_revenue_credits"] >= 30 and e["clearing_days"] == 14
-        assert e["available_credits"] > 0
+        assert e["clearing_credits"] > 0 and e["available_credits"] == e["available_microcredits"] / 1000
 
         ag = c.get("/v1/admin/agents", headers=ADMIN).json()["agents"]
         assert {"id", "title", "status", "decision", "findings", "version_id"} <= set(ag[0])
@@ -117,3 +117,51 @@ def test_flat_event_texts():
     flat = flatten_event(base | {"type": "confirm", "role": "agent", "data": {"id": "c_9", "action": "Book it?"}})
     assert flat["id"] == "c_9" and flat["text"] == "Book it?"  # confirm_id for POST /confirm
     assert flatten_event(base | {"type": "spend", "data": {"spent_microcredits": 1500}})["spent_credits"] == 1.5
+
+
+def test_fields_read_by_merged_screens(live_server):
+    """Compare, report card, wallet and creator screens read these fields (see docs/FRONTEND_REVIEW.md)."""
+    with httpx.Client(base_url=live_server, timeout=30) as c:
+        card = c.get("/v1/agents").json()[0]
+        assert card["creator_name"] == "Riya" and card["description"]
+        d = c.get("/v1/agents/trip-planner").json()
+        assert {"stages", "tests"} <= set(d["report_card"]) and "success_rate" in d["live_stats"]
+        assert c.get("/v1/wallet", headers=SAM).json()["email"] == "sam@demo.dev"
+        e = c.get("/v1/creator/earnings", headers={"authorization": "Bearer tok_riya"}).json()
+        assert e["available_credits"] == e["available_microcredits"] / 1000
+
+
+def test_creator_form_manifest_is_laid_over_agent_yaml(live_server):
+    riya = {"authorization": "Bearer tok_riya"}
+    with httpx.Client(base_url=live_server, timeout=30) as c:
+        aid = c.post("/v1/creator/agents", headers=riya, json={"slug": "echo-form", "category": "writing"}).json()["id"]
+        form = {"name": "echo-form", "display_name": "Echo Form", "version": "1.0.1", "summary": "", "tags": [],
+                "pricing": {"model": "per_task", "price_credits": 8}}
+        r = c.post(f"/v1/creator/agents/{aid}/versions", headers=riya,
+                   json={"manifest": form, "source_path": "sdk/python/examples/echo_agent"})
+        assert r.status_code == 202, r.text
+        vid = r.json()["version_id"]
+        for _ in range(240):
+            rv = c.get(f"/v1/creator/agents/{aid}/versions/{vid}/review", headers=riya).json()["review"]
+            if rv["status"] == "done":
+                break
+            time.sleep(0.5)
+        stages = [s["stage"] for s in rv["report_card"]["stages"]]
+        assert rv["decision"] == "approved" and len(stages) == 9 and stages[0] == "manifest_lint"
+
+
+def test_seed_submits_invoicegenius_pro_for_review(db, monkeypatch):
+    from pathlib import Path
+
+    from app.config import REPO_ROOT, settings
+    from app.models import AgentVersion
+    from app.seed import seed
+    if not (REPO_ROOT / "agents" / "invoicegenius-pro" / "agent.yaml").exists():
+        return
+    monkeypatch.setattr(settings, "agents_dir", Path(REPO_ROOT / "agents"))
+    seed(reset=True)
+    db.expire_all()
+    v = db.get(AgentVersion, "agv_invoicegenius_pro_1")
+    assert v.status == "submitted" and v.manifest_json["support_contact"]
+    monkeypatch.undo()
+    seed(reset=True)

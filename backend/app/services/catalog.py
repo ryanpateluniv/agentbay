@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session as DB
 
 from ..config import MICRO, settings
-from ..models import Agent, AgentVersion, Listing, Quote, Rating, ReviewFinding, ReviewRun, Session, now
+from ..models import Agent, AgentVersion, CreatorProfile, Listing, Quote, Rating, ReviewFinding, ReviewRun, Session, TestResult, User, now
 from .confidence import lower_bound
 from .pricing import FLAT_MODELS
 
@@ -56,6 +56,8 @@ def agent_card(db: DB, agent: Agent, relevance: float = 0.0) -> dict:
     review = latest_review(db, version.id) if version else None
     live = listing.live_stats_json or {}
     m = version.manifest_json if version else {}
+    profile = db.get(CreatorProfile, agent.creator_id)
+    creator = db.get(User, agent.creator_id)
     return {
         "id": agent.id, "slug": agent.slug, "title": listing.title, "summary": listing.summary,
         "category": agent.category, "tags": listing.tags, "mode": agent.mode, "badges": listing.badges,
@@ -67,6 +69,8 @@ def agent_card(db: DB, agent: Agent, relevance: float = 0.0) -> dict:
         "success_rate": live.get("q_live"), "rating_avg": live.get("rating_avg"),
         "rating_n": int(live.get("rating_n", 0)), "relevance": round(relevance, 3),
         "inputs": m.get("inputs", []), "outputs": m.get("outputs", []), "example_tasks": listing.example_tasks or [],
+        "description": listing.description or "",
+        "creator_name": (profile.display_name if profile else "") or (creator.name if creator else ""),
     }
 
 
@@ -82,7 +86,10 @@ def agent_detail(db: DB, agent: Agent) -> dict:
                   "cost_p90_microcredits": review.cost_p90, "latency_p50_ms": review.latency_p50,
                   "latency_p95_ms": review.latency_p95, "reviewed_at": review.finished_at,
                   "findings": [{"severity": f.severity, "category": f.category, "detail": f.detail,
-                                "status": f.status} for f in findings]}
+                                "status": f.status} for f in findings],
+                  "stages": (review.report_json or {}).get("stages", []),
+                  "tests": [{"case_id": t.case_id, "passed": t.passed, "score": t.score} for t in
+                            db.scalars(select(TestResult).where(TestResult.review_run_id == review.id))]}
     ratings = db.execute(select(Rating).join(Session, Session.id == Rating.session_id)
                          .join(AgentVersion, AgentVersion.id == Session.agent_version_id)
                          .where(AgentVersion.agent_id == agent.id).limit(20)).scalars()
@@ -95,6 +102,8 @@ def agent_detail(db: DB, agent: Agent) -> dict:
         "report_card": report, "tools_requested": m.get("tools_requested", []),
         "models_allowed": m.get("models_allowed", []),
         "ratings": [{"stars": r.stars, "comment": r.comment, "creator_reply": r.creator_reply} for r in ratings],
+        "live_stats": {k: v for k, v in (listing.live_stats_json or {}).items() if k != "seeded"}
+                      | {"success_rate": (listing.live_stats_json or {}).get("q_live")},
     }
 
 

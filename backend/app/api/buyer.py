@@ -317,7 +317,7 @@ def wallet(db: DB = Depends(get_db), user: User = Depends(current_user)):
              "ref_type": e.ref_type, "ref_id": e.ref_id} for e in ledger.history(db, acc.id)]
     bal = sessions.balance_summary(db, user.id)
     granted = ledger.granted_total(db, acc.id)
-    return {"user_id": user.id, **bal, "history": hist, "user": user.name or user.email,
+    return {"user_id": user.id, **bal, "history": hist, "user": user.name or user.email, "email": user.email,
             "balance_credits": bal["balance_microcredits"] / MICRO, "granted_credits": granted / MICRO,
             "used_credits": max(0, granted - bal["balance_microcredits"] - bal["held_microcredits"]) / MICRO}
 

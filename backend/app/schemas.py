@@ -56,6 +56,8 @@ class AgentCard(BaseModel):
     inputs: list[str] = []
     outputs: list[str] = []
     example_tasks: list[str] = []
+    description: str = ""
+    creator_name: str = ""
 
 
 class SearchResponse(BaseModel):
@@ -72,6 +74,8 @@ class ReportCardSummary(BaseModel):
     latency_p95_ms: int
     findings: list[dict[str, Any]]
     reviewed_at: datetime | None
+    stages: list[dict[str, Any]] = []
+    tests: list[dict[str, Any]] = []
 
 
 class AgentDetail(AgentCard):
@@ -82,6 +86,7 @@ class AgentDetail(AgentCard):
     tools_requested: list[str]
     models_allowed: list[str]
     ratings: list[dict[str, Any]]
+    live_stats: dict[str, Any] = {}
 
 
 class CompareRequest(BaseModel):
@@ -214,6 +219,7 @@ class WalletOut(BaseModel):
     history: list[dict[str, Any]]
     # display conveniences (credits, may be fractional; money of record is the microcredit fields)
     user: str = ""
+    email: str = ""
     balance_credits: float = 0
     granted_credits: float = Field(0, description="all credits ever added (promo + purchases)")
     used_credits: float = Field(0, description="granted - balance - held")

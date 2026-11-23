@@ -70,8 +70,13 @@ async def submit_version(agent_id: str, body: S.VersionSubmit, db: DB = Depends(
         if not src.is_dir():
             raise HTTPException(422, detail={"error": "source_not_found", "detail": str(src)})
     manifest = body.manifest
-    if manifest is None and src and (src / "agent.yaml").exists():
-        manifest = yaml.safe_load((src / "agent.yaml").read_text())
+    if src and (src / "agent.yaml").exists():
+        # The web form sends only the fields it collects; lay its non-empty values over agent.yaml.
+        base = yaml.safe_load((src / "agent.yaml").read_text()) or {}
+        given = {k: v for k, v in (manifest or {}).items() if v not in (None, "", [], {})}
+        if isinstance(given.get("pricing"), dict):
+            given["pricing"] = (base.get("pricing") or {}) | given["pricing"]
+        manifest = base | given
     if not manifest:
         raise HTTPException(422, detail={"error": "manifest_missing", "detail": "no manifest and no agent.yaml"})
     pricing = manifest.get("pricing") or {}
@@ -216,8 +221,8 @@ def earnings(db: DB = Depends(get_db), user: User = Depends(creator)):
     return {"accrued_microcredits": balance + paid, "clearing_microcredits": min(clearing, balance),
             "available_microcredits": max(0, balance - clearing), "paid_out_microcredits": paid,
             "balance_microcredits": balance, "clearing_days": 14,
-            # display conveniences. The demo has no real clearing delay, so "available" shown to the UI is the balance.
-            "available_credits": balance / 1000, "accrued_credits": (balance + paid) / 1000,
+            # display conveniences (credits); available excludes the 14-day clearing window, like the microcredit field
+            "available_credits": max(0, balance - clearing) / 1000, "accrued_credits": (balance + paid) / 1000,
             "clearing_credits": min(clearing, balance) / 1000}
 
 

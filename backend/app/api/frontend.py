@@ -124,6 +124,11 @@ admin = require_role("admin")
 _REVIEW_RUNS: dict[tuple, str] = {}
 
 
+def _display_name(db: DB, version_id: str | None) -> str:
+    ver = db.get(AgentVersion, version_id) if version_id else None
+    return (ver.manifest_json or {}).get("display_name", "") if ver else ""
+
+
 @router.get("/v1/admin/agents", summary="All agents with their current version's review decision and findings")
 def admin_agents(db: DB = Depends(get_db), user: User = Depends(admin)):
     out = []
@@ -133,7 +138,7 @@ def admin_agents(db: DB = Depends(get_db), user: User = Depends(admin)):
         run = catalog.latest_review(db, vid) if vid else None
         findings = list(db.scalars(select(ReviewFinding).where(ReviewFinding.review_run_id == run.id))) if run else []
         listing = db.get(Listing, a.id)
-        out.append({"id": a.id, "slug": a.slug, "title": listing.title if listing else a.slug, "status": a.status,
+        out.append({"id": a.id, "slug": a.slug, "title": listing.title if listing else (_display_name(db, vid) or a.slug), "status": a.status,
                     "mode": a.mode, "version_id": vid, "decision": run.decision if run else None,
                     "findings": [f"[{f.severity}] {f.category}: {f.detail}" for f in findings
                                  if f.severity != "info"]})
