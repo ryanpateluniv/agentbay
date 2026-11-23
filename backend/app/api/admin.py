@@ -7,10 +7,10 @@ from sqlalchemy.orm import Session as DB
 from .. import schemas as S
 from ..auth import require_role
 from ..db import get_db
-from ..models import (Agent, AgentVersion, AuditLog, Dispute, ModelPrice, PlatformSetting, Session, ToolPrice,
-                      UsageEvent, User)
+from ..models import (Agent, AgentVersion, AuditLog, Dispute, ModelPrice, PlatformSetting, ReviewFinding, Session,
+                      ToolPrice, UsageEvent, User)
 from ..config import settings
-from ..services import catalog, ledger, sessions, upstream
+from ..services import catalog, ledger, review, sessions, upstream
 from ..services.sessions import SessionError
 
 router = APIRouter(prefix="/v1/admin", tags=["admin"])
@@ -44,8 +44,14 @@ def decide(v: str, body: S.DecisionIn, db: DB = Depends(get_db), user: User = De
     run = catalog.latest_review(db, v)
     if run:
         run.decision = body.decision
-        run.report_json = dict(run.report_json) | {"reviewer_notes": body.notes, "decision": body.decision}
+        run.report_json = dict(run.report_json or {}) | {"reviewer_notes": body.notes, "decision": body.decision,
+                                                         "awaiting_admin": False}
+        if body.decision != "approved":
+            db.add(ReviewFinding(review_run_id=run.id, severity="high", category="admin_review",
+                                 detail=body.notes or f"Admin decision: {body.decision}"))
     db.commit()
+    if body.decision == "approved":
+        review.publish_version(db, db.get(Agent, ver.agent_id), ver)  # live and listed
     audit(db, user, "version_decision", v, body.model_dump())
     return {"version_id": v, "status": ver.status}
 

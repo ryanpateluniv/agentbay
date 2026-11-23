@@ -272,6 +272,21 @@ class VersionSubmit(BaseModel):
     manifest: dict[str, Any] | None = Field(None, description="overrides agent.yaml if given")
 
 
+class TemplateAgentIn(BaseModel):
+    manifest: dict[str, Any] = Field(description="agent.yaml as JSON; runtime, review, tools and secrets are set by the server")
+    prompt: str = Field(description="prompt.md")
+    cases: list[dict[str, Any]] | str = Field(description="test cases: a list, or cases.jsonl text")
+
+
+class TemplateAgentOut(BaseModel):
+    agent_id: str
+    slug: str
+    version_id: str
+    semver: str
+    status: str = Field(description="draft until submitted")
+    files: list[str]
+
+
 class ListingPatch(BaseModel):
     title: str | None = None
     summary: str | None = None

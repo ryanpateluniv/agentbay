@@ -3,7 +3,7 @@ from datetime import timedelta
 from pathlib import Path
 
 import yaml
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session as DB
 
@@ -13,7 +13,7 @@ from ..config import REPO_ROOT
 from ..db import get_db
 from ..models import (Agent, AgentVersion, LedgerEntry, Listing, Payout, Rating, ReviewFinding, ReviewRun, Session,
                       SessionMessage, TestResult, User, now)
-from ..services import catalog, ledger
+from ..services import catalog, ledger, nocode
 
 router = APIRouter(prefix="/v1/creator", tags=["creator"])
 creator = require_role("creator")
@@ -90,16 +90,71 @@ async def submit_version(agent_id: str, body: S.VersionSubmit, db: DB = Depends(
     return {"version_id": ver.id, "review_run_id": run, "status": "in_review"}
 
 
+def _template_out(db: DB, ver: AgentVersion) -> dict:
+    agent = db.get(Agent, ver.agent_id)
+    return {"agent_id": agent.id, "slug": agent.slug, "version_id": ver.id, "semver": ver.semver,
+            "status": ver.status, "files": ["agent.yaml", "prompt.md", "cases.jsonl"]}
+
+
+def _save(db: DB, user: User, manifest: dict, prompt: str, cases) -> dict:
+    from ..services import review
+    try:
+        ver = nocode.save_template(db, user, manifest, prompt, cases, review.lint)
+    except nocode.TemplateError as e:
+        db.rollback()
+        raise HTTPException(422, detail={"error": "invalid_agent", "detail": str(e), "problems": e.problems})
+    return _template_out(db, ver)
+
+
+@router.post("/template-agents", response_model=S.TemplateAgentOut, status_code=201,
+             summary="Create a no-code agent, or a new version of one you own, from {manifest, prompt, cases} (draft)")
+def create_template_agent(body: S.TemplateAgentIn, db: DB = Depends(get_db), user: User = Depends(creator)):
+    return _save(db, user, body.manifest, body.prompt, body.cases)
+
+
+@router.post("/template-agents/upload", response_model=S.TemplateAgentOut, status_code=201,
+             summary="Same as /template-agents, from a zip of the folder (raw body, Content-Type: application/zip)",
+             openapi_extra={"requestBody": {"required": True, "content": {"application/zip": {
+                 "schema": {"type": "string", "format": "binary"}}}}})
+async def upload_template_agent(request: Request, db: DB = Depends(get_db), user: User = Depends(creator)):
+    if int(request.headers.get("content-length") or 0) > nocode.MAX_ZIP_BYTES:
+        raise HTTPException(413, detail={"error": "too_large", "detail": "zip is over 1 MB"})
+    data = bytearray()
+    async for chunk in request.stream():
+        data += chunk
+        if len(data) > nocode.MAX_ZIP_BYTES:
+            raise HTTPException(413, detail={"error": "too_large", "detail": "zip is over 1 MB"})
+    try:
+        manifest, prompt, cases = nocode.read_zip(bytes(data))
+    except nocode.TemplateError as e:
+        raise HTTPException(422, detail={"error": "invalid_agent", "detail": str(e), "problems": e.problems})
+    return _save(db, user, manifest, prompt, cases)
+
+
+@router.post("/agents/{agent_id}/versions/{v}/submit", status_code=202,
+             summary="Submit a draft version for review (no-code agents then wait for an admin)")
+async def submit_draft(agent_id: str, v: str, db: DB = Depends(get_db), user: User = Depends(creator)):
+    from ..services import review
+    ver = _version(db, _own_agent(db, agent_id, user), v)
+    if ver.status != "draft":
+        raise HTTPException(409, detail={"error": "not_draft", "detail": f"version is {ver.status}; upload a new version"})
+    run = review.start_review(ver.id)
+    return {"version_id": ver.id, "review_run_id": run, "status": "in_review"}
+
+
 @router.get("/agents/{agent_id}/versions/{v}/review", summary="Pipeline status and report card")
 def get_review(agent_id: str, v: str, db: DB = Depends(get_db), user: User = Depends(creator)):
     agent = _own_agent(db, agent_id, user)
     ver = _version(db, agent, v)
     run = catalog.latest_review(db, ver.id)
+    listed = agent.current_version_id == ver.id and agent.status == "live"
+    gate = {"agent_status": agent.status, "listed": listed,
+            "awaiting_admin": bool(run and run.status == "done" and (run.report_json or {}).get("awaiting_admin"))}
     if run is None:
-        return {"version_id": ver.id, "version_status": ver.status, "review": None}
+        return {"version_id": ver.id, "version_status": ver.status, "review": None, **gate}
     findings = db.scalars(select(ReviewFinding).where(ReviewFinding.review_run_id == run.id))
     tests = db.scalars(select(TestResult).where(TestResult.review_run_id == run.id))
-    return {"version_id": ver.id, "version_status": ver.status, "review": {
+    return {"version_id": ver.id, "version_status": ver.status, **gate, "review": {
         "id": run.id, "status": run.status, "stage": run.stage, "decision": run.decision, "scores": run.scores_json,
         "cost_p50_microcredits": run.cost_p50, "cost_p90_microcredits": run.cost_p90,
         "latency_p50_ms": run.latency_p50, "latency_p95_ms": run.latency_p95, "started_at": run.started_at,

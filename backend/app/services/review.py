@@ -250,8 +250,12 @@ async def run_review(run_id: str):
         run.status, run.decision, run.finished_at = "done", decision, now()
         run.report_json = dict(run.report_json or {}) | report | {"decision": decision}
         ver.status = {"approved": "approved", "pending_human_review": "in_review"}.get(decision, "rejected")
+        gated = decision == "approved" and nocode.needs_admin(ver)
+        if gated:  # creator-published template: passed the automated review, an admin makes it live
+            ver.status = "in_review"
+            run.report_json = run.report_json | {"awaiting_admin": True}
         db.commit()
-        if decision == "approved" and not agent.current_version_id:
+        if decision == "approved" and not agent.current_version_id and not gated:
             publish_version(db, agent, ver)  # first version goes live automatically (Beta badge)
 
     # 1. intake and manifest lint

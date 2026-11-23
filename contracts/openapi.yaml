@@ -1145,6 +1145,126 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/template-agents:
+    post:
+      tags:
+      - creator
+      summary: Create a no-code agent, or a new version of one you own, from {manifest,
+        prompt, cases} (draft)
+      operationId: create_template_agent_v1_creator_template_agents_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: a session token from /v1/auth/login, demo
+            tok_sam / tok_riya / tok_admin, or a Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: a session token from /v1/auth/login, demo tok_sam
+          / tok_riya / tok_admin, or a Supabase access token when configured'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TemplateAgentIn'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateAgentOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /v1/creator/template-agents/upload:
+    post:
+      tags:
+      - creator
+      summary: 'Same as /template-agents, from a zip of the folder (raw body, Content-Type:
+        application/zip)'
+      operationId: upload_template_agent_v1_creator_template_agents_upload_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: a session token from /v1/auth/login, demo
+            tok_sam / tok_riya / tok_admin, or a Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: a session token from /v1/auth/login, demo tok_sam
+          / tok_riya / tok_admin, or a Supabase access token when configured'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateAgentOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      requestBody:
+        required: true
+        content:
+          application/zip:
+            schema:
+              type: string
+              format: binary
+  /v1/creator/agents/{agent_id}/versions/{v}/submit:
+    post:
+      tags:
+      - creator
+      summary: Submit a draft version for review (no-code agents then wait for an
+        admin)
+      operationId: submit_draft_v1_creator_agents__agent_id__versions__v__submit_post
+      parameters:
+      - name: agent_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Agent Id
+      - name: v
+        in: path
+        required: true
+        schema:
+          type: string
+          title: V
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          description: 'Bearer <token>: a session token from /v1/auth/login, demo
+            tok_sam / tok_riya / tok_admin, or a Supabase access token when configured'
+          default: ''
+          title: Authorization
+        description: 'Bearer <token>: a session token from /v1/auth/login, demo tok_sam
+          / tok_riya / tok_admin, or a Supabase access token when configured'
+      responses:
+        '202':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /v1/creator/agents/{agent_id}/versions/{v}/review:
     get:
       tags:
@@ -3357,6 +3477,65 @@ components:
       required:
       - plan
       title: SubscriptionIn
+    TemplateAgentIn:
+      properties:
+        manifest:
+          additionalProperties: true
+          type: object
+          title: Manifest
+          description: agent.yaml as JSON; runtime, review, tools and secrets are
+            set by the server
+        prompt:
+          type: string
+          title: Prompt
+          description: prompt.md
+        cases:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: string
+          title: Cases
+          description: 'test cases: a list, or cases.jsonl text'
+      type: object
+      required:
+      - manifest
+      - prompt
+      - cases
+      title: TemplateAgentIn
+    TemplateAgentOut:
+      properties:
+        agent_id:
+          type: string
+          title: Agent Id
+        slug:
+          type: string
+          title: Slug
+        version_id:
+          type: string
+          title: Version Id
+        semver:
+          type: string
+          title: Semver
+        status:
+          type: string
+          title: Status
+          description: draft until submitted
+        files:
+          items:
+            type: string
+          type: array
+          title: Files
+      type: object
+      required:
+      - agent_id
+      - slug
+      - version_id
+      - semver
+      - status
+      - files
+      title: TemplateAgentOut
     ToolPriceIn:
       properties:
         tool:
