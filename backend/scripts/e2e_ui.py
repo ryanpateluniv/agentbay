@@ -54,7 +54,7 @@ with sync_playwright() as p:
 
     def login(token):
         page.goto(BASE + "/")
-        page.evaluate("localStorage.removeItem('cohort-demo-token')")
+        page.evaluate("localStorage.removeItem('cohort-demo-token'); sessionStorage.setItem('cohort-entered', '1')")  # past the landing page
         page.goto(BASE + "/")
         page.wait_for_selector("#auth:not(.hidden)", timeout=10000)
         label = {"tok_sam": "Sam", "tok_riya": "Riya", "tok_admin": "Admin"}[token]
@@ -95,6 +95,8 @@ with sync_playwright() as p:
     @step("Buyer", "Demo login (3 buttons, Sam)", "auth overlay · GET /v1/auth/config, /v1/me, /v1/wallet")
     def _():
         page.goto(BASE + "/")
+        page.wait_for_selector("#landing:not(.hidden)", timeout=10000)
+        page.click("#land-start")  # landing page first, then sign-in
         page.wait_for_selector("#auth:not(.hidden)", timeout=10000)
         btns = page.locator("#auth-options button.auth-quiet").all_inner_texts()
         check(len(btns) == 3, btns)
@@ -117,7 +119,7 @@ with sync_playwright() as p:
         page.fill("#task", "Plan a 5-day trip to Tokyo under $2,000")
         page.press("#task", "Enter")
         page.wait_for_selector(".pick", timeout=15000)
-        cards = [t.split("\n")[1] for t in page.locator(".pick").all_inner_texts()]
+        cards = [t.replace("\n", " ")[:40] for t in page.locator(".pick").all_inner_texts()]
         check(any("Trip Planner" in c for c in cards), cards)
         stream = [c for c in calls if c[1].endswith("/stream")]
         check(stream and stream[-1][3], "stream call without Authorization")
@@ -126,7 +128,7 @@ with sync_playwright() as p:
     @step("Buyer", "Compare 2 agents", "Compare view · POST /v1/compare")
     def _():
         page.locator("#new-chat").click()
-        page.fill("#task", "Summarize and brief me on research about invoices")
+        page.fill("#task", "Audit this invoice and write a research brief on it")
         page.press("#task", "Enter")
         page.wait_for_selector(".pick", timeout=15000)
         boxes = page.locator(".pick input[data-pick]")
