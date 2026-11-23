@@ -51,6 +51,8 @@ Agent events (NDJSON lines):
 
 External agents (Mode B) also get `x-marketplace-timestamp` and `x-marketplace-signature = hex(HMAC_SHA256(secret, "<ts>." + raw_body))`.
 
+Python SDK note: `ctx.task.files` is a list of **names**. The SDK writes the wire `files` (`{name, content_base64}`) into the workspace; read them with `ctx.read_file(name)`.
+
 ## 3. Environment injected into the agent
 
 `MARKETPLACE_SESSION_ID`, `MARKETPLACE_LLM_BASE_URL` (`<backend>/proxy/v1`), `MARKETPLACE_LLM_API_KEY` (session virtual key),
@@ -58,5 +60,5 @@ External agents (Mode B) also get `x-marketplace-timestamp` and `x-marketplace-s
 and `ANTHROPIC_BASE_URL` / `ANTHROPIC_API_KEY`.
 
 Proxy: `POST {MARKETPLACE_LLM_BASE_URL}/chat/completions` (OpenAI format, `model` = `fast | balanced | strong`, `stream` supported).
-At the cap it returns `402 {"error": {"code": "budget_exhausted", ...}}`. `GET {base}/budget` returns the remaining budget.
+At the cap it returns `402 {"error": {"code": "budget_exhausted", ...}}`. Real-mode failures return `429 upstream_rate_limited`, `504 upstream_timeout`, `502 provider_error`, `400 invalid_request` or `503 safety_limit`, and none of them are billed. `GET {base}/budget` returns the remaining budget.
 Tools: `POST {MARKETPLACE_TOOLS_URL}/v1/tools/web_search {"query"}` returns `{untrusted: true, results: [...]}` (0.5 credit per call).

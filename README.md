@@ -14,7 +14,7 @@ An app store for AI agents: every agent is tested before you pay, and every cent
 
 ```bash
 make dev          # creates .venv, installs, copies .env.example -> .env, seeds a fresh DB, serves on :8000
-make test         # 36 tests: ledger, cost formula, cap enforcement, settlement, sessions e2e, review
+make test         # 42 tests (always fake mode): ledger, cost formula, caps, settlement, sessions e2e, review, real-mode proxy vs a stub OpenAI
 make demo         # scripted end-to-end demo against the running server (second terminal)
 ```
 
@@ -31,9 +31,22 @@ API docs are at http://localhost:8000/docs. The health check is `GET /health`.
 
 **Money:** every amount in the API is integer **microcredits** (1 credit = 1,000 microcredits = $0.01). Divide by 1000 to display.
 
-### Real LLM mode
+### Real LLM mode (OpenAI)
 
-Set these in `.env`: `LLM_MODE=real`, `LLM_UPSTREAM_BASE_URL` (any OpenAI-compatible `/v1` endpoint) and `LLM_UPSTREAM_API_KEY`. Optionally set `LLM_MODEL_FAST/BALANCED/STRONG`, the provider model ids mapped to the platform aliases (read at seed time). Real keys stay on the server; agents only ever see a session virtual key.
+Fake mode is the default, so the demo always works offline. To use OpenAI:
+
+```bash
+# .env must contain OPENAI_API_KEY=sk-...  (.env is gitignored; the key is never logged)
+LLM_MODE=real make dev                    # this run only
+python backend/scripts/verify_real.py     # one real Invoice Auditor session + metering check
+```
+
+If OpenAI fails or rate-limits during the demo, restart with plain `make dev` to go back to fake mode.
+
+- **Aliases and prices** live in `backend/config/models.yaml`: `fast` = gpt-6-luna, `balanced` = gpt-6.1-terra, `strong` = gpt-6.2-astra. Prices are USD per 1M tokens, including the cached-input price. Run `make seed` after editing the file. **Verify the prices** at https://developers.openai.com/api/docs/pricing.
+- **Retries:** 429, 5xx and timeouts are retried with exponential backoff (honouring `Retry-After`) up to `LLM_MAX_RETRIES`. Then the call fails cleanly with 429 `upstream_rate_limited`, 504 `upstream_timeout` or 502 `provider_error`. Failed calls are never billed, and retries inside the proxy are billed once.
+- **Safety caps:** `REAL_MAX_USD_PER_SESSION` (default $0.25) and `REAL_MAX_USD_PER_RUN` (default $2.00 per server process). Each call reserves its worst-case cost first and `max_completion_tokens` is clamped to fit, so a call that could break a cap is refused with 503 `safety_limit`. Current spend: `GET /v1/admin/metrics` → `real_mode_guard`.
+- **Audit:** every OpenAI usage block is appended untouched to `backend/data/upstream_usage.jsonl`. Usage events store the provider request id, so the two can be joined.
 
 ### Docker sandbox (optional)
 

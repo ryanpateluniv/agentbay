@@ -1,0 +1,27 @@
+# Model aliases -> provider models, and the prices the cost formula uses.
+# Prices are USD per 1M tokens as decimal strings (converted to integer micro-USD, never floats).
+# Source: https://developers.openai.com/api/docs/pricing, read 2026-11-22. VERIFY before relying on them.
+# Ids were checked against GET /v1/models for this account on 2026-11-22.
+# Used in both modes: fake mode bills fake tokens at these prices too.
+# Changing this file takes effect after `make seed` (or PUT /v1/admin/model-prices at runtime).
+provider: openai
+aliases:
+  fast:
+    provider_model: gpt-6-luna
+    input: "0.10"
+    cached_input: "0.01"
+    output: "0.50"
+    # gpt-6.x accept only the default temperature and use max_completion_tokens
+    drop_params: [temperature, top_p]
+  balanced:
+    provider_model: gpt-6.1-terra
+    input: "1.00"
+    cached_input: "0.05"
+    output: "5.00"
+    drop_params: [temperature, top_p]
+  strong:
+    provider_model: gpt-6.2-astra
+    input: "8.00"
+    cached_input: "0.40"
+    output: "40.00"
+    drop_params: [temperature, top_p]

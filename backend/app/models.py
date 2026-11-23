@@ -214,6 +214,9 @@ class UsageEvent(Base):
     tool: Mapped[str | None] = mapped_column(String(50), nullable=True)
     input_tokens: Mapped[int] = mapped_column(Integer, default=0)
     output_tokens: Mapped[int] = mapped_column(Integer, default=0)
+    cached_tokens: Mapped[int] = mapped_column(Integer, default=0)  # subset of input_tokens
+    reasoning_tokens: Mapped[int] = mapped_column(Integer, default=0)  # subset of output_tokens
+    provider_request_id: Mapped[str | None] = mapped_column(String(120), nullable=True)
     provider_cost_micro_usd: Mapped[int] = mapped_column(Money, default=0)
     cost_microcredits: Mapped[int] = mapped_column(Money, default=0)
     latency_ms: Mapped[int] = mapped_column(Integer, default=0)
@@ -319,6 +322,8 @@ class ModelPrice(Base):
     provider_model: Mapped[str] = mapped_column(String(100))
     price_in: Mapped[int] = mapped_column(Money)
     price_out: Mapped[int] = mapped_column(Money)
+    price_cached_in: Mapped[int | None] = mapped_column(Money, nullable=True)  # None -> same as price_in
+    drop_params: Mapped[list] = mapped_column(JSON, default=list)  # request params this model rejects
     effective_from: Mapped[datetime] = mapped_column(DateTime, default=now)
 
 

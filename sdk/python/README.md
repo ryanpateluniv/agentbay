@@ -33,7 +33,7 @@ Put an `agent.yaml` next to it (schema: `contracts/agent-manifest.schema.json`, 
 | --- | --- |
 | `@agent.on_task` | Your handler `fn(ctx)`. Returning a string is the same as `ctx.return_result(string)`. |
 | `@agent.on_quote` | Optional `fn(task_text) -> {"estimate_credits", "questions", "limits"}` |
-| `ctx.task.text`, `ctx.task.files` | Buyer's task. Input files are also written into the workspace. |
+| `ctx.task.text`, `ctx.task.files` | Buyer's task. `files` is a list of **file names**, already written to the workspace; read one with `ctx.read_file(name)`. |
 | `ctx.message(text)` | Chat message to the buyer |
 | `ctx.ask_user(question, options=None) -> str` | Ask and wait for the answer |
 | `ctx.confirm(action) -> bool` | Ask the buyer to approve a sensitive action |

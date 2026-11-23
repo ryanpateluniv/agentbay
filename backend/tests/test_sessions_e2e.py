@@ -165,7 +165,7 @@ def test_streaming_bills_streamed_tokens(live_server):
 def test_concurrent_calls_cannot_blow_through_cap(live_server):
     """10 parallel calls against a cap worth ~2 calls: per-session lock + max_tokens clamp keep spend near the cap."""
     import concurrent.futures
-    cap = 400  # microcredits of cost limit (usage-based: cap*100/250 = 160 cost)
+    cap = 100  # microcredits (usage-based: cost limit = cap*100/250 = 40)
     sid, key = _direct_key(cap)
     h = {"authorization": f"Bearer {key}"}
 

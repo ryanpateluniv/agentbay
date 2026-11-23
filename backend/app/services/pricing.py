@@ -8,12 +8,15 @@ def ceil_div(a: int, b: int) -> int:
     return -(-a // b)
 
 
-def llm_cost(t_in: int, t_out: int, price_in: int, price_out: int, markup_bps: int) -> tuple[int, int]:
+def llm_cost(t_in: int, t_out: int, price_in: int, price_out: int, markup_bps: int, *,
+             cached: int = 0, price_cached_in: int | None = None) -> tuple[int, int]:
     """C_call = (t_in*p_in + t_out*p_out) * (1+m) / v_credit, in microcredits (rounded up).
 
     Prices are micro-USD per 1M tokens. v_credit = $0.01 = 10_000 micro-USD = 1000 microcredits,
-    so 1 microcredit = 10 micro-USD. Returns (cost_microcredits, provider_cost_micro_usd)."""
-    raw = t_in * price_in + t_out * price_out  # micro-USD * 1e6
+    so 1 microcredit = 10 micro-USD. `cached` input tokens (a subset of t_in) are priced at
+    price_cached_in, as the provider bills them. Returns (cost_microcredits, provider_cost_micro_usd)."""
+    cached = min(cached, t_in) if price_cached_in is not None else 0
+    raw = (t_in - cached) * price_in + cached * (price_cached_in or 0) + t_out * price_out  # micro-USD * 1e6
     cost = ceil_div(raw * (10_000 + markup_bps), 1_000_000 * 10 * 10_000)
     return cost, ceil_div(raw, 1_000_000)
 

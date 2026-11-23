@@ -8,3 +8,7 @@ jsonschema>=4
 python-dotenv>=1
 docker>=7
 pytest>=8
+# demo agents' own deps (the subprocess sandbox runs agents with this venv)
+openai>=1.40
+pypdf>=4
+langgraph==1.2.24

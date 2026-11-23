@@ -28,3 +28,14 @@ One line each, with the reason.
 - Ratings: the 24 h delay before rating is not enforced (demo).
 - Session time limit is wall clock and does not pause while waiting for the user. Per-minute billing does exclude waiting time.
 - Budget cap reached: the buyer pays min(cap, full charge) if a result was delivered, else 0. The agent gets 20 s of grace before a hard stop.
+- Real mode uses OpenAI. Aliases are fast = gpt-6-luna, balanced = gpt-6.1-terra, strong = gpt-6.2-astra (the top non-pro model; the -pro tiers are priced for research use). The ids were checked with GET /v1/models. Prices come from the OpenAI pricing page on 2026-11-22 and live in `backend/config/models.yaml`, not in code.
+- The gpt-6.x models reject `max_tokens` and any non-default `temperature`. The proxy always sends `max_completion_tokens` and drops each model's `drop_params` (temperature, top_p), so agents written for older models still work.
+- Cached input tokens are billed at the cached price (as OpenAI bills them). Reasoning tokens are part of `completion_tokens` and billed as output.
+- Fake mode uses the same alias prices as real mode, so fake costs are realistic.
+- Streaming: if the client drops mid-stream, the streamed tokens are billed (spec). If the provider fails mid-stream, nothing is billed ("provider errors are never billed").
+- Timeouts: the buyer is not billed, but the safety guard counts the full reservation, since OpenAI may still have run the call.
+- Safety caps are in-memory per server process ("per run") and per session, with a worst-case reservation before each call. The residual risk is the input-token estimate (~3 chars/token, conservative).
+- The review judge in real mode uses the `balanced` alias through the same upstream client and safety guard. It isn't billed to anyone, because review sessions have no ledger.
+- SDK: `ctx.task.files` is now a list of file names (matching the agents teammate's code); the wire format is unchanged.
+- Seeded listings take their manifest (price, limits, models) from `agents/<slug>/agent.yaml` when it exists. Tests set `AGENTS_DIR` to an empty dir, so they stay hermetic.
+- Demo agents' Python deps (openai, pypdf, langgraph) are in `backend/requirements.txt`, because the subprocess sandbox shares the backend venv.

@@ -1,6 +1,6 @@
 # Status
 
-_Updated 2026-11-22 ~18:45_
+_Updated 2026-11-22 ~19:30_
 
 ## Done
 - Phase 1 review (`docs/REVIEW.md`)
@@ -12,13 +12,18 @@ _Updated 2026-11-22 ~18:45_
 - Step 6: session flow end to end: subprocess sandbox (Docker optional), NDJSON → SSE with replay, ask_user/confirm, live spend, 80% warning, budget hard stop with 20 s grace, timeout, cancel rules, settle, receipt, orphan reaping, restart refunds
 - Step 7: review pipeline (lint, build, static scan, 3 probes, cases x2, cost/latency, judge, Q/R/S/K, confidence, report card, auto-publish of the first version)
 - Step 8: search (TF-IDF fallback), quotes, compare, creator endpoints, admin kill/refund/prices/fees/disputes/metrics
-- Step 9: `make dev` / `make test` / `make demo`, root README with demo script. 36 tests passing.
+- Step 9: `make dev` / `make test` / `make demo`, root README with demo script
+- **Real LLM mode (OpenAI)**: config-driven aliases and prices (`backend/config/models.yaml`), retries with backoff, clean unbilled failures, per-session and per-run USD safety caps, raw provider usage log. Verified with one real Invoice Auditor session (metering matched OpenAI's usage exactly) and a full `make demo` in real mode. Total real spend: about $0.044. 42 tests passing (fake mode).
+
+## How to switch modes
+- Fake (default, offline): `make dev`
+- Real: put `OPENAI_API_KEY` in `.env`, then `LLM_MODE=real make dev`. Verify with `python backend/scripts/verify_real.py`. Caps: `REAL_MAX_USD_PER_SESSION` / `REAL_MAX_USD_PER_RUN`.
 
 ## In progress
 - Nothing
 
 ## Blocked
-- LLM provider still `[PROVIDER]`. Fake mode is the default; real mode forwards to any OpenAI-compatible upstream.
+- None. Open item for the agents teammate: Research Briefer uses a different external contract (`X-Timestamp`, `{session_id,text}` / `{text,done}`) than `contracts/EVENTS.md`, so it needs an adapter or alignment.
 
 ## Next (if time)
 - Point at the real agents in `agents/` once they land (resolved automatically per session)

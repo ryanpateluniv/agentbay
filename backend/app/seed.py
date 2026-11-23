@@ -7,7 +7,7 @@ import sys
 
 from sqlalchemy import select
 
-from .config import MICRO, settings
+from .config import MICRO, load_models, settings, usd_to_micro
 from .db import Base, SessionLocal, engine, init_db
 from .models import (Agent, AgentVersion, CreatorProfile, Listing, ModelPrice, PlatformSetting, ReviewFinding,
                      ReviewRun, ToolPrice, User, now)
@@ -20,12 +20,6 @@ USERS = [
     ("usr_admin", "admin@demo.dev", "Admin", ["admin", "buyer"], "tok_admin", 0, 0),
 ]
 
-MODEL_PRICES = [
-    # alias, provider model (overridable), micro-USD per 1M input tokens, per 1M output tokens
-    ("fast", os.environ.get("LLM_MODEL_FAST", "gpt-4o-mini"), 150_000, 600_000),
-    ("balanced", os.environ.get("LLM_MODEL_BALANCED", "gpt-4.1-mini"), 400_000, 1_600_000),
-    ("strong", os.environ.get("LLM_MODEL_STRONG", "gpt-4o"), 2_500_000, 10_000_000),
-]
 
 TOOL_PRICES = [("web_search", "call", 500), ("file_storage", "call", 0)]
 
@@ -109,8 +103,11 @@ def seed(db=None, reset: bool = False):
         db.add(User(id=uid, email=email, name=name, roles=roles, api_token=tok))
         if "creator" in roles:
             db.add(CreatorProfile(user_id=uid, display_name=name.split(" ")[0], verification_level="established"))
-    for alias, pm, pin, pout in MODEL_PRICES:
-        db.add(ModelPrice(alias=alias, provider_model=pm, price_in=pin, price_out=pout))
+    for alias, m in load_models().items():  # backend/config/models.yaml
+        db.add(ModelPrice(alias=alias, provider_model=m["provider_model"], price_in=usd_to_micro(m["input"]),
+                          price_out=usd_to_micro(m["output"]),
+                          price_cached_in=usd_to_micro(m["cached_input"]) if m.get("cached_input") else None,
+                          drop_params=m.get("drop_params", [])))
     for tool, unit, price in TOOL_PRICES:
         db.add(ToolPrice(tool=tool, unit=unit, price=price))
     db.commit()
@@ -123,6 +120,10 @@ def seed(db=None, reset: bool = False):
     from .services.confidence import compute_confidence, badges_for
     for spec in LISTINGS:
         m = spec["manifest"]
+        teammate_manifest = settings.agents_dir / spec["slug"] / "agent.yaml"
+        if teammate_manifest.exists():  # the real agent's own manifest wins (price, limits, models)
+            import yaml
+            m = m | yaml.safe_load(teammate_manifest.read_text())
         agent = Agent(id=f"agt_{spec['slug'].replace('-', '_')}", creator_id="usr_riya", slug=spec["slug"],
                       category=m["category"], status="live", mode=spec["mode"],
                       endpoint_url=os.environ.get(f"EXTERNAL_URL_{spec['slug'].upper().replace('-', '_')}"))

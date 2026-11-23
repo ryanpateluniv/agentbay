@@ -83,7 +83,7 @@ def chat(messages: list, model: str = "fast", *, base_url: str | None = None, ap
 @dataclass
 class Task:
     text: str
-    files: list = field(default_factory=list)  # [{"name", "content_base64"}]
+    files: list = field(default_factory=list)  # input file names; read them with ctx.read_file(name)
 
 
 class _Run:
@@ -104,8 +104,15 @@ class Context:
         self._llm_key = (proxy or {}).get("api_key") or os.environ.get("MARKETPLACE_LLM_API_KEY")
         self.workspace = Path(os.environ.get("MARKETPLACE_WORKSPACE") or Path.cwd() / ".workspace")
         self.workspace.mkdir(parents=True, exist_ok=True)
-        for f in task.files:
-            (self.workspace / Path(f["name"]).name).write_bytes(base64.b64decode(f.get("content_base64", "")))
+        names = []
+        for f in task.files:  # wire format: [{"name", "content_base64"}] -> written to the workspace
+            if isinstance(f, dict):
+                name = Path(f["name"]).name
+                (self.workspace / name).write_bytes(base64.b64decode(f.get("content_base64", "")))
+                names.append(name)
+            else:
+                names.append(str(f))
+        task.files = names
 
     # -- internal --
     def _check(self):

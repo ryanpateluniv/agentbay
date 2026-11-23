@@ -6,6 +6,8 @@ os.environ["DATABASE_URL"] = f"sqlite:///{_tmp}/test.db"
 os.environ["DATA_DIR"] = _tmp
 os.environ["LLM_MODE"] = "fake"
 os.environ["RUNTIME_MODE"] = "subprocess"
+os.environ["AGENTS_DIR"] = _tmp  # hermetic: seeded listings run the SDK example agent, not agents/
+os.environ["OPENAI_API_KEY"] = ""  # set (empty) so dotenv cannot load the real key; tests never reach the provider
 
 import pytest  # noqa: E402
 

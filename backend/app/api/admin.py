@@ -9,7 +9,8 @@ from ..auth import require_role
 from ..db import get_db
 from ..models import (Agent, AgentVersion, AuditLog, Dispute, ModelPrice, PlatformSetting, Session, ToolPrice,
                       UsageEvent, User)
-from ..services import catalog, ledger, sessions
+from ..config import settings
+from ..services import catalog, ledger, sessions, upstream
 from ..services.sessions import SessionError
 
 router = APIRouter(prefix="/v1/admin", tags=["admin"])
@@ -158,5 +159,6 @@ def metrics(db: DB = Depends(get_db), user: User = Depends(admin)):
         "provider_cost_microcredits": ledger.account_balance(db, ledger.PROVIDER_COST),
         "creator_payable_microcredits": sum(s.creator_earnings for s in rows),
         "usage_events": int(db.scalar(select(func.count()).select_from(UsageEvent))),
+        "llm_mode": settings.llm_mode, "real_mode_guard": upstream.guard.snapshot(),
         "failure_rate": round(sum(1 for s in rows if s.status in ("failed", "timed_out")) / len(rows), 3) if rows else 0,
     }

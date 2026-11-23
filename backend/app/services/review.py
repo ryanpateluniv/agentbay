@@ -7,7 +7,6 @@ import re
 import statistics
 from pathlib import Path
 
-import httpx
 import jsonschema
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DB
@@ -99,7 +98,7 @@ def lint(db: DB, manifest: dict) -> list[str]:
 
 def static_scan(src: Path, manifest: dict) -> list[tuple[str, str, str]]:
     findings = []
-    allowed = set(manifest.get("allowed_domains") or [])
+    allowed = set(manifest.get("allowed_domains") or (manifest.get("network") or {}).get("allowed_domains") or [])
     for f in sorted(src.rglob("*")):
         if not f.is_file() or f.suffix not in (".py", ".js", ".ts", ".sh", ".yaml", ".yml", ".json", ".toml", ".env") \
                 or "node_modules" in f.parts or ".venv" in f.parts or f.stat().st_size > 500_000:
@@ -178,8 +177,9 @@ async def run_case(db: DB, ver: AgentVersion, task: str, answers: list[str]) -> 
             "latency_ms": latency, "steps": steps, "session_id": s.id}
 
 
-def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str]:
-    """Automated checker + judge. Real mode asks the `strong` model with a rubric; fake mode is deterministic."""
+async def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str]:
+    """Automated checker + LLM judge. Real mode asks the `balanced` alias with a rubric (through the same
+    upstream client and safety cap as the proxy); fake mode is a deterministic heuristic."""
     if out["status"] != "settled" or not out["result"].strip():
         return False, 0, f"no result (status {out['status']})"
     blob = (out["result"] + " " + out["files_text"]).lower()
@@ -187,17 +187,28 @@ def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str]:
     if missing:
         return False, 30, f"missing expected content: {missing}"
     score = 85 if len(blob) > 40 else 60
-    if settings.llm_mode == "real" and settings.llm_upstream_api_key:
+    if settings.llm_mode == "real":
+        from . import upstream
+        from .proxy import current_price
+        db = SessionLocal()
+        price = current_price(db, "balanced")
+        db.close()
+        messages = [{"role": "system", "content": "You grade AI agent outputs. Rubric: relevance, completeness, "
+                     "correctness, honesty. Reply JSON {\"score\": 0-100, \"why\": str}."},
+                    {"role": "user", "content": f"TASK:\n{task}\n\nOUTPUT:\n{blob[:6000]}"}]
+        reservation, actual = 0, 0
         try:
-            r = httpx.post(settings.llm_upstream_base_url.rstrip("/") + "/chat/completions", timeout=60,
-                           headers={"authorization": f"Bearer {settings.llm_upstream_api_key}"},
-                           json={"model": "gpt-4o-mini", "response_format": {"type": "json_object"}, "messages": [
-                               {"role": "system", "content": "You grade AI agent outputs. Rubric: relevance, "
-                                "completeness, correctness, honesty. Reply JSON {\"score\": 0-100, \"why\": str}."},
-                               {"role": "user", "content": f"TASK:\n{task}\n\nOUTPUT:\n{blob[:6000]}"}]})
-            score = int(json.loads(r.json()["choices"][0]["message"]["content"])["score"])
-        except Exception:  # noqa: BLE001
-            pass
+            max_out, reservation = upstream.guard.reserve(None, upstream.estimate_input_uusd(messages, price),
+                                                          price.price_out, 400)
+            data = await upstream.complete(upstream.build_payload(
+                {"messages": messages, "response_format": {"type": "json_object"}}, price, max_out, False))
+            upstream.log_usage(None, data, "judge")
+            actual = upstream.provider_cost_uusd(data.get("usage") or {}, price)
+            score = int(json.loads(data["choices"][0]["message"]["content"])["score"])
+        except Exception as e:  # noqa: BLE001  (judge failure falls back to the heuristic)
+            log.warning("judge failed: %s", e)
+        finally:
+            upstream.guard.settle(None, reservation, actual)
     return score >= 60, score, "ok"
 
 
@@ -291,7 +302,7 @@ async def run_review(run_id: str):
     for case in cases:
         for i in range(settings.review_runs_per_case):
             out = await run_case(db, ver, case.get("task", ""), case.get("answers", []))
-            passed, score, detail = judge(case.get("task", ""), out, case.get("expect_contains", []))
+            passed, score, detail = await judge(case.get("task", ""), out, case.get("expect_contains", []))
             if not case.get("task", "").strip() and out["status"] in ("settled", "failed"):
                 passed, score, detail = True, max(score, 70), "handled empty input"  # robustness case
             db.add(TestResult(review_run_id=run.id, case_id=case["id"], run_index=i, passed=passed, score=score,

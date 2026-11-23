@@ -19,7 +19,7 @@ from sqlalchemy.orm import Session as DB
 
 from ..config import settings
 from ..models import Agent, AgentVersion, ModelPrice, PlatformSetting, Session, SessionToken, ToolPrice, UsageEvent, now
-from . import sessions
+from . import sessions, upstream
 from .pricing import llm_cost, max_output_tokens
 
 DEFAULT_MAX_TOKENS = 1024
@@ -160,58 +160,82 @@ def _prepare(db: DB, authorization: str, body: dict):
     return tok, s, alias, price
 
 
-def _bill(db, s, tok, idem, alias, price, t_in, t_out, latency_ms, estimated=False):
-    cost, provider = llm_cost(t_in, t_out, price.price_in, price.price_out, markup_bps(db))
+def _bill(db, s, tok, idem, alias, price, t_in, t_out, latency_ms, estimated=False, *, cached=0, reasoning=0,
+          request_id=None):
+    cost, provider = llm_cost(t_in, t_out, price.price_in, price.price_out, markup_bps(db), cached=cached,
+                              price_cached_in=price.price_cached_in)
     record(db, s, tok, idem, type="llm_call", model_alias=alias, provider_model=price.provider_model,
-           input_tokens=t_in, output_tokens=t_out, provider_cost_micro_usd=provider, cost_microcredits=cost,
+           input_tokens=t_in, output_tokens=t_out, cached_tokens=cached, reasoning_tokens=reasoning,
+           provider_request_id=request_id, provider_cost_micro_usd=provider, cost_microcredits=cost,
            latency_ms=latency_ms, estimated=estimated)
     return cost
+
+
+def _requested_max(body: dict) -> int | None:
+    return body.get("max_completion_tokens") or body.get("max_tokens")
+
+
+def _response(cid: str, alias: str, text: str, finish: str, t_in: int, t_out: int, cost: int, extra: dict | None = None):
+    usage = {"prompt_tokens": t_in, "completion_tokens": t_out, "total_tokens": t_in + t_out, "cost_microcredits": cost}
+    return {"id": cid, "object": "chat.completion", "created": int(time.time()), "model": alias,
+            "choices": [{"index": 0, "message": {"role": "assistant", "content": text}, "finish_reason": finish}],
+            "usage": usage | (extra or {})}
 
 
 async def chat_completion(db: DB, authorization: str, body: dict, idem: str | None) -> dict:
     tok, s, alias, price = _prepare(db, authorization, body)
     idem = idem or "llm_" + secrets.token_hex(8)
+    messages = body.get("messages", [])
     async with _locks[s.id]:
-        max_tokens = _clamp(db, tok, s, price, body.get("max_tokens") or body.get("max_completion_tokens"))
+        max_tokens = _clamp(db, tok, s, price, _requested_max(body))
         t0 = time.monotonic()
-        messages = body.get("messages", [])
         if settings.llm_mode == "fake":
             json_mode = (body.get("response_format") or {}).get("type") == "json_object"
             text, t_in, t_out = fake_completion(alias, messages, max_tokens, json_mode)
             await asyncio.sleep(0.15 + t_out / 3000)
-            finish = "length" if t_out >= max_tokens else "stop"
-            upstream_id = "chatcmpl-fake-" + hashlib.sha256(text.encode()).hexdigest()[:12]
-            estimated = False
-        else:
-            payload = {k: v for k, v in body.items() if k not in ("stream", "stream_options", "max_completion_tokens")}
-            payload |= {"model": price.provider_model, "max_tokens": max_tokens}
-            try:
-                async with httpx.AsyncClient(timeout=120) as c:
-                    r = await c.post(settings.llm_upstream_base_url.rstrip("/") + "/chat/completions", json=payload,
-                                     headers={"authorization": f"Bearer {settings.llm_upstream_api_key}"})
-            except httpx.HTTPError as e:
-                raise ProxyError(502, "provider_error", str(e))  # provider errors are never billed
-            if r.status_code >= 400:
-                raise ProxyError(502, "provider_error", r.text[:300])
-            data = r.json()
-            text = data["choices"][0]["message"].get("content") or ""
-            finish = data["choices"][0].get("finish_reason", "stop")
+            cost = _bill(db, s, tok, idem, alias, price, t_in, t_out, int((time.monotonic() - t0) * 1000))
+            return _response("chatcmpl-fake-" + hashlib.sha256(text.encode()).hexdigest()[:12], alias, text,
+                             "length" if t_out >= max_tokens else "stop", t_in, t_out, cost)
+
+        # real mode: hard safety cap first, then the provider (with retries); bill only on success
+        try:
+            max_tokens, reservation = upstream.guard.reserve(s.id, upstream.estimate_input_uusd(messages, price),
+                                                             price.price_out, max_tokens)
+        except upstream.UpstreamError as e:
+            raise ProxyError(e.status, e.code, e.message)
+        actual = 0
+        try:
+            data = await upstream.complete(upstream.build_payload(body, price, max_tokens, stream=False))
+            upstream.log_usage(s.id, data, alias)
             usage = data.get("usage") or {}
+            t_in, t_out, cached = upstream.usage_tokens(usage)
+            text = data["choices"][0]["message"].get("content") or ""
             estimated = "prompt_tokens" not in usage
-            t_in = usage.get("prompt_tokens") or count_tokens(prompt_text(messages))
-            t_out = usage.get("completion_tokens") or count_tokens(text)
-            upstream_id = data.get("id", "chatcmpl-" + secrets.token_hex(6))
-        latency = int((time.monotonic() - t0) * 1000)
-        cost = _bill(db, s, tok, idem, alias, price, t_in, t_out, latency, estimated)
-    return {"id": upstream_id, "object": "chat.completion", "created": int(time.time()), "model": alias,
-            "choices": [{"index": 0, "message": {"role": "assistant", "content": text}, "finish_reason": finish}],
-            "usage": {"prompt_tokens": t_in, "completion_tokens": t_out, "total_tokens": t_in + t_out,
-                      "cost_microcredits": cost}}
+            if estimated:
+                t_in, t_out = count_tokens(prompt_text(messages)), count_tokens(text)
+            actual = upstream.provider_cost_uusd({"prompt_tokens": t_in, "completion_tokens": t_out,
+                                                  "prompt_tokens_details": {"cached_tokens": cached}}, price)
+        except upstream.UpstreamError as e:
+            if e.code == "upstream_timeout":
+                actual = reservation  # provider may still have run it: count worst case against the safety cap
+            raise ProxyError(e.status, e.code, e.message)  # never billed to the buyer
+        finally:
+            upstream.guard.settle(s.id, reservation, actual)
+        reasoning = int((usage.get("completion_tokens_details") or {}).get("reasoning_tokens") or 0)
+        cost = _bill(db, s, tok, idem, alias, price, t_in, t_out, int((time.monotonic() - t0) * 1000), estimated,
+                     cached=cached, reasoning=reasoning, request_id=data.get("id"))
+        return _response(data.get("id", "chatcmpl-" + secrets.token_hex(6)), alias, text,
+                         data["choices"][0].get("finish_reason", "stop"), t_in, t_out, cost,
+                         {"prompt_tokens_details": {"cached_tokens": cached},
+                          "completion_tokens_details": {"reasoning_tokens": reasoning}})
 
 
 async def chat_completion_stream(db: DB, authorization: str, body: dict, idem: str | None):
-    """Returns an async generator of SSE chunks. Billing happens in `finally`, so a dropped connection
-    bills only the tokens actually streamed."""
+    """Returns an async generator of SSE chunks.
+
+    Billing rules: on success, bill the provider's usage block. If the *client* drops mid-stream, bill the
+    tokens actually streamed (estimated). If the *provider* fails, bill nothing (provider errors are never
+    billed) and end the stream with an error chunk."""
     tok, s, alias, price = _prepare(db, authorization, body)
     _clamp(db, tok, s, price, None)  # fail fast with 402 before the stream starts
     idem = idem or "llm_" + secrets.token_hex(8)
@@ -226,49 +250,68 @@ async def chat_completion_stream(db: DB, authorization: str, body: dict, idem: s
 
     async def gen():
         async with _locks[s.id]:
-            max_tokens = _clamp(db, tok, s, price, body.get("max_tokens") or body.get("max_completion_tokens"))
+            max_tokens = _clamp(db, tok, s, price, _requested_max(body))
             messages = body.get("messages", [])
             t_in = count_tokens(prompt_text(messages)) + 4 * len(messages)
-            streamed, usage, t0, ok = [], None, time.monotonic(), False
+            streamed, usage, t0 = [], None, time.monotonic()
+            outcome = "client_dropped"  # until proven otherwise
+            request_id, reservation, ti, to = None, 0, t_in, 0
             try:
+                if settings.llm_mode == "real":
+                    try:
+                        max_tokens, reservation = upstream.guard.reserve(
+                            s.id, upstream.estimate_input_uusd(messages, price), price.price_out, max_tokens)
+                    except upstream.UpstreamError as e:
+                        outcome = "provider_failed"
+                        yield f"data: {json.dumps(ProxyError(e.status, e.code, e.message).body())}\n\n"
+                        return
                 yield chunk({"role": "assistant", "content": ""})
                 if settings.llm_mode == "fake":
                     text, t_in, _ = fake_completion(alias, messages, max_tokens)
                     for i in range(0, len(text), 24):
-                        piece = text[i:i + 24]
-                        streamed.append(piece)
+                        streamed.append(text[i:i + 24])
                         await asyncio.sleep(0.02)
-                        yield chunk({"content": piece})
+                        yield chunk({"content": text[i:i + 24]})
+                    usage = {"prompt_tokens": t_in, "completion_tokens": count_tokens(text)}
                 else:
-                    payload = {k: v for k, v in body.items() if k != "max_completion_tokens"}
-                    payload |= {"model": price.provider_model, "max_tokens": max_tokens, "stream": True,
-                                "stream_options": {"include_usage": True}}
-                    async with httpx.AsyncClient(timeout=120) as c:
-                        async with c.stream("POST", settings.llm_upstream_base_url.rstrip("/") + "/chat/completions",
-                                            json=payload,
-                                            headers={"authorization": f"Bearer {settings.llm_upstream_api_key}"}) as r:
-                            if r.status_code >= 400:
-                                yield f"data: {json.dumps(ProxyError(502, 'provider_error', 'upstream error').body())}\n\n"
-                                return
+                    try:
+                        async with upstream.open_stream(upstream.build_payload(body, price, max_tokens, True)) as r:
                             async for line in r.aiter_lines():
                                 if not line.startswith("data:") or line.strip() == "data: [DONE]":
                                     continue
                                 d = json.loads(line[5:])
-                                usage = d.get("usage") or usage
+                                request_id = d.get("id") or request_id
+                                if d.get("usage"):
+                                    usage = d["usage"]
+                                    upstream.log_usage(s.id, d, alias)
                                 for ch in d.get("choices", []):
                                     piece = (ch.get("delta") or {}).get("content") or ""
                                     if piece:
                                         streamed.append(piece)
                                         yield chunk({"content": piece})
-                ok = True
+                    except (upstream.UpstreamError, httpx.HTTPError, ValueError) as e:
+                        outcome = "provider_failed"
+                        err = e if isinstance(e, upstream.UpstreamError) else \
+                            upstream.UpstreamError(502, "provider_error", f"stream broke: {e}")
+                        yield f"data: {json.dumps(ProxyError(err.status, err.code, err.message).body())}\n\n"
+                        return
+                outcome = "ok"
             finally:
-                text_out = "".join(streamed)
-                if usage and ok:
-                    ti, to, est = usage.get("prompt_tokens", t_in), usage.get("completion_tokens", 0), False
-                else:  # dropped or no usage block: bill what was actually streamed
-                    ti, to, est = t_in, count_tokens(text_out) if text_out else 0, True
-                if to or ok:
-                    _bill(db, s, tok, idem, alias, price, ti, to, int((time.monotonic() - t0) * 1000), est)
+                cached = 0
+                if outcome == "ok" and usage:
+                    ti, to, cached = upstream.usage_tokens(usage)
+                    est = False
+                else:
+                    ti, to, est = t_in, count_tokens("".join(streamed)) if streamed else 0, True
+                if settings.llm_mode == "real":
+                    spent = 0 if outcome == "provider_failed" and not streamed else upstream.provider_cost_uusd(
+                        {"prompt_tokens": ti, "completion_tokens": to,
+                         "prompt_tokens_details": {"cached_tokens": cached}}, price)
+                    upstream.guard.settle(s.id, reservation, spent)
+                if outcome != "provider_failed" and (to or outcome == "ok"):
+                    reasoning = int(((usage or {}).get("completion_tokens_details") or {}).get("reasoning_tokens") or 0)
+                    _bill(db, s, tok, idem, alias, price, ti, to, int((time.monotonic() - t0) * 1000), est,
+                          cached=cached, reasoning=reasoning, request_id=request_id)
             yield chunk({}, "stop", {"prompt_tokens": ti, "completion_tokens": to, "total_tokens": ti + to})
             yield "data: [DONE]\n\n"
 

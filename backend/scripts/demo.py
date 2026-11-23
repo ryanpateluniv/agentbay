@@ -34,7 +34,6 @@ s = c.post("/v1/sessions", json={"quote_id": q["id"]}, headers=SAM).json()
 print(f"  session {s['id']}  cap {cr(s['cap_microcredits'])}")
 
 step("3. Live event stream (SSE)")
-answered = threading.Event()
 with c.stream("GET", f"/v1/sessions/{s['id']}/events?token=tok_sam", timeout=None) as r:
     event = None
     for line in r.iter_lines():
@@ -46,10 +45,15 @@ with c.stream("GET", f"/v1/sessions/{s['id']}/events?token=tok_sam", timeout=Non
                 print(f"  [spend]   {cr(d['spent_microcredits'])} of {cr(d['cap_microcredits'])} "
                       f"({d['input_tokens']} in / {d['output_tokens']} out tokens)")
             elif event == "ask_user":
-                print(f"  [ask]     {d['question']}")
-                print("  [buyer]   2000 USD, food and museums")
-                threading.Thread(target=lambda: c.post(f"/v1/sessions/{s['id']}/messages", headers=SAM, json={
-                    "text": "2000 USD, food and museums", "reply_to": d["id"]})).start()
+                answer = (d.get("options") or [None])[0] or "2000 USD total, I love food and museums"
+                print(f"  [ask]     {d['question']}  options={d.get('options')}")
+                print(f"  [buyer]   {answer}")
+                threading.Thread(target=lambda d=d, a=answer: c.post(f"/v1/sessions/{s['id']}/messages", headers=SAM,
+                                 json={"text": a, "reply_to": d["id"]})).start()
+            elif event == "confirm":
+                print(f"  [confirm] {d['action']}  -> approved")
+                threading.Thread(target=lambda d=d: c.post(f"/v1/sessions/{s['id']}/confirm", headers=SAM,
+                                 json={"confirm_id": d["id"], "approved": True})).start()
             elif event == "settled":
                 rc = d
                 break
