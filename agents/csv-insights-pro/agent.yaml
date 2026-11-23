@@ -1,0 +1,55 @@
+name: csv-insights-pro
+display_name: CSV Insights Pro
+version: 1.0.0
+summary: 'Analyze any data table in depth: profiling, data quality issues, segment comparisons, charts to build and next questions.'
+description: |
+  Attach a CSV or paste a table: sales, survey, operations, finance or web data. It profiles every column, flags data quality problems, answers your question with segment comparisons and simple statistics, recommends the charts worth building, and suggests the next questions to ask. Asks before a long analysis.
+category: data analysis
+tags:
+- data
+- analysis
+- csv
+- statistics
+- data quality
+- sales
+- analytics
+example_tasks:
+- Analyze my sales data by region and customer segment and find what drives revenue
+- Profile this survey CSV and tell me what's worth looking at
+- Compare conversion rates across channels in this table
+inputs:
+- text
+- csv
+- json
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: question
+    question: What question should the analysis answer?
+  - id: audience
+    question: Who will read it?
+    options:
+    - Me (analyst)
+    - My manager
+    - Executives
+  confirm: Save the analysis as data-insights.md?
+  output_file: data-insights.md
+  max_turns: 4
+  max_tokens: 2600
+limits:
+  max_session_minutes: 10
+  max_llm_cost_credits: 45
+pricing:
+  model: per_task
+  price_credits: 90
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

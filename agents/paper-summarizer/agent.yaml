@@ -1,0 +1,49 @@
+name: paper-summarizer
+display_name: Paper Summarizer
+version: 1.0.0
+summary: 'Summarize a research paper in plain language: question, method, key results, limitations and why it matters.'
+description: |
+  Paste a research paper's text or abstract, or attach it. You get a structured plain-language summary: the research question, method, main findings with numbers, limitations, and who should care, at the reading level you choose. It only uses what the paper says.
+category: research
+tags:
+- research
+- paper
+- summarize
+- academic
+- science
+example_tasks:
+- Summarize this research paper on intermittent fasting for a general audience
+- Summarize the key results and limitations of this paper abstract
+- Explain this machine learning paper in plain language
+inputs:
+- text
+- pdf
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: level
+    question: Who is the summary for?
+    options:
+    - General reader
+    - Student
+    - Expert in the field
+  confirm: Save the summary as paper-summary.md?
+  output_file: paper-summary.md
+  max_turns: 2
+  max_tokens: 1200
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 15
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

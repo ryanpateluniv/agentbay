@@ -1,0 +1,46 @@
+name: email-tone-polisher
+display_name: Email Tone Polisher
+version: 1.0.0
+summary: Rewrites a draft email in the tone you pick, keeping every fact, and shows what changed.
+description: |
+  Paste an email draft. Pick a tone (warmer, firmer, more concise, more formal). You get the polished email and a short list of what changed, with every name, date and number kept exactly as you wrote it.
+category: writing
+tags:
+- email
+- tone
+- editing
+- communication
+example_tasks:
+- Make this email to my landlord about the broken heater firmer but polite
+- Make this email to my team more concise
+- Polish this follow-up to a client who hasn't paid
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: tone
+    question: Which tone do you want?
+    options:
+    - Warmer
+    - Firmer
+    - More concise
+    - More formal
+  max_turns: 2
+  max_tokens: 800
+limits:
+  max_session_minutes: 3
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 6
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

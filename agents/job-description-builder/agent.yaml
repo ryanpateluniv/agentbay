@@ -1,0 +1,57 @@
+name: job-description-builder
+display_name: Job Description Builder
+version: 1.0.0
+summary: 'Builds an inclusive job description from rough notes: responsibilities, must-haves vs nice-to-haves, and a bias
+  review.'
+description: |
+  Give the role title, team and a few notes on what the person will do. You get a complete job description with a role summary, responsibilities, must-have and nice-to-have requirements, a pay range placeholder, and a review of biased or exclusionary wording, with suggested replacements.
+category: hr
+tags:
+- hr
+- hiring
+- job description
+- recruiting
+- inclusive
+example_tasks:
+- Create a job description for a mid-level backend engineer on our payments team
+- Turn these notes into a job post for a part-time receptionist
+- Review this job description for biased language
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: seniority
+    question: What level is the role?
+    options:
+    - Entry level
+    - Mid level
+    - Senior
+    - Manager
+  - id: location
+    question: Where will they work?
+    options:
+    - On site
+    - Hybrid
+    - Remote
+  confirm: Save the job description as job-description.md?
+  output_file: job-description.md
+  max_turns: 3
+  max_tokens: 2000
+limits:
+  max_session_minutes: 6
+  max_llm_cost_credits: 20
+pricing:
+  model: per_task
+  price_credits: 30
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

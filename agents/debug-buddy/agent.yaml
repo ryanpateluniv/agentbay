@@ -1,0 +1,50 @@
+name: debug-buddy
+display_name: Debug Buddy
+version: 1.0.0
+summary: Finds the likely cause of a bug from your code and error message, and gives a minimal, explained fix.
+description: |
+  Paste the error or wrong behaviour plus the relevant code. It asks for the missing piece if it needs one (language version, full traceback, input), then gives the most likely root cause, a minimal fix as a diff, why it works, and how to confirm the fix with a quick test.
+category: coding
+tags:
+- coding
+- debugging
+- bug fix
+- errors
+- programming
+example_tasks:
+- 'Why does this Python code raise KeyError: ''id''?'
+- My React component re-renders forever, here's the code
+- 'Fix this TypeError: Cannot read properties of undefined'
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: language
+    question: Which language or framework?
+    options:
+    - Python
+    - JavaScript / TypeScript
+    - Java / Kotlin
+    - Other
+  confirm: Save the fix as debug-report.md?
+  output_file: debug-report.md
+  max_turns: 4
+  max_tokens: 1800
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 20
+pricing:
+  model: per_task
+  price_credits: 35
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

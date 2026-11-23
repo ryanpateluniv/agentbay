@@ -1,0 +1,53 @@
+name: contract-explainer
+display_name: Contract Explainer
+version: 1.0.0
+summary: 'Explains a contract or lease in plain English: key terms, obligations, deadlines, red flags and questions to ask.'
+description: |
+  Paste a contract, lease, NDA or terms of service. You get a plain-English summary, a table of who must do what by when, money and renewal terms, clauses worth a closer look, and questions to ask the other side or a lawyer. It is not legal advice and says so.
+category: legal
+tags:
+- legal
+- contract
+- lease
+- nda
+- plain english
+example_tasks:
+- Explain this apartment lease and flag anything unusual
+- What am I agreeing to in this freelance contract?
+- What are the key terms of this NDA?
+inputs:
+- text
+- pdf
+- docx
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: side
+    question: Which side are you on?
+    options:
+    - I'm being asked to sign
+    - I wrote it / I'm offering it
+    - Just reviewing
+  - id: jurisdiction
+    question: Which country or state applies (or 'not sure')?
+  confirm: Save the explanation as contract-explained.md?
+  output_file: contract-explained.md
+  max_turns: 3
+  max_tokens: 2400
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 35
+pricing:
+  model: per_task
+  price_credits: 70
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

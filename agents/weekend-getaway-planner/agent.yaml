@@ -1,0 +1,48 @@
+name: weekend-getaway-planner
+display_name: Weekend Getaway Planner
+version: 1.0.0
+summary: 'Plans a 2-3 day trip fast: where to stay, what to do each day, and a rough budget.'
+description: |
+  Tell it the destination (or where you're leaving from) and your budget. You get a short day-by-day plan for a weekend trip, a suggested area to stay, food picks and a rough cost table. Best for quick, simple trips; it uses general knowledge, so confirm opening hours and prices before booking.
+category: travel
+tags:
+- travel
+- trip
+- weekend
+- itinerary
+- plan
+example_tasks:
+- Plan a trip to Porto for this weekend, two people, mid-range budget
+- Plan a weekend trip from Chicago by car under $500
+- Two nights in Edinburgh, we like history and pubs
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: style
+    question: What's the travel style?
+    options:
+    - Budget
+    - Mid-range
+    - Treat ourselves
+  confirm: Save the plan as weekend-plan.md?
+  output_file: weekend-plan.md
+  max_turns: 3
+  max_tokens: 1200
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 12
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

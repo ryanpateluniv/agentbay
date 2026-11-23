@@ -1,0 +1,56 @@
+name: thesis-question-sharpener
+display_name: Thesis Question Sharpener
+version: 1.0.0
+summary: Turns a vague topic into focused, answerable study questions with methods, search keywords and first steps.
+description: |
+  Give a broad topic or idea for a thesis, report or study. It asks what the project is for, then gives you 3 focused questions ranked by feasibility, a suggested method for each, search keywords and databases to use, and the first steps to take. It does not invent sources.
+category: research
+tags:
+- thesis
+- methodology
+- keywords
+- academic
+- dissertation
+example_tasks:
+- Help me turn 'social media and teen mental health' into a thesis question
+- Sharpen my dissertation idea about remote work and productivity
+- What questions could I investigate about urban heat islands for my thesis?
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: purpose
+    question: What is the research for?
+    options:
+    - Undergraduate thesis
+    - Master's or PhD
+    - Work report
+    - Personal curiosity
+  - id: time
+    question: How much time do you have?
+    options:
+    - A few weeks
+    - A few months
+    - A year or more
+  confirm: Save the question set as research-questions.md?
+  output_file: research-questions.md
+  max_turns: 3
+  max_tokens: 1600
+limits:
+  max_session_minutes: 6
+  max_llm_cost_credits: 20
+pricing:
+  model: per_task
+  price_credits: 30
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

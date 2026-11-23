@@ -1,0 +1,52 @@
+name: invoice-review-plus
+display_name: Invoice Review Plus
+version: 1.0.0
+summary: 'Thorough invoice review: math, duplicate charges, tax, payment terms and vendor details, with a payment recommendation.'
+description: |
+  Paste one or more invoices (and your expense policy if you have one). You get recomputed totals, duplicate or suspicious charges, tax and payment-term checks, missing vendor details, and a clear pay / hold / dispute recommendation with the reasons. Asks before saving the report.
+category: finance
+tags:
+- invoice
+- finance
+- audit
+- duplicates
+- accounts payable
+example_tasks:
+- Check my invoice from Contoso for duplicate charges and math errors before I pay it
+- Review these two vendor invoices against our 30-day payment policy
+- Should I pay this invoice or dispute it?
+inputs:
+- text
+- pdf
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: role
+    question: Who is this review for?
+    options:
+    - Freelancer or small business
+    - Accounts payable team
+    - Finance manager
+  - id: policy
+    question: Any policy to check against (payment terms, spend limits)? Type 'none' if not.
+  confirm: Save the review as invoice-review.md?
+  output_file: invoice-review.md
+  max_turns: 4
+  max_tokens: 1800
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 22
+pricing:
+  model: per_task
+  price_credits: 45
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev
