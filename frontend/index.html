@@ -1839,6 +1839,77 @@
   #creator-review { margin-top: 24px; }
   #creator-review h3 { margin-top: 0; }
   @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+  /* auth form */
+  .auth-tabs { display: flex; gap: 4px; width: 100%; padding: 3px; border-radius: 999px; background: rgba(228, 228, 231, 0.06); }
+  .auth-tabs button { flex: 1; height: 30px; border: 0; border-radius: 999px; background: transparent; color: #8a8f98; font: inherit; font-size: 13px; }
+  .auth-tabs button.on { background: rgba(228, 228, 231, 0.12); color: #e4e4e7; }
+  .auth-problems { width: 100%; margin: 0; padding: 0 0 0 18px; color: #e7b3b3; font-size: 12px; line-height: 1.5; }
+  .auth-problems:empty { display: none; }
+  #auth-demo { border: 0; background: transparent; font: inherit; font-size: 13px; color: #8a8f98; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  #auth-demo:hover { color: #e4e4e7; }
+  #toast {
+    position: fixed; left: 50%; bottom: 28px; z-index: 60; transform: translate(-50%, 12px);
+    max-width: min(520px, calc(100% - 32px)); padding: 10px 16px; border-radius: 12px;
+    background: var(--send); color: var(--send-text); font-size: 14px; box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s;
+  }
+  #toast.on { opacity: 1; transform: translate(-50%, 0); }
+
+  /* wallet */
+  .wallet-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; padding: 4px 0 14px; border-bottom: 1px solid var(--line); }
+  .wallet-head .meta { margin: 0; }
+  .wallet-balance { margin: 2px 0 0; font-size: 32px; font-weight: 500; letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+  .tx-list { display: flex; flex-direction: column; }
+  .tx { display: grid; grid-template-columns: 78px minmax(0, 1fr) auto 110px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .tx-type { justify-self: start; font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--fill-2); color: var(--muted); }
+  .tx-type.t-bonus, .tx-type.t-topup, .tx-type.t-refund { background: var(--good-soft); color: var(--good); }
+  .tx-type.t-hold { background: var(--beta-soft); color: var(--beta); }
+  .tx-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .tx-label small { display: block; color: var(--faint); font-size: 12px; }
+  .tx-amt { font-variant-numeric: tabular-nums; }
+  .tx-amt.pos { color: var(--good); }
+  .tx-bal { text-align: right; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  #wallet-more { margin-top: 12px; }
+
+  /* creator: publish */
+  .publish { margin: 28px 0 8px; padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--panel); }
+  .publish > h3 { margin-top: 0; }
+  .guide { counter-reset: step; list-style: none; margin: 16px 0 20px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .guide li { counter-increment: step; position: relative; padding-left: 36px; font-size: 14px; line-height: 1.5; color: var(--muted); }
+  .guide li b { color: var(--text); font-weight: 500; }
+  .guide li::before {
+    content: counter(step); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 12px; background: var(--fill-2); color: var(--text);
+  }
+  .guide code, .publish code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; background: var(--fill-2); border-radius: 5px; padding: 1px 5px; color: var(--text); }
+  .publish-form { display: flex; flex-direction: column; gap: 14px; }
+  .publish-form fieldset { margin: 0; padding: 0; border: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; }
+  .publish-form legend { margin-bottom: 8px; font-size: 13px; color: var(--muted); }
+  .publish-form label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
+  .publish-form label.wide { grid-column: 1 / -1; }
+  #creator .publish-form textarea { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; line-height: 1.5; }
+  .publish-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .publish-or { font-size: 13px; color: var(--muted); }
+  .problems { margin: 0; padding: 10px 14px 10px 30px; border-radius: 10px; background: var(--bad-soft); color: var(--bad); font-size: 13px; line-height: 1.5; }
+  .problems:empty { display: none; }
+  #pf-note:empty { display: none; }
+  #publish-list { display: flex; flex-direction: column; }
+  .sub-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; padding: 10px 4px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--text); text-align: left; font: inherit; font-size: 14px; cursor: pointer; }
+  .sub-row:hover { background: var(--fill); }
+  .sub-card { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .sub-card h3 { margin: 0; font-size: 15px; }
+  .review-steps li.st-todo { color: var(--faint); }
+  .review-steps li.st-now::before { color: var(--focus); animation: pill-pulse 1.2s ease-in-out infinite; }
+
+  /* admin */
+  .queue-row { align-items: center; }
+  .queue-row > span:last-child { display: flex; gap: 6px; flex: none; }
+  .sub-card .notes { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--muted); }
+  @media (max-width: 760px) {
+    .publish-form fieldset { grid-template-columns: 1fr; }
+    .tx { grid-template-columns: 70px minmax(0, 1fr) auto; }
+    .tx-bal { display: none; }
+  }
   #landing { z-index: 40; }  /* landing first, then sign-in (z 30), then the app */
 </style>
 </head>
@@ -1881,6 +1952,18 @@
       Continue with Google
     </button>
     </div>
+    <form id="auth-form" class="hidden" novalidate>
+      <div class="auth-tabs" role="tablist">
+        <button type="button" id="auth-tab-login" class="on" role="tab">Log in</button>
+        <button type="button" id="auth-tab-signup" role="tab">Sign up</button>
+      </div>
+      <div class="auth-field hidden" id="auth-name-row"><input id="auth-name" type="text" autocomplete="name" maxlength="100" placeholder="Name (optional)" aria-label="Name"></div>
+      <div class="auth-field"><input id="auth-email" type="email" autocomplete="email" maxlength="200" placeholder="Email address" aria-label="Email"></div>
+      <div class="auth-field"><input id="auth-password" type="password" autocomplete="current-password" maxlength="128" placeholder="Password" aria-label="Password"></div>
+      <ul id="auth-problems" class="auth-problems"></ul>
+      <button id="auth-submit" type="submit">Log in</button>
+    </form>
+    <button id="auth-demo" class="auth-link hidden" type="button">Continue as demo user</button>
     <p id="auth-error"></p>
   </div>
 </div>
@@ -1950,6 +2033,7 @@
       <div class="acct-split"></div>
       <button class="user-row" type="button" data-view="account">Account overview</button>
       <button class="user-row" type="button" data-view="creator">Creator</button>
+      <button class="user-row hidden" id="become-creator" type="button">Become a creator</button>
       <div class="theme-choices" role="group" aria-label="Theme">
         <button type="button" data-theme-choice="light">Light</button>
         <button type="button" data-theme-choice="dark">Dark</button>
@@ -2113,6 +2197,61 @@
   <h2>Creator ledger</h2>
   <div id="creator-error" class="warn"></div>
   <div id="creator-home"></div>
+  <section id="publish" class="publish">
+    <h3>Publish an agent</h3>
+    <p class="meta">No code needed: an agent is a prompt, a short manifest and a few test cases.</p>
+    <ol class="guide">
+      <li><b>Write prompt.md.</b> Tell the model what to do. Use <code>{{task}}</code> for the buyer's request, <code>{{answers.q1}}</code> for an answer and <code>{{files}}</code> for attached text.</li>
+      <li><b>Fill in agent.yaml.</b> Name, summary, model, price and limits. The form below writes it for you.</li>
+      <li><b>Add test cases.</b> One JSON object per line: <code>{"task": "...", "answers": ["..."], "expect_contains": ["..."]}</code>.</li>
+      <li><b>Upload a zip or fill in the form.</b> The zip holds agent.yaml, prompt.md and cases.jsonl. Start from <code>agents/_template</code>.</li>
+      <li><b>Submit for review.</b> Nine automated checks run, then an admin approves it and it's listed.</li>
+    </ol>
+    <form id="publish-form" class="publish-form" novalidate>
+      <fieldset>
+        <legend>agent.yaml</legend>
+        <label>Name (slug)<input id="pf-name" placeholder="meeting-notes" pattern="[a-z0-9][a-z0-9-]{1,62}"></label>
+        <label>Title<input id="pf-title" placeholder="Meeting Notes"></label>
+        <label>Version<input id="pf-version" value="1.0.0"></label>
+        <label>Category<input id="pf-category" value="productivity"></label>
+        <label class="wide">Summary<input id="pf-summary" placeholder="One line buyers see in search (10–300 characters)"></label>
+        <label class="wide">Description<textarea id="pf-description" rows="2" placeholder="What it does and what the buyer gets back"></textarea></label>
+        <label>Tags<input id="pf-tags" placeholder="meetings, notes"></label>
+        <label>Example task<input id="pf-example" placeholder="Turn these notes into next actions"></label>
+        <label>Model<select id="pf-model"><option value="fast">fast</option><option value="balanced">balanced</option></select></label>
+        <label>Pricing<select id="pf-pricing"><option value="per_task">per task</option><option value="usage_based">usage-based</option></select></label>
+        <label id="pf-price-label">Price (credits)<input id="pf-price" type="number" min="0" step="1" value="15"></label>
+        <label>Model spend cap (credits)<input id="pf-cap" type="number" min="1" step="1" value="20"></label>
+        <label>Session minutes<input id="pf-minutes" type="number" min="1" max="60" step="1" value="5"></label>
+        <label>Question before it runs<input id="pf-question" placeholder="Optional, e.g. Who will read this?"></label>
+        <label>Answer options<input id="pf-options" placeholder="Optional, comma separated"></label>
+        <label>Confirm before saving<input id="pf-confirm" placeholder="Optional, e.g. Save the result?"></label>
+        <label>Output file<input id="pf-output" placeholder="Optional, e.g. result.md"></label>
+      </fieldset>
+      <label class="wide">prompt.md<textarea id="pf-prompt" rows="8" spellcheck="false">You turn messy meeting notes into a short summary.
+
+Write Markdown with sections: Decisions, Open questions, Next actions (a table: Action | Owner | Due).
+Use only what is in the notes. If the notes are empty, ask for them instead of guessing.
+
+The notes:
+
+{{task}}</textarea></label>
+      <label class="wide">cases.jsonl<textarea id="pf-cases" rows="4" spellcheck="false">{"task": "Ana will send the budget by Friday. We chose vendor B.", "answers": [], "expect_contains": ["Ana"]}
+{"task": "Raj owns the migration plan, due June 3.", "answers": [], "expect_contains": ["Raj"]}</textarea></label>
+      <div class="publish-actions">
+        <button type="submit" id="pf-save">Save draft</button>
+        <span class="publish-or">or upload a zip</span>
+        <input id="pf-zip" type="file" accept=".zip,application/zip" aria-label="Agent zip">
+        <button type="button" id="pf-zip-go" class="ghost">Upload zip</button>
+      </div>
+      <p id="pf-note" class="meta"></p>
+      <ul id="pf-problems" class="problems"></ul>
+    </form>
+    <h3>Your submissions</h3>
+    <div id="publish-list"></div>
+    <div id="publish-status"></div>
+  </section>
+  <h3>Code agents (source path)</h3>
   <div class="steps" id="creator-steps">
     <button type="button" data-step="1">1 Basics</button>
     <button type="button" data-step="2">2 Manifest</button>
@@ -2161,6 +2300,7 @@
   <div id="admin-metrics"></div>
   <h3>Queue</h3>
   <div id="admin-queue"></div>
+  <div id="admin-review"></div>
   <h3>Agents</h3>
   <div id="admin-body"></div>
   <h3>Refund a session</h3>
@@ -2247,6 +2387,10 @@ async function api(path, opts) {
     const err = new Error((body && body.detail) || (typeof data.detail === "string" ? data.detail : "") || res.statusText);
     err.code = (body && body.error) || data.error || "";
     err.status = res.status;
+    err.problems = Array.isArray(data.detail)
+      ? data.detail.map((d) => ((d.loc || []).slice(1).join(".") ? (d.loc || []).slice(1).join(".") + ": " : "") + (d.msg || ""))
+      : (body && body.problems) || null;
+    if (!err.message && err.problems) err.message = "Fix the problems below.";
     throw err;
   }
   return data;
@@ -2327,6 +2471,31 @@ function enterApp(session) {
 async function loadMe() {
   try { state.me = await api("/v1/me"); } catch (err) { state.me = { roles: [] }; }
   if (state.me.name) paintUser(state.me.name);
+  $("#become-creator").classList.toggle("hidden", !state.me.id || hasRole("creator"));
+}
+async function becomeCreator() {
+  state.me = Object.assign({}, state.me || {}, await api("/v1/me/creator", { method: "POST" }));
+  $("#become-creator").classList.add("hidden");
+  toast("Creator role on. You can publish agents now.");
+  show("creator");
+}
+$("#become-creator").onclick = (event) => {
+  event.stopPropagation();
+  $("#user-menu").classList.add("hidden");
+  becomeCreator().catch((err) => toast(err.message || "Couldn't switch on the creator role."));
+};
+function toast(text) {
+  let box = $("#toast");
+  if (!box) {
+    box = document.createElement("div");
+    box.id = "toast";
+    box.setAttribute("role", "status");
+    document.body.appendChild(box);
+  }
+  box.textContent = text;
+  box.classList.add("on");
+  clearTimeout(state.toastTimer);
+  state.toastTimer = setTimeout(() => box.classList.remove("on"), 4000);
 }
 function hasRole(role) {
   const roles = (state.me && state.me.roles) || [];
@@ -2339,12 +2508,21 @@ function enterDemo(token) {
 async function bootAuth() {
   let cfg = { configured: false };
   try { cfg = await fetch("/v1/auth/config").then((res) => res.json()); } catch (err) { cfg = { configured: false }; }
+  $("#auth-form").classList.toggle("hidden", !cfg.password_login);
+  const savedSession = localStorage.getItem("cohort-session-token");
+  if (savedSession && cfg.password_login) {
+    state.token = savedSession;
+    try {
+      const me = await api("/v1/me");
+      enterApp({ access_token: savedSession, user: { email: me.email, user_metadata: { name: me.name } } });
+    } catch (err) {
+      localStorage.removeItem("cohort-session-token");
+      state.token = "";
+    }
+  }
   if (!cfg.configured || !window.supabase) {
     ["auth-google"].forEach((id) => { $("#"+id).disabled = true; });
     const demo = cfg.demo_tokens || [];
-    const saved = localStorage.getItem("cohort-demo-token");
-    if (saved && demo.includes(saved)) return enterDemo(saved);
-    showAuth(demo.length ? "No Supabase keys set. Pick a demo account." : "Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
     const roles = { tok_sam: "Sam · buyer", tok_riya: "Riya · creator", tok_admin: "Admin · admin" };
     demo.slice().reverse().forEach((token) => {
       const b = document.createElement("button");
@@ -2354,8 +2532,14 @@ async function bootAuth() {
       b.onclick = () => enterDemo(token);
       $("#auth-options").prepend(b);
     });
+    $("#auth-demo").classList.toggle("hidden", !demo.includes("tok_sam"));
+    if (state.token) return;
+    const saved = localStorage.getItem("cohort-demo-token");
+    if (saved && demo.includes(saved)) return enterDemo(saved);
+    showAuth(cfg.password_login ? "Log in, sign up, or pick a demo account." : demo.length ? "No Supabase keys set. Pick a demo account." : "Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
     return;
   }
+  if (state.token) return;
   state.supabase = window.supabase.createClient(cfg.url, cfg.anon_key);
   const { data } = await state.supabase.auth.getSession();
   if (data.session) enterApp(data.session);
@@ -2367,6 +2551,56 @@ async function bootAuth() {
     }
   });
 }
+state.authTab = "login";
+function paintAuthTab() {
+  const signup = state.authTab === "signup";
+  $("#auth-tab-login").classList.toggle("on", !signup);
+  $("#auth-tab-signup").classList.toggle("on", signup);
+  $("#auth-name-row").classList.toggle("hidden", !signup);
+  $("#auth-submit").textContent = signup ? "Create account" : "Log in";
+  $("#auth-password").setAttribute("autocomplete", signup ? "new-password" : "current-password");
+  $("#auth-password").placeholder = signup ? "Password (8 characters or more)" : "Password";
+  $("#auth-problems").innerHTML = "";
+  $("#auth-error").textContent = "";
+}
+$("#auth-tab-login").onclick = () => { state.authTab = "login"; paintAuthTab(); };
+$("#auth-tab-signup").onclick = () => { state.authTab = "signup"; paintAuthTab(); };
+$("#auth-demo").onclick = () => enterDemo("tok_sam");
+$("#auth-form").onsubmit = async (event) => {
+  event.preventDefault();
+  const signup = state.authTab === "signup";
+  const email = $("#auth-email").value.trim();
+  const password = $("#auth-password").value;
+  const problems = [];
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) problems.push("Enter a valid email address.");
+  if (signup && password.length < 8) problems.push("Use a password of 8 characters or more.");
+  if (!signup && !password) problems.push("Enter your password.");
+  $("#auth-error").textContent = "";
+  $("#auth-problems").innerHTML = problems.map((p) => `<li>${esc(p)}</li>`).join("");
+  if (problems.length) return;
+  const body = { email, password };
+  if (signup && $("#auth-name").value.trim()) body.name = $("#auth-name").value.trim();
+  $("#auth-submit").disabled = true;
+  try {
+    const res = await api(signup ? "/v1/auth/signup" : "/v1/auth/login", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
+    localStorage.setItem("cohort-session-token", res.token);
+    localStorage.removeItem("cohort-demo-token");
+    $("#auth-password").value = "";
+    enterApp({ access_token: res.token, user: { email: res.user.email, user_metadata: { name: res.user.name } } });
+    if (signup) toast("Welcome. Your trial credits are in your wallet.");
+  } catch (err) {
+    const messages = {
+      email_taken: "An account with this email already exists. Log in instead.",
+      invalid_credentials: "Email or password is wrong.",
+      too_many_attempts: "Too many attempts. Wait a few minutes, then try again."
+    };
+    $("#auth-error").textContent = messages[err.code] || err.message || "That didn't work. Try again.";
+    $("#auth-problems").innerHTML = (err.problems || []).map((p) => `<li>${esc(p)}</li>`).join("");
+    if (err.code === "email_taken") { state.authTab = "login"; paintAuthTab(); $("#auth-error").textContent = messages.email_taken; }
+  } finally {
+    $("#auth-submit").disabled = false;
+  }
+};
 $("#auth-google").onclick = async () => {
   if (!state.supabase) return;
   $("#auth-error").textContent = "";
@@ -2379,8 +2613,10 @@ $("#auth-google").onclick = async () => {
 $("#sign-out").onclick = async (event) => {
   event.stopPropagation();
   $("#user-menu").classList.add("hidden");
+  if (state.token.startsWith("sess_")) await api("/v1/auth/logout", { method: "POST" }).catch(() => {});
   if (state.supabase) await state.supabase.auth.signOut();
   localStorage.removeItem("cohort-demo-token");
+  localStorage.removeItem("cohort-session-token");
   state.token = "";
   state.me = null;
   showAuth();
@@ -3570,28 +3806,78 @@ async function openReport(id) {
   show("report");
 }
 async function loadWallet() {
-  const w = await api("/v1/wallet");
+  const box = $("#wallet-body");
+  let w;
+  try {
+    w = await api("/v1/wallet");
+  } catch (err) {
+    box.innerHTML = `<p class="empty">Your wallet didn't load (${esc(err.message || "network error")}). Try again in a moment.</p>`;
+    return;
+  }
   const packs = [["S", "$10", "1,000"], ["M", "$25", "2,750"], ["L", "$50", "5,750"]];
   const plans = [["plus", "$19 / month", "2,200"], ["pro", "$49 / month", "6,000"]];
-  const hist = (w.history || []).slice(0, 20).map((row) => `<div class="kv"><span>${esc(row.ref_type || row.memo || row.direction)}</span><span>${esc(row.direction)} ${creditsFine(fromMicro(row.amount_microcredits))}</span></div>`).join("");
-  $("#wallet-body").innerHTML = `<div class="kv"><span>Balance</span><span>${creditsFine(w.balance_credits)}</span></div>
-    <div class="kv"><span>Held</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
+  const trial = (w.entries || []).find((e) => e.label === "Trial credits");
+  box.innerHTML = `<div class="wallet-head">
+      <div><p class="meta">Balance</p><p class="wallet-balance">${creditsFine(w.balance_credits)}</p></div>
+      <button type="button" id="wallet-topup">Add 500 credits</button>
+    </div>
+    <div class="kv"><span>Held for running sessions</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
     <div class="kv"><span>Granted</span><span>${creditsFine(w.granted_credits)}</span></div>
+    ${trial ? `<div class="kv"><span>Trial credits</span><span>${creditsFine(trial.amount_credits)} · ${esc(new Date(trial.ts).toLocaleDateString())}</span></div>` : ""}
+    <h3>History</h3>
+    <div id="wallet-history" class="tx-list"></div>
+    <button type="button" id="wallet-more" class="ghost hidden">Load more</button>
     <h3>Packs</h3>
     <div class="grid-3">${packs.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-pack="${id}">Add ${id}</button></article>`).join("")}</div>
     <h3>Plans</h3>
-    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>
-    <h3>History</h3>
-    ${hist || `<p class="empty">No transactions yet.</p>`}`;
-  $("#wallet-body").querySelectorAll("[data-pack]").forEach((b) => b.onclick = async () => {
+    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>`;
+  $("#wallet-topup").onclick = async () => {
+    await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
+    toast("Added 500 credits.");
+    refreshBal();
+    loadWallet();
+  };
+  $("#wallet-more").onclick = () => loadWalletHistory(state.walletNext);
+  box.querySelectorAll("[data-pack]").forEach((b) => b.onclick = async () => {
     await once("pack:" + b.dataset.pack, (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ pack: b.dataset.pack })}));
     refreshBal();
     loadWallet();
   });
-  $("#wallet-body").querySelectorAll("[data-plan]").forEach((b) => b.onclick = async () => {
+  box.querySelectorAll("[data-plan]").forEach((b) => b.onclick = async () => {
     await api("/v1/subscriptions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ plan: b.dataset.plan })});
     loadWallet();
   });
+  loadWalletHistory(null);
+}
+async function loadWalletHistory(before) {
+  const list = $("#wallet-history");
+  const more = $("#wallet-more");
+  if (!list) return;
+  let page;
+  try {
+    page = await api("/v1/wallet/history?limit=20" + (before ? "&before=" + encodeURIComponent(before) : ""));
+  } catch (err) {
+    list.insertAdjacentHTML("beforeend", `<p class="empty">History didn't load (${esc(err.message || "network error")}).</p>`);
+    return;
+  }
+  const names = { bonus: "Bonus", topup: "Top-up", hold: "Hold", settle: "Settle", refund: "Refund" };
+  const rows = (page.entries || []).map((e) => {
+    const up = e.signed_credits >= 0;
+    const when = new Date(e.ts).toLocaleString([], { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" });
+    return `<div class="tx">
+      <span class="tx-type t-${esc(e.type)}">${esc(names[e.type] || e.type)}</span>
+      <span class="tx-label">${esc(e.label)}<small>${esc(when)}</small></span>
+      <span class="tx-amt ${up ? "pos" : "neg"}">${up ? "+" : "−"}${creditsFine(Math.abs(e.signed_credits))}</span>
+      <span class="tx-bal">${creditsFine(e.balance_after_credits)}</span>
+    </div>`;
+  }).join("");
+  if (!before && !rows) {
+    list.innerHTML = `<p class="empty">No activity yet. Add credits or start a session: every top-up, hold, charge and refund shows up here.</p>`;
+  } else {
+    list.insertAdjacentHTML("beforeend", rows);
+  }
+  state.walletNext = page.next_before;
+  more.classList.toggle("hidden", !page.next_before);
 }
 function showCreatorStep(n) {
   state.step = n;
@@ -3608,11 +3894,15 @@ async function loadCreator() {
     $("#creator-home").innerHTML = "";
     $("#creator-form").classList.add("hidden");
     $("#creator-steps").classList.add("hidden");
-    $("#creator-error").textContent = "Creator role required. Sign in as Riya to open this view.";
+    $("#creator-error").innerHTML = `Publishing agents needs the creator role. <button type="button" id="creator-become">Become a creator</button>`;
+    $("#publish").classList.add("hidden");
+    $("#creator-become").onclick = () => becomeCreator().catch((err) => { $("#creator-error").textContent = err.message || "Couldn't switch on the creator role."; });
     return;
   }
   $("#creator-form").classList.remove("hidden");
   $("#creator-steps").classList.remove("hidden");
+  $("#publish").classList.toggle("hidden", !hasRole("creator"));
+  if (hasRole("creator")) loadSubmissions();
   if (!hasRole("creator")) {
     $("#creator-error").textContent = "This account is an admin, not a creator. The creator API will refuse it.";
   }
@@ -3663,6 +3953,121 @@ async function openCreatorAgent(id) {
     }
   };
 }
+const REVIEW_STAGES = ["manifest_lint", "build", "static_scan", "security_probes", "functional_benchmark", "cost_latency_audit", "reliability", "policy", "decision"];
+function publishManifest() {
+  const v = (id) => $("#" + id).value.trim();
+  const num = (id) => Number($("#" + id).value) || 0;
+  const usage = v("pf-pricing") === "usage_based";
+  const nocode = { model: v("pf-model"), max_turns: 3 };
+  if (v("pf-question")) {
+    nocode.questions = [{ id: "q1", question: v("pf-question") }];
+    const options = v("pf-options").split(",").map((o) => o.trim()).filter(Boolean);
+    if (options.length) nocode.questions[0].options = options;
+  }
+  if (v("pf-confirm")) nocode.confirm = v("pf-confirm");
+  if (v("pf-output")) nocode.output_file = v("pf-output");
+  return {
+    name: v("pf-name"), display_name: v("pf-title") || v("pf-name"), version: v("pf-version") || "1.0.0",
+    summary: v("pf-summary"), description: v("pf-description"), category: v("pf-category") || "general",
+    tags: v("pf-tags").split(",").map((x) => x.trim()).filter(Boolean),
+    example_tasks: v("pf-example") ? [v("pf-example")] : [], inputs: ["text"], outputs: ["markdown"],
+    models_allowed: [v("pf-model")], nocode,
+    limits: { max_session_minutes: num("pf-minutes") || 5, max_llm_cost_credits: num("pf-cap") || 20 },
+    pricing: usage ? { model: "usage_based", markup_pct: num("pf-price") } : { model: "per_task", price_credits: num("pf-price") }
+  };
+}
+$("#pf-pricing").onchange = () => {
+  $("#pf-price-label").firstChild.textContent = $("#pf-pricing").value === "usage_based" ? "Markup (%)" : "Price (credits)";
+};
+function showPublishResult(promise, label) {
+  $("#pf-note").textContent = label;
+  $("#pf-problems").innerHTML = "";
+  $("#pf-save").disabled = $("#pf-zip-go").disabled = true;
+  return promise.then((draft) => {
+    $("#pf-note").textContent = `Saved ${draft.slug} ${draft.semver} as a draft. Submit it for review below.`;
+    loadSubmissions();
+    openSubmission(draft.agent_id, draft.version_id);
+  }).catch((err) => {
+    $("#pf-note").textContent = err.problems ? "Fix these, then save again:" : (err.message || "That didn't save.");
+    $("#pf-problems").innerHTML = (err.problems || []).map((p) => `<li>${esc(p)}</li>`).join("");
+  }).finally(() => { $("#pf-save").disabled = $("#pf-zip-go").disabled = false; });
+}
+$("#publish-form").onsubmit = (event) => {
+  event.preventDefault();
+  showPublishResult(api("/v1/creator/template-agents", { method: "POST", headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ manifest: publishManifest(), prompt: $("#pf-prompt").value, cases: $("#pf-cases").value }) }), "Saving…");
+};
+$("#pf-zip-go").onclick = () => {
+  const file = $("#pf-zip").files && $("#pf-zip").files[0];
+  if (!file) { $("#pf-note").textContent = "Choose a .zip with agent.yaml, prompt.md and cases.jsonl first."; return; }
+  if (file.size > 1000000) { $("#pf-note").textContent = "That zip is over 1 MB."; return; }
+  showPublishResult(api("/v1/creator/template-agents/upload", { method: "POST", headers: {"Content-Type":"application/zip"}, body: file }), "Uploading…");
+};
+async function loadSubmissions() {
+  const box = $("#publish-list");
+  let mine = [];
+  try { mine = await api("/v1/creator/agents"); } catch (err) { box.innerHTML = `<p class="empty">${esc(err.message || "Couldn't load your submissions.")}</p>`; return; }
+  const rows = [];
+  (mine || []).forEach((a) => (a.versions || []).forEach((ver) => rows.push({ a, ver })));
+  box.innerHTML = rows.length ? rows.map(({ a, ver }) => `<button type="button" class="sub-row" data-agent="${esc(a.id)}" data-version="${esc(ver.id)}">
+      <span>${esc(a.title)} <span class="meta">${esc(ver.semver)}</span></span>
+      <span class="status ${statusTone(ver.status === "in_review" ? "pending" : ver.status === "draft" ? "beta" : ver.status)}">${esc(ver.status.replace("_", " "))}</span>
+    </button>`).join("") : `<p class="empty">Nothing submitted yet. Save a draft above to start.</p>`;
+  box.querySelectorAll(".sub-row").forEach((b) => b.onclick = () => openSubmission(b.dataset.agent, b.dataset.version));
+}
+async function openSubmission(agentId, versionId) {
+  clearTimeout(state.pubPoll);
+  state.pubOpen = versionId;
+  const panel = $("#publish-status");
+  let data;
+  try {
+    data = await api("/v1/creator/agents/" + agentId + "/versions/" + versionId + "/review");
+  } catch (err) {
+    panel.innerHTML = `<p class="empty">${esc(err.message || "Couldn't load this submission.")}</p>`;
+    return;
+  }
+  if (state.pubOpen !== versionId) return;
+  const review = data.review;
+  const stages = (review && review.report_card && review.report_card.stages) || [];
+  const done = Object.fromEntries(stages.map((s) => [s.stage, s]));
+  const failed = ["rejected", "changes_requested"].includes(data.version_status) || (review && review.status === "done" && ["rejected", "changes_requested"].includes(review.decision));
+  let phase, tone, note;
+  if (data.version_status === "draft") [phase, tone, note] = ["Draft", "beta", "Saved but not submitted. Submit it to start the nine checks."];
+  else if (data.listed) [phase, tone, note] = ["Approved · listed", "good", "Live on the marketplace. Buyers can find and run it."];
+  else if (failed) [phase, tone, note] = ["Rejected", "bad", "Fix the findings below, bump the version and save again."];
+  else if (data.awaiting_admin) [phase, tone, note] = ["Awaiting admin", "beta", "Passed the automated review. An admin approves it before it's listed."];
+  else if (data.version_status === "approved") [phase, tone, note] = ["Approved", "good", "Approved, but another version is the one listed."];
+  else [phase, tone, note] = ["In review", "beta", "Running the checks. This page updates by itself."];
+  const running = phase === "In review";
+  const steps = REVIEW_STAGES.map((name) => {
+    const s = done[name];
+    const now = running && !s && REVIEW_STAGES.indexOf(name) === stages.length;
+    return `<li class="stage ${s ? "st-" + esc(s.status) : now ? "st-now" : "st-todo"}">${esc(name.replaceAll("_", " "))}${s ? " · " + esc(s.status) : now ? " · running" : ""}</li>`;
+  }).join("");
+  const card = review && review.status === "done" ? Object.assign({}, review.report_card || {}, { decision: review.decision, scores: review.scores, findings: review.findings, tests: review.tests, stages: [], cost_p50_microcredits: review.cost_p50_microcredits, cost_p90_microcredits: review.cost_p90_microcredits, latency_p50_ms: review.latency_p50_ms, latency_p95_ms: review.latency_p95_ms }) : null;
+  panel.innerHTML = `<article class="sub-card">
+      <div class="cmp-head"><h3>Submission ${esc(versionId)}</h3><span class="status ${tone}">${esc(phase)}</span></div>
+      <p class="meta">${esc(note)}</p>
+      ${data.version_status === "draft" ? `<button type="button" id="pf-submit">Submit for review</button>` : `<ul class="stage-list review-steps">${steps}</ul>`}
+      ${card ? reportCardHtml(card) : ""}
+    </article>`;
+  const submit = $("#pf-submit");
+  if (submit) submit.onclick = async () => {
+    submit.disabled = true;
+    try {
+      await once("submit:" + versionId, (key) => api("/v1/creator/agents/" + agentId + "/versions/" + versionId + "/submit", { method: "POST", headers: { "Idempotency-Key": key } }));
+    } catch (err) {
+      toast(err.message || "Submit failed.");
+    }
+    loadSubmissions();
+    openSubmission(agentId, versionId);
+  };
+  if ((running || phase === "Awaiting admin") && !$("#creator").classList.contains("hidden")) {
+    state.pubPoll = setTimeout(() => openSubmission(agentId, versionId), running ? 1500 : 5000);
+  } else if (!running) {
+    loadSubmissions();
+  }
+}
 async function loadAdmin() {
   $("#admin-error").textContent = "";
   if (!state.me) await loadMe();
@@ -3680,16 +4085,20 @@ async function loadAdmin() {
     <div class="kv"><span>Provider cost</span><span>${creditsFine(fromMicro(metrics.provider_cost_microcredits))}</span></div>
     <div class="kv"><span>Failure rate</span><span>${esc(metrics.failure_rate)}</span></div>`;
   const queue = await api("/v1/admin/review-queue");
-  const queueRows = (Array.isArray(queue) ? queue : []).map((row) => `<div class="kv"><span>${esc(row.agent_id)} ${esc(row.semver)} · ${esc(row.review_stage || row.status)}</span><span><button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
-  $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
   const data = await api("/v1/admin/agents");
+  const titles = Object.fromEntries((data.agents || []).map((a) => [a.id, a.title]));
+  state.adminQueue = Array.isArray(queue) ? queue : [];
+  const queueRows = state.adminQueue.map((row) => `<div class="kv queue-row"><span><b>${esc(titles[row.agent_id] || row.agent_id)}</b> ${esc(row.semver)} · <span class="status ${row.review_decision === "approved" ? "good" : row.review_decision ? "bad" : "beta"}">${esc(row.review_decision ? "checks " + row.review_decision : (row.review_stage || row.status).replaceAll("_", " "))}</span></span><span><button type="button" class="ghost" data-open="${row.version_id}">Open</button> <button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" class="ghost" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
+  $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
+  state.adminTitles = titles;
   $("#admin-body").innerHTML = (data.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title)}</h3><p class="meta">${esc(a.status)} · ${esc(a.decision || "")}</p>${reportCardHtml({ decision: a.decision, findings: (a.findings || []).map((f) => ({ detail: f })) })}
     <button type="button" data-review="${a.version_id}">Run review</button>
     <button type="button" data-kill="${a.id}">Kill switch</button>
     <button type="button" data-unpause="${a.id}">Unpause</button></article>`).join("") || `<p class="empty">No agents.</p>`;
-  $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = async () => {
-    await api("/v1/admin/versions/" + b.dataset.decision + "/decision", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ decision: b.dataset.choice })});
-    loadAdmin();
+  $("#admin-queue").querySelectorAll("[data-open]").forEach((b) => b.onclick = () => openQueued(b.dataset.open));
+  $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = () => {
+    if (b.dataset.choice === "rejected") return openQueued(b.dataset.decision, true);  // a rejection needs notes
+    decide(b.dataset.decision, "approved", "");
   });
   $("#admin-body").querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
     const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
@@ -3705,6 +4114,48 @@ async function loadAdmin() {
     await api("/v1/admin/agents/" + b.dataset.unpause + "/unpause", { method: "POST" });
     loadAdmin();
   });
+}
+async function openQueued(versionId, rejecting) {
+  const row = (state.adminQueue || []).find((r) => r.version_id === versionId);
+  const panel = $("#admin-review");
+  if (!row) { panel.innerHTML = ""; return; }
+  const title = (state.adminTitles || {})[row.agent_id] || row.agent_id;
+  let data;
+  try {
+    data = await api("/v1/creator/agents/" + row.agent_id + "/versions/" + versionId + "/review");
+  } catch (err) {
+    panel.innerHTML = `<p class="empty">${esc(err.message || "Couldn't open this submission.")}</p>`;
+    return;
+  }
+  const r = data.review;
+  const card = r ? Object.assign({}, r.report_card || {}, { decision: r.decision, scores: r.scores, findings: r.findings, tests: r.tests, stages: (r.report_card || {}).stages, cost_p50_microcredits: r.cost_p50_microcredits, cost_p90_microcredits: r.cost_p90_microcredits, latency_p50_ms: r.latency_p50_ms, latency_p95_ms: r.latency_p95_ms }) : null;
+  panel.innerHTML = `<article class="sub-card">
+      <div class="cmp-head"><h3>${esc(title)} ${esc(row.semver)}</h3><span class="status ${r && r.status === "done" ? statusTone(r.decision) : "beta"}">${esc(r ? (r.status === "done" ? "checks " + r.decision : "checks running · " + r.stage) : "not reviewed")}</span></div>
+      ${reportCardHtml(card)}
+      <label class="notes">Notes for the creator (required to reject)<textarea id="admin-notes" rows="2" placeholder="What to fix"></textarea></label>
+      <div class="cmp-actions"><button type="button" id="admin-approve">Approve and list</button><button type="button" class="ghost" id="admin-reject">Reject</button></div>
+    </article>`;
+  $("#admin-approve").onclick = () => decide(versionId, "approved", $("#admin-notes").value.trim(), title);
+  $("#admin-reject").onclick = () => {
+    const notes = $("#admin-notes").value.trim();
+    if (!notes) { $("#admin-notes").focus(); toast("Add a note so the creator knows what to fix."); return; }
+    decide(versionId, "rejected", notes, title);
+  };
+  if (rejecting) $("#admin-notes").focus();
+  panel.scrollIntoView({ block: "nearest" });
+}
+async function decide(versionId, decision, notes, title) {
+  const row = (state.adminQueue || []).find((r) => r.version_id === versionId);
+  const name = title || (row && (state.adminTitles || {})[row.agent_id]) || "The agent";
+  try {
+    await api("/v1/admin/versions/" + versionId + "/decision", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ decision, notes })});
+  } catch (err) {
+    toast(err.message || "The decision didn't save.");
+    return;
+  }
+  toast(decision === "approved" ? name + " is live and listed." : name + " was rejected. The creator sees your notes.");
+  $("#admin-review").innerHTML = "";
+  loadAdmin();
 }
 $("#compare-back").onclick = () => show("discover");
 $("#report-back").onclick = () => show("discover");

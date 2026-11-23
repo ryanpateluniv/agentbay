@@ -8,7 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session as DB
 
 from .. import schemas as S
-from ..auth import require_role
+from ..auth import current_user, require_role
 from ..config import REPO_ROOT
 from ..db import get_db
 from ..models import (Agent, AgentVersion, LedgerEntry, Listing, Payout, Rating, ReviewFinding, ReviewRun, Session,
@@ -143,7 +143,9 @@ async def submit_draft(agent_id: str, v: str, db: DB = Depends(get_db), user: Us
 
 
 @router.get("/agents/{agent_id}/versions/{v}/review", summary="Pipeline status and report card")
-def get_review(agent_id: str, v: str, db: DB = Depends(get_db), user: User = Depends(creator)):
+def get_review(agent_id: str, v: str, db: DB = Depends(get_db), user: User = Depends(current_user)):
+    if not {"creator", "admin"} & set(user.roles):  # admins open submissions from the review queue
+        raise HTTPException(403, detail="creator role required")
     agent = _own_agent(db, agent_id, user)
     ver = _version(db, agent, v)
     run = catalog.latest_review(db, ver.id)

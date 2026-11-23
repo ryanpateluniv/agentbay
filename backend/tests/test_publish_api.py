@@ -133,3 +133,12 @@ def test_validation_ownership_and_zip_safety(live_server):
         assert up(b"0" * 1_100_000).status_code == 413
         assert c.post("/v1/creator/template-agents", headers={"authorization": "Bearer tok_sam"},
                       json=template("nope")).status_code == 403  # buyers must switch on the creator role
+
+
+def test_admin_can_open_any_submission_review(live_server):
+    with httpx.Client(base_url=live_server, timeout=60) as c:
+        h = creator_headers(c, "adminview@example.com")
+        d = c.post("/v1/creator/template-agents", headers=h, json=template("admin-view")).json()
+        url = f"/v1/creator/agents/{d['agent_id']}/versions/{d['version_id']}/review"
+        assert c.get(url, headers=ADMIN).json()["version_status"] == "draft"
+        assert c.get(url, headers={"authorization": "Bearer tok_sam"}).status_code == 403
