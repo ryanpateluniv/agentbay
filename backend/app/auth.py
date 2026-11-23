@@ -1,8 +1,10 @@
-"""User auth: demo bearer tokens (tok_sam, ...) and, when configured, Supabase access tokens.
+"""User auth: demo bearer tokens (tok_sam, ...), email+password session tokens (sess_..., see api/accounts.py) and,
+when configured, Supabase access tokens.
 
 A Supabase token is verified by asking Supabase who it belongs to (GET {SUPABASE_URL}/auth/v1/user), which works
 for any signing scheme. The email is mapped to a platform user, created on first sight with the free trial
 credits (Section 7). ADMIN_EMAILS (comma list) get the admin role; everyone gets buyer + creator."""
+import hashlib
 import os
 import time
 
@@ -11,14 +13,15 @@ from fastapi import Depends, Header, HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DB
 
-from .config import MICRO
+from .config import MICRO, settings
 from .db import get_db
-from .models import CreatorProfile, User
+from .models import AuthSession, CreatorProfile, User, now
 
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "").rstrip("/")
 SUPABASE_ANON_KEY = os.environ.get("SUPABASE_ANON_KEY", "")
 ADMIN_EMAILS = {e.strip().lower() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip()}
-FREE_TRIAL_CREDITS = 200
+FREE_TRIAL_CREDITS = settings.trial_credits
+SESSION_PREFIX = "sess_"
 _cache: dict[str, tuple[float, str]] = {}  # token -> (expires_at, user_id)
 
 
@@ -53,17 +56,32 @@ def _supabase_user(db: DB, token: str) -> User | None:
     return user
 
 
+def token_hash(token: str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
+
+
+def _session_user(db: DB, token: str) -> User | None:
+    s = db.get(AuthSession, token_hash(token))
+    if s is None or s.revoked_at is not None or s.expires_at <= now():
+        return None
+    return db.get(User, s.user_id)
+
+
 def user_for_token(db: DB, token: str) -> User | None:
     if not token:
         return None
+    if token.startswith(SESSION_PREFIX):
+        user = _session_user(db, token)
+        return user if user and user.status == "active" else None
     user = db.scalar(select(User).where(User.api_token == token))
     if user is None and supabase_configured() and token.count(".") == 2:  # looks like a JWT
         user = _supabase_user(db, token)
     return user if user and user.status == "active" else None
 
 
-def current_user(authorization: str = Header("", description="Bearer <token>: demo tok_sam / tok_riya / tok_admin, "
-                                                             "or a Supabase access token when configured"),
+def current_user(authorization: str = Header("", description="Bearer <token>: a session token from /v1/auth/login, "
+                                                             "demo tok_sam / tok_riya / tok_admin, or a Supabase "
+                                                             "access token when configured"),
                  db: DB = Depends(get_db)) -> User:
     user = user_for_token(db, authorization.removeprefix("Bearer ").strip())
     if user is None:

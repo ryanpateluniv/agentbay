@@ -6,7 +6,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from .api import admin, buyer, creator, frontend, runtime as runtime_api
+from .api import accounts, admin, buyer, creator, frontend, runtime as runtime_api
 from .config import settings
 from .db import SessionLocal, init_db
 from .models import AgentVersion, Session
@@ -53,7 +53,7 @@ async def http_error(_, exc: HTTPException):
     return JSONResponse(body, status_code=exc.status_code)
 
 
-for r in (buyer.router, creator.router, admin.router, runtime_api.router, frontend.router):
+for r in (accounts.router, buyer.router, creator.router, admin.router, runtime_api.router, frontend.router):
     app.include_router(r)
 
 

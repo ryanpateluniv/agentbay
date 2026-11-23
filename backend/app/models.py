@@ -34,6 +34,24 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=now)
 
 
+class UserCredential(Base):
+    """Email + password login. Separate table so databases created before accounts existed keep working."""
+    __tablename__ = "user_credentials"
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    password_hash: Mapped[str] = mapped_column(String(200))
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=now)
+
+
+class AuthSession(Base):
+    """Login session. Only the sha256 of the bearer token is stored."""
+    __tablename__ = "auth_sessions"
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=now)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+
+
 class CreatorProfile(Base):
     __tablename__ = "creator_profiles"
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), primary_key=True)

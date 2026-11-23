@@ -29,8 +29,8 @@ def index():
 @router.get("/v1/auth/config", summary="Public auth config for the frontend (Supabase URL + anon key, if set)")
 def auth_config():
     if not supabase_configured():
-        return {"configured": False, "demo_tokens": ["tok_sam", "tok_riya", "tok_admin"]}
-    return {"configured": True, "url": SUPABASE_URL, "anon_key": SUPABASE_ANON_KEY}
+        return {"configured": False, "demo_tokens": ["tok_sam", "tok_riya", "tok_admin"], "password_login": True}
+    return {"configured": True, "url": SUPABASE_URL, "anon_key": SUPABASE_ANON_KEY, "password_login": True}
 
 
 # ---------- discovery chat ----------
