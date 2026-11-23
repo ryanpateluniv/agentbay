@@ -1910,6 +1910,98 @@
     .tx { grid-template-columns: 70px minmax(0, 1fr) auto; }
     .tx-bal { display: none; }
   }
+  /* ---------- session screen ---------- */
+  #session-live { max-width: 760px; margin: 0 auto; padding-bottom: 96px; }
+  .ses-head {
+    position: sticky; top: 0; z-index: 5; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "av id pill" "meter meter cancel";
+    gap: 8px 12px; align-items: center; margin: 0 -4px 8px; padding: 12px 4px; background: var(--panel); border-bottom: 1px solid var(--line);
+  }
+  .ses-avatar { grid-area: av; width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 15px; background: #2563eb; flex: none; }
+  .ses-avatar.big { width: 56px; height: 56px; font-size: 22px; margin: 0 auto 10px; }
+  .ses-id { grid-area: id; display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .ses-id h2 { margin: 0; font-size: 17px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ses-id .tag { text-transform: capitalize; flex: none; }
+  .ses-head #session-status { grid-area: pill; margin: 0; max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ses-meter { grid-area: meter; display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+  .ses-meter #spend { margin: 0; font-size: 12px; font-variant-numeric: tabular-nums; }
+  .ses-meter #spend:empty { display: none; }
+  .ses-meter .meter { height: 4px; border-radius: 4px; background: var(--fill-2); }
+  .ses-meter .meter > div { border-radius: 4px; background: var(--good); transition: width .3s; }
+  .ses-meter .meter > div.warn { background: #d99a2b; }
+  .ses-meter .meter > div.hot { background: #e5484d; }
+  .ses-head #cancel { grid-area: cancel; height: 28px; font-size: 12px; }
+
+  /* empty state */
+  .ses-empty { text-align: center; padding: 40px 16px 8px; }
+  .ses-empty h3 { margin: 0 0 6px; font-size: 18px; }
+  .ses-empty .meta { max-width: 520px; margin: 0 auto; line-height: 1.5; }
+  #session-live:has(#log > *) .ses-empty, .ses-empty:empty { display: none; }
+  .ses-examples { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 16px; }
+  #session .ses-example { height: auto; min-height: 32px; padding: 6px 14px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--text); font-size: 13px; text-align: left; }
+  #session .ses-example:hover { background: var(--fill); opacity: 1; }
+
+  /* conversation */
+  #log { gap: 14px; margin: 18px 0; }
+  #log .bubble { max-width: 720px; line-height: 1.6; font-size: 15px; }
+  #log .bubble.buyer { align-self: flex-end; max-width: 80%; padding: 10px 14px; border-radius: 18px 18px 4px 18px; background: color-mix(in srgb, var(--focus) 18%, var(--fill)); }
+  #log .bubble.agent { position: relative; align-self: flex-start; margin-left: 44px; padding: 26px 16px 14px; border-radius: 4px 16px 16px 16px; background: var(--fill); border: 1px solid var(--line); }
+  #log .bubble.agent::before {
+    content: var(--agent-initial, "A"); position: absolute; left: -44px; top: 0; width: 32px; height: 32px; border-radius: 50%;
+    display: grid; place-items: center; background: var(--agent-paint, #2563eb); color: #fff; font-size: 13px; line-height: 32px; text-align: center;
+  }
+  #log .bubble.agent::after { content: var(--agent-name, "Agent"); position: absolute; left: 16px; top: 7px; font-size: 11px; color: var(--muted); }
+  #log .bubble.agent.file-bubble { padding: 26px 16px 12px; }
+  #log .bubble.warn { align-self: stretch; border: 1px solid var(--bad); background: var(--bad-soft); color: var(--bad); }
+
+  /* progress timeline + typing */
+  .steps-log { margin-left: 44px; padding-left: 14px; border-left: 1px solid var(--line); }
+  .steps-log .note { position: relative; margin-left: -21px; }
+  .steps-more { padding-left: 8px !important; }
+  .typing { display: none; gap: 4px; align-items: center; margin: 4px 0 8px 44px; padding: 10px 14px; width: max-content; border-radius: 14px; background: var(--fill); }
+  .typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typing 1.2s infinite ease-in-out; }
+  .typing span:nth-child(2) { animation-delay: .15s; }
+  .typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes typing { 0%, 60%, 100% { opacity: .3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+  #session-live:has(#session-status.live):not(:has(#ask:not(.hidden))):not(:has(#log.done)) .typing { display: flex; }
+
+  /* ask / confirm */
+  #ask { position: relative; margin: 8px 0 12px 44px; padding: 16px 18px 16px 54px; border: 1px solid color-mix(in srgb, var(--focus) 45%, var(--line)); border-radius: 16px; background: var(--fill); max-width: 676px; }
+  #ask::before {
+    content: "?"; position: absolute; left: 16px; top: 16px; width: 26px; height: 26px; border-radius: 50%;
+    display: grid; place-items: center; background: color-mix(in srgb, var(--focus) 22%, transparent); color: var(--focus); font-size: 14px; line-height: 26px; text-align: center;
+  }
+  #ask[data-kind="confirm"]::before { content: "!"; }
+  .ask-label { margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+  .ask-q { margin: 0 0 12px; font-size: 16px; line-height: 1.45; color: var(--text); }
+  #ask[data-kind="options"] .ask-row button { background: transparent; color: var(--text); border-color: var(--line); }
+  #ask[data-kind="options"] .ask-row button:hover { background: var(--hover); border-color: var(--focus); opacity: 1; }
+  #ask[data-kind="confirm"] .ask-row button:not(.ghost) { background: var(--good); color: #fff; }
+
+  /* session complete card */
+  #receipt .rc { max-width: 720px; margin-left: 44px; border-color: color-mix(in srgb, var(--good) 35%, var(--line)); }
+  .rc-done { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 14px; color: var(--good); }
+  .rc-check { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: var(--good); color: #fff; }
+  .rc-amount { font-size: 34px; }
+  .rc-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .rc-files a.file-chip { display: inline-flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); color: var(--text); text-decoration: none; font-size: 14px; }
+  .rc-files a.file-chip svg { color: var(--muted); }
+  #after-receipt { margin-left: 44px; }
+
+  /* composer */
+  .ses-composer {
+    position: sticky; bottom: 12px; z-index: 5; display: flex; align-items: flex-end; gap: 8px; margin-top: 16px;
+    padding: 8px 8px 8px 16px; border: 1px solid var(--line); border-radius: 22px; background: var(--panel); box-shadow: 0 8px 28px rgba(0,0,0,.18);
+  }
+  #session .ses-composer textarea { flex: 1; height: 24px; min-height: 24px; max-height: 160px; padding: 6px 0; border: 0; background: transparent; resize: none; font-size: 15px; line-height: 1.4; box-shadow: none; }
+  #session .ses-composer button { width: 36px; height: 36px; padding: 0; border-radius: 50%; display: grid; place-items: center; flex: none; }
+  .ses-composer.disabled { opacity: .55; }
+  .ses-composer.disabled textarea { cursor: not-allowed; }
+  @media (max-width: 760px) {
+    #log .bubble.agent, .steps-log, .typing, #ask, #receipt .rc, #after-receipt { margin-left: 0; }
+    #log .bubble.agent { padding-left: 16px; }
+    #log .bubble.agent::before { display: none; }
+    .ses-head { grid-template-areas: "av id id" "pill pill cancel" "meter meter meter"; }
+  }
   #landing { z-index: 40; }  /* landing first, then sign-in (z 30), then the app */
 </style>
 </head>
@@ -2163,11 +2255,22 @@
   </div>
   <div id="session-live" class="hidden">
     <button class="ghost" id="session-back" type="button">All sessions</button>
-    <h2 id="session-title">Live session</h2>
-    <div id="session-status" class="pill">Holding</div>
-    <div class="meter"><div id="bar"></div></div>
-    <p class="meta" id="spend"></p>
+    <header class="ses-head">
+      <div class="ses-avatar" id="ses-avatar" aria-hidden="true">A</div>
+      <div class="ses-id">
+        <h2 id="session-title">Live session</h2>
+        <span id="ses-category" class="tag hidden"></span>
+      </div>
+      <div id="session-status" class="pill">Holding</div>
+      <div class="ses-meter">
+        <p class="meta" id="spend"></p>
+        <div class="meter"><div id="bar"></div></div>
+      </div>
+      <button class="ghost" id="cancel" type="button">Cancel session</button>
+    </header>
+    <div id="ses-empty" class="ses-empty"></div>
     <div id="log"></div>
+    <div id="ses-typing" class="typing" aria-label="The agent is working"><span></span><span></span><span></span></div>
     <div id="ask" class="hidden"></div>
     <p id="session-edge" class="warn"></p>
     <div class="session-tools">
@@ -2176,7 +2279,6 @@
       <label>File <input id="session-file" type="file" aria-label="Attach a file"></label>
       <span id="file-note" class="meta"></span>
     </div>
-    <button class="ghost" id="cancel" type="button">Cancel session</button>
     <div id="receipt"></div>
     <div id="after-receipt" class="hidden">
       <form id="rate-form" class="form-grid">
@@ -2190,6 +2292,12 @@
       </form>
       <p id="after-note" class="meta"></p>
     </div>
+    <form id="ses-composer" class="ses-composer" novalidate>
+      <textarea id="ses-input" rows="1" placeholder="The agent is working…" aria-label="Message"></textarea>
+      <button id="ses-send" type="submit" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+      </button>
+    </form>
   </div>
 </section>
 
@@ -3505,6 +3613,7 @@ async function start(agentId, cap) {
   $("#spend").textContent = "Spent " + credits(0) + " of " + credits(cap);
   show("session");
   showLive();
+  paintSessionAgent(agentId);
   openEvents(state.session, cap);
   refreshBal();
 }
@@ -3517,9 +3626,83 @@ async function openHistory(id, cap, active) {
   $("#session-title").textContent = active ? "Live session" : "Session";
   show("session");
   showLive();
+  paintSessionAgent(null);
+  api("/v1/sessions/" + id).then((s) => { if (state.session === id) paintSessionAgent(s.agent_id); }).catch(() => {});
   if (active) openEvents(id, cap);
   else showReceipt(id);
 }
+function paintSessionAgent(agentId) {
+  const pool = [].concat(state.library || [], state.liveCards || [], state.agents || []);
+  const a = pool.find((x) => x && x.id === agentId) || null;
+  state.sessionAgent = a;
+  const name = a ? a.title : "Agent";
+  const paint = avatarPaint(name);
+  $("#ses-avatar").textContent = name.slice(0, 1).toUpperCase();
+  $("#ses-avatar").style.background = paint.mark;
+  if (a) $("#session-title").textContent = name;
+  $("#ses-category").textContent = a ? a.category || "" : "";
+  $("#ses-category").classList.toggle("hidden", !(a && a.category));
+  const log = $("#log");
+  log.style.setProperty("--agent-name", JSON.stringify(name));
+  log.style.setProperty("--agent-initial", JSON.stringify(name.slice(0, 1).toUpperCase()));
+  log.style.setProperty("--agent-paint", paint.mark);
+  const examples = ((a && a.example_tasks) || []).slice(0, 3);
+  $("#ses-empty").innerHTML = a ? `<div class="ses-avatar big" style="background:${paint.mark}">${esc(name.slice(0, 1).toUpperCase())}</div>
+    <h3>${esc(name)}</h3><p class="meta">${esc(a.description || a.summary || "")}</p>
+    <div class="ses-examples">${examples.map((x) => `<button type="button" class="ses-example">${esc(x)}</button>`).join("")}</div>` : "";
+  $("#ses-empty").querySelectorAll(".ses-example").forEach((b) => b.onclick = () => {
+    $("#ses-input").value = b.textContent;
+    syncComposer();
+    $("#ses-input").focus();
+  });
+  syncComposer();
+}
+// Composer: answers a free-text question through the ask card; after the session settles it starts a new run
+// with the same agent (quote first, as everywhere else). Disabled while the agent is working.
+function composerMode() {
+  const ask = $("#ask");
+  if (!ask.classList.contains("hidden") && ask.querySelector(".ask-row input")) return "answer";
+  if ($("#log").classList.contains("done") && state.sessionAgent) return "new";
+  return "busy";
+}
+function syncComposer() {
+  const mode = composerMode();
+  const box = $("#ses-input");
+  $("#ses-composer").classList.toggle("disabled", mode === "busy");
+  box.disabled = mode === "busy";
+  $("#ses-send").disabled = mode === "busy" || !box.value.trim();
+  box.placeholder = mode === "answer" ? "Type your answer…" : mode === "new" ? "Ask " + state.sessionAgent.title + " something new…" : "The agent is working…";
+}
+$("#ses-input").addEventListener("input", () => {
+  const box = $("#ses-input");
+  box.style.height = "auto";
+  box.style.height = Math.min(box.scrollHeight, 160) + "px";
+  syncComposer();
+});
+$("#ses-input").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    $("#ses-composer").requestSubmit();
+  }
+});
+$("#ses-composer").onsubmit = (e) => {
+  e.preventDefault();
+  const text = $("#ses-input").value.trim();
+  const mode = composerMode();
+  if (!text || mode === "busy") return;
+  if (mode === "answer") {
+    const input = $("#ask .ask-row input");
+    input.value = text;
+    $("#ask .ask-row button").click();
+  } else {
+    state.task = text;
+    openQuote(state.sessionAgent.id);
+  }
+  $("#ses-input").value = "";
+  $("#ses-input").style.height = "";
+  syncComposer();
+};
+new MutationObserver(syncComposer).observe($("#session-live"), { attributes: true, attributeFilter: ["class"], subtree: true, childList: true });
 function openEvents(id, cap) {
   if (state.es) state.es.close();
   state.cap = cap;
@@ -3593,7 +3776,8 @@ function openEvents(id, cap) {
     if (data.type === "ask_user") {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
-      ask.innerHTML = `<p class="ask-label">${data.options && data.options.length ? "Pick one" : "Your answer"}</p><div class="ask-row"></div>`;
+      ask.dataset.kind = data.options && data.options.length ? "options" : "text";
+      ask.innerHTML = `<p class="ask-label">${data.options && data.options.length ? "Pick one" : "Your answer"}</p>${data.question ? `<p class="ask-q">${esc(data.question)}</p>` : ""}<div class="ask-row"></div>`;
       const row = ask.querySelector(".ask-row");
       if (data.options && data.options.length) {
         data.options.forEach((opt) => {
@@ -3617,7 +3801,8 @@ function openEvents(id, cap) {
     if (data.type === "confirm") {
       $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
-      ask.innerHTML = `<p class="ask-label">Approval needed</p><div class="ask-row"></div>`;
+      ask.dataset.kind = "confirm";
+      ask.innerHTML = `<p class="ask-label">Approval needed</p>${data.action || data.text ? `<p class="ask-q">${esc(data.action || data.text)}</p>` : ""}<div class="ask-row"></div>`;
       const row = ask.querySelector(".ask-row");
       [["Approve", true], ["Deny", false]].forEach(([label, approved]) => {
         const b = document.createElement("button");
@@ -3654,12 +3839,15 @@ async function showReceipt(id) {
   const r = await api("/v1/receipts/" + id);
   const charged = Number(r.price_credits) || 0;
   const row = (label, value) => `<div class="rc-row"><span>${label}</span><b>${esc(creditsFine(value))}</b></div>`;
+  const files = [...document.querySelectorAll("#log a.file-chip")].map((a) => a.outerHTML).join("");
   $("#receipt").innerHTML = `<div class="rc">
+    <p class="rc-done"><span class="rc-check" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>Session complete</p>
     <p class="rc-top">${charged === 0 ? `<span class="rc-label">You were not charged.</span>` : `<span class="rc-label">Charged</span> <b class="rc-amount">${esc(creditsFine(charged))}</b>`}</p>
     <div class="rc-rows">${row("Held", r.cap_credits)}${row("Released", r.released_credits)}</div>
     <p class="rc-head">Where it went</p>
     <div class="rc-rows">${row("Creator earnings", r.earnings_credits)}${row("Platform fee", r.fee_credits)}${row("Model and tools", r.cost_credits)}</div>
     ${r.refund_reason ? `<p class="rc-note">${esc(r.refund_reason)}</p>` : ""}
+    ${files ? `<p class="rc-head">Files</p><div class="rc-files">${files}</div>` : ""}
   </div>`;
   $("#session-status").classList.remove("live");
   $("#log").classList.add("done");
