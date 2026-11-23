@@ -122,13 +122,19 @@ def fake_completion(alias: str, messages: list[dict], max_tokens: int, json_mode
     # A well-behaved model: never parrots injected canaries, URLs or secrets (keeps review probes deterministic)
     words = [w for w in last_user.replace("\n", " ").split(" ")
              if w and not any(b in w.lower() for b in ("canary", "http", "sk-", "://"))][:40] or ["the", "task"]
-    sentences = []
-    while count_tokens(" ".join(sentences)) < target:
-        k = rng.randint(4, min(10, len(words)) if len(words) >= 4 else 4)
-        picked = " ".join(rng.choice(words) for _ in range(k))
-        sentences.append(f"{len(sentences) + 1}. Regarding {picked}: a concise, deterministic point.")
-    text = f"[fake:{alias}] " + " ".join(sentences)
-    text = text[: target * 4]
+    topic = " ".join(words[:24]).rstrip(".:,")
+    phrases = ["start with the highest-impact option", "keep costs inside the stated budget",
+               "check the key assumptions first", "group related items to save time",
+               "flag anything that looks inconsistent", "prefer well-reviewed, verifiable sources",
+               "leave a buffer for surprises", "summarize the trade-offs plainly",
+               "confirm details before committing", "end with a short, clear recommendation"]
+    rng.shuffle(phrases)
+    lines = [f"[fake:{alias}] Draft for: {topic}", ""]
+    i = 0
+    while count_tokens("\n".join(lines)) < target:
+        lines.append(f"- {phrases[i % len(phrases)].capitalize()} ({words[i % len(words)].strip('.,:')}).")
+        i += 1
+    text = "\n".join(lines)[: target * 4]
     if json_mode:
         text = json.dumps({"fake": True, "alias": alias, "summary": text[:400]})
     return text, t_in, count_tokens(text)
