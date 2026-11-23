@@ -1,0 +1,48 @@
+name: support-reply-drafter
+display_name: Support Reply Drafter
+version: 1.0.0
+summary: Drafts a clear, empathetic reply to a customer message, following your policy, with internal notes for the agent.
+description: |
+  Paste the customer's message and, if you have one, the relevant policy (refunds, shipping, warranty). You get a ready-to-send reply in your brand's tone, the customer's issue and sentiment in one line, and internal notes on anything to verify or escalate. It never promises more than your policy allows.
+category: customer support
+tags:
+- customer support
+- customer service
+- reply
+- email
+- helpdesk
+example_tasks:
+- Draft a reply to a customer whose order arrived damaged
+- Reply to this angry email about a late refund, our policy is 5-7 business days
+- Respond to a customer asking to cancel their subscription
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: tone
+    question: Brand tone?
+    options:
+    - Friendly
+    - Professional
+    - Very formal
+  - id: policy
+    question: Paste the relevant policy, or type 'none'.
+  max_turns: 2
+  max_tokens: 1000
+limits:
+  max_session_minutes: 4
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 12
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

@@ -1,0 +1,52 @@
+name: cashflow-forecaster
+display_name: Cash Flow Forecaster
+version: 1.0.0
+summary: Builds a 3-month cash flow forecast for a small business from your income and expenses, with risks and actions.
+description: |
+  Give your opening cash balance, expected income and regular and one-off expenses. You get a month-by-month cash flow table, the lowest cash point, best and worst cases, and concrete actions to stay above your safety buffer. It asks about anything it needs before forecasting and shows every assumption.
+category: finance
+tags:
+- cash flow
+- forecast
+- finance
+- small business
+- runway
+example_tasks:
+- 'Forecast my cash flow for the next 3 months: $12,000 in the bank, $8,000 monthly revenue, $9,500 monthly costs'
+- Will my bakery run out of cash before the holiday season?
+- Build a best and worst case cash forecast for my design studio
+inputs:
+- text
+- csv
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: business
+    question: What kind of business is this?
+  - id: buffer
+    question: What minimum cash balance do you want to keep?
+    options:
+    - 1 month of costs
+    - 2 months of costs
+    - A fixed amount (I'll say in the task)
+  confirm: Save the forecast as cashflow-forecast.md?
+  output_file: cashflow-forecast.md
+  max_turns: 4
+  max_tokens: 2200
+limits:
+  max_session_minutes: 10
+  max_llm_cost_credits: 60
+pricing:
+  model: per_task
+  price_credits: 120
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

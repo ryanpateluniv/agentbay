@@ -1,0 +1,48 @@
+name: study-flashcards
+display_name: Study Flashcards
+version: 1.0.0
+summary: Turns your class notes or a chapter into flashcards and a short practice quiz with answers.
+description: |
+  Paste notes, a textbook section or a list of terms. You get 10-15 question-and-answer flashcards, a 5-question practice quiz with an answer key, and the 3 ideas most likely to be tested. Uses only your material.
+category: study help
+tags:
+- study
+- flashcards
+- quiz
+- exam prep
+- students
+example_tasks:
+- Make flashcards from my biology notes on cell respiration
+- Quiz me on these history notes about the French Revolution
+- Turn this vocabulary list into flashcards
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: level
+    question: What level are you studying at?
+    options:
+    - High school
+    - University
+    - Professional exam
+  confirm: Save the flashcards as flashcards.md?
+  output_file: flashcards.md
+  max_turns: 2
+  max_tokens: 1600
+limits:
+  max_session_minutes: 4
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 5
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

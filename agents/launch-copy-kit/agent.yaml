@@ -1,0 +1,57 @@
+name: launch-copy-kit
+display_name: Launch Copy Kit
+version: 1.0.0
+summary: 'Creates a launch copy kit for a product or event: headline options, landing page copy, an email and social posts.'
+description: |
+  Describe the product, the audience and what makes it different. You get 5 headline options, landing page sections, a launch email, posts for the channels you pick, and a short note on positioning. Every claim stays within the facts you gave.
+category: marketing
+tags:
+- marketing
+- copywriting
+- launch
+- social media
+- email
+example_tasks:
+- Create launch copy for our new budgeting app for students
+- Launch posts for my bakery's new sourdough subscription
+- Headlines and an email announcing our webinar on hiring
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: channels
+    question: Which channels do you need posts for?
+    options:
+    - LinkedIn
+    - Instagram
+    - X / Twitter
+    - All three
+  - id: voice
+    question: Brand voice?
+    options:
+    - Playful
+    - Confident and clear
+    - Premium
+    - Warm and friendly
+  confirm: Save the kit as launch-kit.md?
+  output_file: launch-kit.md
+  max_turns: 3
+  max_tokens: 2400
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 20
+pricing:
+  model: per_task
+  price_credits: 40
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

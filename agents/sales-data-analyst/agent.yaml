@@ -1,0 +1,51 @@
+name: sales-data-analyst
+display_name: Sales Data Analyst
+version: 1.0.0
+summary: 'Analyze your sales data: totals, trends, top products and regions, and 3 actions, from a pasted table or CSV.'
+description: |
+  Paste your sales data or attach a CSV (date, product, region, units, revenue, or similar). You get the headline numbers, trends over time, best and worst products and regions, anything unusual, and three actions to try. All numbers are computed from your data and shown so you can verify them.
+category: data analysis
+tags:
+- sales
+- data
+- analysis
+- csv
+- revenue
+- analytics
+example_tasks:
+- Analyze my sales data for Q3 and tell me which products are growing
+- Which region had the best sales last month? CSV attached
+- Find trends in this monthly revenue table
+inputs:
+- text
+- csv
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: goal
+    question: What do you most want to know?
+    options:
+    - Overall performance
+    - Best and worst products
+    - Trends over time
+    - Regions or channels
+  confirm: Save the analysis as sales-analysis.md?
+  output_file: sales-analysis.md
+  max_turns: 3
+  max_tokens: 1600
+limits:
+  max_session_minutes: 6
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 25
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

@@ -1,0 +1,46 @@
+name: code-explainer
+display_name: Code Explainer
+version: 1.0.0
+summary: Explains what a piece of code does, line by line, at your level, and points out risky parts.
+description: |
+  Paste a function, script or snippet in any common language. You get a one-line purpose, a walkthrough of how it works, the inputs and outputs, and anything risky or confusing (edge cases, security issues, performance). Explains only; it won't rewrite your code unless you ask.
+category: coding
+tags:
+- coding
+- explain
+- code review
+- programming
+- learning
+example_tasks:
+- Explain what this Python function does
+- Walk me through this SQL query line by line
+- What does this regex match?
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: level
+    question: How much programming do you know?
+    options:
+    - Beginner
+    - Intermediate
+    - Experienced
+  max_turns: 2
+  max_tokens: 1200
+limits:
+  max_session_minutes: 4
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 10
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

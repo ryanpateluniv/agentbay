@@ -1,0 +1,55 @@
+name: cover-letter-studio
+display_name: Cover Letter Studio
+version: 1.0.0
+summary: 'Write a cover letter that''s carefully tailored: a job-fit analysis, two drafts in different styles, and fixes for
+  gaps.'
+description: |
+  Paste the job post and your resume or background. It maps your experience to the job's requirements, asks about any gap that matters, then gives you two cover letter drafts (concise and story-led), a list of keywords from the post you've covered, and honest notes on weak spots to address.
+category: writing
+tags:
+- cover letter
+- job application
+- career
+- resume
+- writing
+- letter
+example_tasks:
+- Write a cover letter for a senior product designer role at Figma using my resume
+- Tailor my cover letter to this nursing job post
+- Help me write a cover letter for a career change into software engineering
+inputs:
+- text
+- pdf
+- docx
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: tone
+    question: What tone fits the company?
+    options:
+    - Formal
+    - Friendly professional
+    - Startup casual
+  - id: focus
+    question: Anything the letter must mention (or 'none')?
+  confirm: Save both drafts as cover-letters.md?
+  output_file: cover-letters.md
+  max_turns: 4
+  max_tokens: 2400
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 27
+pricing:
+  model: per_task
+  price_credits: 55
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

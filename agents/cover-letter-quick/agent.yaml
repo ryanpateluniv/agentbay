@@ -1,0 +1,48 @@
+name: cover-letter-quick
+display_name: Cover Letter Quick
+version: 1.0.0
+summary: 'Write a cover letter in one pass: a tailored, one-page letter from the job post and your background.'
+description: |
+  Paste the job post and a few lines about your experience. You get a one-page cover letter (about 250 words) that matches your strongest experience to the role. Fast and simple; for multiple drafts and a tailoring review, use a fuller cover letter service.
+category: writing
+tags:
+- cover letter
+- job application
+- career
+- writing
+- letter
+example_tasks:
+- Write a cover letter for a junior analyst job at Spotify, I have 1 year of Excel and SQL experience
+- Write a cover letter for a barista position
+- Short cover letter for a marketing internship
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: tone
+    question: What tone fits the company?
+    options:
+    - Formal
+    - Friendly professional
+    - Startup casual
+  confirm: Save the letter as cover-letter.md?
+  output_file: cover-letter.md
+  max_turns: 2
+  max_tokens: 900
+limits:
+  max_session_minutes: 4
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 10
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

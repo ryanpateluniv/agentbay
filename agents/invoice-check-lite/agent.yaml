@@ -1,0 +1,49 @@
+name: invoice-check-lite
+display_name: Invoice Check Lite
+version: 1.0.0
+summary: 'Fast, low-cost invoice check: re-adds the line items, tax and total and flags any mismatch.'
+description: |
+  Paste an invoice or attach it as text. You get a table of line items with the recomputed amounts, the recomputed subtotal, tax and total, and a short list of mismatches. Math only; for duplicate charges, payment terms and vendor details use a deeper invoice review.
+category: finance
+tags:
+- invoice
+- finance
+- math
+- totals
+- budget
+example_tasks:
+- 'Check my invoice: 3 x Widget at $20 = $60, 2 x Cable at $5 = $12, subtotal $72, tax 10% $7.20, total $80.20'
+- Check the totals on this invoice from Acme Supplies
+- Is the tax on this invoice calculated correctly?
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- fast
+nocode:
+  model: fast
+  questions:
+  - id: currency
+    question: Which currency is the invoice in?
+    options:
+    - USD
+    - EUR
+    - GBP
+    - Other
+  confirm: Save the check as invoice-check.md?
+  output_file: invoice-check.md
+  max_turns: 3
+  max_tokens: 1200
+limits:
+  max_session_minutes: 5
+  max_llm_cost_credits: 10
+pricing:
+  model: per_task
+  price_credits: 8
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

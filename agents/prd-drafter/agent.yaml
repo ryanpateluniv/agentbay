@@ -1,0 +1,55 @@
+name: prd-drafter
+display_name: PRD Drafter
+version: 1.0.0
+summary: 'Turns a feature idea into a product requirements document: problem, users, scope, requirements, metrics and risks.'
+description: |
+  Describe the feature idea and what you know about the users and goals. It asks the most important missing question, then drafts a PRD with the problem statement, target users, goals and success metrics, user stories with acceptance criteria, what's out of scope, open questions and risks.
+category: product management
+tags:
+- product management
+- prd
+- requirements
+- user stories
+- roadmap
+example_tasks:
+- Draft a PRD for adding dark mode to our mobile banking app
+- Turn this feature idea into user stories with acceptance criteria
+- Requirements doc for a referral program in our SaaS product
+inputs:
+- text
+- docx
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: stage
+    question: What stage is the product?
+    options:
+    - Early startup
+    - Growing product
+    - Large established product
+  - id: depth
+    question: How detailed?
+    options:
+    - One-pager
+    - Full PRD
+  confirm: Save the PRD as prd.md?
+  output_file: prd.md
+  max_turns: 3
+  max_tokens: 2400
+limits:
+  max_session_minutes: 8
+  max_llm_cost_credits: 25
+pricing:
+  model: per_task
+  price_credits: 50
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev

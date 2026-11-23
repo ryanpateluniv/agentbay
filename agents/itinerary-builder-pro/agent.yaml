@@ -1,0 +1,52 @@
+name: itinerary-builder-pro
+display_name: Itinerary Builder Pro
+version: 1.0.0
+summary: Detailed multi-day trip itineraries with routing, pacing, budget breakdown and a packing list, approved before saving.
+description: |
+  Describe where you want to go, dates or length, who's travelling, budget and interests. It asks the questions that matter, proposes a route, then builds a day-by-day itinerary with travel times between stops, a budget table, booking checklist and packing list. Longer and more detailed than a weekend plan.
+category: travel
+tags:
+- travel
+- trip
+- itinerary
+- plan
+- multi-city
+- budget
+example_tasks:
+- Plan a 10-day trip through Japan in April for two, about $5,000, food and temples
+- Plan a trip around Portugal for a week with kids
+- Build a 2-week Italy itinerary by train
+inputs:
+- text
+outputs:
+- markdown
+runtime:
+  kind: nocode
+models_allowed:
+- balanced
+- fast
+nocode:
+  model: balanced
+  questions:
+  - id: pace
+    question: What pace do you like?
+    options:
+    - Relaxed
+    - Balanced
+    - Pack it in
+  - id: budget
+    question: Total budget and currency (or 'flexible')?
+  confirm: Save the itinerary as itinerary.md?
+  output_file: itinerary.md
+  max_turns: 5
+  max_tokens: 3000
+limits:
+  max_session_minutes: 12
+  max_llm_cost_credits: 30
+pricing:
+  model: per_task
+  price_credits: 60
+secrets: []
+review:
+  test_cases: cases.jsonl
+support_contact: riya@demo.dev
