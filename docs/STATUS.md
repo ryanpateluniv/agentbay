@@ -8,9 +8,10 @@
 - Step 4: marketplace_sdk (stdlib), dev runner, example agent, README
 - Step 5: LLM proxy (virtual keys, aliases, integer cost formula, clamp, budget_exhausted, streaming, fake mode), tool broker (mock web_search)
 - Step 6: session flow end to end on a live server: quote, hold, subprocess sandbox, ask_user round trip, SSE, settle, receipt, cancel 50%, kill switch refund, admin refund, 402, concurrent cap. 27 tests passing
+- Step 7: review pipeline (lint, build or subprocess check, static scan, 3 injection/exfil probes, cases x2, cost/latency p50/p90/p95, judge, Q/R/S/K, confidence, report card); scam fixture rejected, example agent approved and auto-listed. 30 tests passing
 
 ## In progress
-- Step 7: review pipeline
+- Step 8: search, creator endpoints, admin (mostly done; adding tests)
 
 ## Blocked
 - Nothing. LLM provider is still `[PROVIDER]`; running in `LLM_MODE=fake` until it's confirmed.

@@ -17,3 +17,14 @@ One line each, with the reason.
 - Live stats (n, live Q/R, ratings, price p50/p90) are seeded into `listings.live_stats_json` and updated on each settled session, instead of seeding hundreds of fake session rows.
 - Default sandbox is a subprocess (Docker daemon not running on the dev box); `RUNTIME_MODE=docker` is optional.
 - Seeded agent versions point at `agents/<slug>/main.py` when it exists, otherwise at `sdk/python/examples/echo_agent`, so the demo runs before the agents are delivered.
+- Review: runs per case default to 2 (`REVIEW_RUNS_PER_CASE`, spec says 5) so the live demo finishes in about 15 s.
+- Review: there's no egress proxy in subprocess mode, so undeclared or provider domains are caught by a static scan of the source (critical finding = automatic rejection).
+- Review: the fake LLM never parrots canaries, URLs or `sk-` secrets ("a well-behaved model"), so injection and exfiltration probes are deterministic and only the agent's own code can fail them.
+- Review: the first approved version of a new agent is published automatically (Beta badge). Later versions need `POST .../publish`.
+- Review: sensitive categories (finance, health, legal, children) end in `pending_human_review` until `POST /v1/admin/versions/{v}/decision`.
+- Proxy: calls within one session are serialised by a per-session lock. Simplest correct cap enforcement; parallel calls inside one session queue up.
+- SDK additions outside the Section 5 list: `ctx.llm()`, `ctx.tool()`, `chat()`, `@agent.on_quote`, `python -m marketplace_sdk.dev`. Thin helpers so plain-Python agents need no extra libraries.
+- API additions outside Section 13: `GET /v1/agents`, `GET /v1/sessions`, `GET /v1/sessions/{id}/history`, `GET /v1/me`, `GET /v1/creator/agents`, `POST /v1/admin/sessions/{id}/refund` (the MVP refund button), `POST /v1/admin/agents/{id}/unpause`, `GET /v1/admin/model-prices`.
+- Ratings: the 24 h delay before rating is not enforced (demo).
+- Session time limit is wall clock and does not pause while waiting for the user. Per-minute billing does exclude waiting time.
+- Budget cap reached: the buyer pays min(cap, full charge) if a result was delivered, else 0. The agent gets 20 s of grace before a hard stop.

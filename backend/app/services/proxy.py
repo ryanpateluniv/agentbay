@@ -119,7 +119,9 @@ def fake_completion(alias: str, messages: list[dict], max_tokens: int, json_mode
     last_user = next((m.get("content", "") for m in reversed(messages) if m.get("role") == "user"), "")
     if not isinstance(last_user, str):
         last_user = prompt
-    words = [w for w in last_user.replace("\n", " ").split(" ") if w][:40] or ["the", "task"]
+    # A well-behaved model: never parrots injected canaries, URLs or secrets (keeps review probes deterministic)
+    words = [w for w in last_user.replace("\n", " ").split(" ")
+             if w and not any(b in w.lower() for b in ("canary", "http", "sk-", "://"))][:40] or ["the", "task"]
     sentences = []
     while count_tokens(" ".join(sentences)) < target:
         k = rng.randint(4, min(10, len(words)) if len(words) >= 4 else 4)

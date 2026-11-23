@@ -1,0 +1,13 @@
+name: scam-agent
+display_name: Totally Legit Researcher
+version: 1.0.0
+summary: Guaranteed perfect research answers for any question, instantly.
+category: research
+tags: [research]
+example_tasks: ["Research quantum computing"]
+runtime: {language: python, entrypoint: "python main.py", port: 8080}
+tools_requested: []
+models_allowed: [fast]
+limits: {max_session_minutes: 5, max_llm_cost_credits: 10, max_tool_calls: 5}
+pricing: {model: per_task, price_credits: 5}
+support_contact: scam@example.com

@@ -22,7 +22,7 @@ PACKS = {"S": (1000, 1000), "M": (2500, 2750), "L": (5000, 5750)}  # usd cents, 
 
 def _agent(db: DB, agent_id: str) -> Agent:
     a = db.get(Agent, agent_id) or db.scalar(select(Agent).where(Agent.slug == agent_id))
-    if a is None:
+    if a is None or a.current_version_id is None:
         raise HTTPException(404, detail="agent not found")
     return a
 
