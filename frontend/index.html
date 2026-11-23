@@ -1323,13 +1323,30 @@ function enterApp(session) {
   paintUser(name);
   $("#auth").classList.add("hidden");
   refreshBal();
+  loadSidebar();
+}
+function enterDemo(token) {
+  localStorage.setItem("cohort-demo-token", token);
+  enterApp({ access_token: token, user: { email: token.replace("tok_", "") + "@demo.dev", user_metadata: {} } });
 }
 async function bootAuth() {
   let cfg = { configured: false };
   try { cfg = await fetch("/v1/auth/config").then((res) => res.json()); } catch (err) { cfg = { configured: false }; }
   if (!cfg.configured || !window.supabase) {
     ["auth-google", "auth-email-go", "auth-submit", "auth-switch"].forEach((id) => { $("#"+id).disabled = true; });
-    showAuth("Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
+    const demo = cfg.demo_tokens || [];
+    const saved = localStorage.getItem("cohort-demo-token");
+    if (saved && demo.includes(saved)) return enterDemo(saved);
+    showAuth(demo.length ? "No Supabase keys set. Pick a demo account." : "Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
+    const roles = { tok_sam: "Sam · buyer", tok_riya: "Riya · creator", tok_admin: "Admin · admin" };
+    demo.slice().reverse().forEach((token) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "auth-quiet";
+      b.textContent = "Demo login: " + (roles[token] || token);
+      b.onclick = () => enterDemo(token);
+      $("#auth-options").prepend(b);
+    });
     return;
   }
   state.supabase = window.supabase.createClient(cfg.url, cfg.anon_key);
@@ -1397,6 +1414,7 @@ $("#sign-out").onclick = async (event) => {
   event.stopPropagation();
   $("#user-menu").classList.add("hidden");
   if (state.supabase) await state.supabase.auth.signOut();
+  localStorage.removeItem("cohort-demo-token");
   state.token = "";
   showAuth();
 };
@@ -1461,8 +1479,15 @@ $("#theme-toggle").onclick = () => {
 };
 document.querySelector(".theme-slot").onmouseenter = () => placeThemeFlyout();
 document.querySelector(".theme-slot").onmouseleave = () => $("#theme-flyout").classList.add("hidden");
+const pendingKeys = {};
+async function once(action, run) {
+  // One Idempotency-Key per user action; a double-click while it is in flight reuses the same key.
+  const fresh = !pendingKeys[action];
+  if (fresh) pendingKeys[action] = crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
+  try { return await run(pendingKeys[action]); } finally { if (fresh) delete pendingKeys[action]; }
+}
 $("#add-credits").onclick = async () => {
-  await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
+  await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
   refreshBal();
 };
 document.addEventListener("click", () => {
@@ -1679,7 +1704,7 @@ async function sendText(text) {
     fitTask();
     const res = await fetch("/v1/conversations/" + state.conversation + "/stream", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: Object.assign({ "Content-Type": "application/json" }, state.token ? { Authorization: "Bearer " + state.token } : {}),
       body: JSON.stringify({ text })
     });
     if (!res.ok) {
@@ -1736,14 +1761,10 @@ async function loadSidebar() {
   const data = await api("/v1/conversations");
   const box = $("#history");
   box.innerHTML = "";
-  const library = [
-    ["Invoice Auditor", "Check this invoice for tax errors"],
-    ["Trip Planner", "Plan a 4 day trip"],
-    ["Research Briefer", "Write a short research brief"],
-    ["Inbox Cleaner", "Sort this inbox into what needs a reply"],
-    ["Meeting Notes", "Turn this meeting into notes"],
-    ["Contract Reader", "Read this contract for odd clauses"]
-  ];
+  let library = [];
+  try {
+    library = (await api("/v1/agents")).map((a) => [a.title, (a.example_tasks || [])[0] || a.summary || a.title]);
+  } catch (err) { library = []; }
   const libLabel = document.createElement("div");
   libLabel.className = "side-label";
   libLabel.textContent = "Library";
@@ -1824,14 +1845,14 @@ async function openQuote(agentId) {
   $("#quote-title").textContent = agent ? agent.title : "Quote";
   $("#quote-task").textContent = task;
   $("#quote-price").textContent = agent ? priceLabel(agent) + ". Maximum " + credits(q.maximum) + "." : "Maximum " + credits(q.maximum) + ".";
-  $("#quote-cap").value = q.maximum;
+  $("#quote-cap").value = q.high_credits != null ? q.high_credits : q.maximum;
   $("#quote").classList.remove("hidden");
   paintQuote();
 }
 $("#quote-cap").addEventListener("input", paintQuote);
 $("#quote-back").onclick = () => $("#quote").classList.add("hidden");
 $("#quote-topup").onclick = async () => {
-  await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
+  await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
   const w = await api("/v1/wallet");
   state.quote.balance = w.balance_credits;
   paintQuote();
@@ -1840,7 +1861,7 @@ $("#quote-topup").onclick = async () => {
 $("#quote-start").onclick = () => start(state.quote.agentId, Number($("#quote-cap").value));
 async function start(agentId, cap) {
   const task = state.task || $("#task").value.trim();
-  const ses = await api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap })});
+  const ses = await once("start", (key) => api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap })}));
   $("#quote").classList.add("hidden");
   state.session = ses.session_id;
   $("#log").innerHTML = "";
@@ -1876,7 +1897,15 @@ function openEvents(id, cap) {
     const div = document.createElement("div");
     div.className = "bubble " + (data.role || "");
     div.textContent = data.text || data.label || data.type;
-    $("#log").appendChild(div);
+    if (data.type === "file" && data.url) {
+      const link = document.createElement("a");
+      link.href = data.url + "?access_token=" + encodeURIComponent(state.token || "");
+      link.download = data.name || "";
+      link.textContent = data.name || "Download file";
+      div.textContent = "";
+      div.appendChild(link);
+    }
+    if (data.type !== "spend" && data.type !== "status") $("#log").appendChild(div);
     if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
     if (data.spent_credits != null) {
       const pct = Math.min(100, (data.spent_credits / cap) * 100);
@@ -1891,10 +1920,36 @@ function openEvents(id, cap) {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
       ask.innerHTML = "";
-      (data.options && data.options.length ? data.options : ["Continue"]).forEach((opt) => {
+      if (data.options && data.options.length) {
+        data.options.forEach((opt) => {
+          const b = document.createElement("button");
+          b.textContent = opt;
+          b.onclick = () => answer(opt, data.id);
+          ask.appendChild(b);
+        });
+      } else {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Type your answer";
+        const send = document.createElement("button");
+        send.textContent = "Send";
+        send.onclick = () => { if (input.value.trim()) answer(input.value.trim(), data.id); };
+        input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
+        ask.append(input, send);
+        input.focus();
+      }
+    }
+    if (data.type === "confirm") {
+      $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
+      ask.classList.remove("hidden");
+      ask.innerHTML = "";
+      [["Approve", true], ["Deny", false]].forEach(([label, approved]) => {
         const b = document.createElement("button");
-        b.textContent = opt;
-        b.onclick = () => answer(opt);
+        b.textContent = label;
+        b.onclick = async () => {
+          ask.classList.add("hidden");
+          await api("/v1/sessions/" + state.session + "/confirm", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ confirm_id: data.id, approved })});
+        };
         ask.appendChild(b);
       });
     }
@@ -1910,9 +1965,9 @@ function openEvents(id, cap) {
     }
   };
 }
-async function answer(text) {
+async function answer(text, replyTo) {
   $("#ask").classList.add("hidden");
-  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text })});
+  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text, reply_to: replyTo })});
 }
 $("#cancel").onclick = async () => {
   if (!state.session) return;
@@ -1946,7 +2001,7 @@ async function loadAdmin() {
     data.agents.map((a) => `<tr><td>${a.title}<div class="meta">${(a.findings||[]).join(" ")}</div></td><td>${a.status}</td><td class="${a.decision==="rejected"?"warn":"ok"}">${a.decision}</td>
       <td><button data-review="${a.version_id}">Run review</button> <button data-kill="${a.id}">Kill switch</button></td></tr>`).join("") + `</table>`;
   document.querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
-    const res = await api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST" });
+    const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
     alert(res.decision + "\n" + res.findings.join("\n") + "\nconfidence " + res.confidence);
     loadAdmin();
   });
@@ -1956,8 +2011,7 @@ async function loadAdmin() {
     loadAdmin();
   });
 }
-refreshBal();
-loadSidebar();
+bootAuth();
 </script>
 </body>
 </html>

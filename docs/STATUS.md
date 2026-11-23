@@ -38,3 +38,5 @@ _Updated 2026-11-22 ~19:30_
 ## Frontend integration (2026-11-22)
 - Reviewed `frontend/index.html` (`docs/FRONTEND_REVIEW.md`). Backend compatibility layer added and served at http://localhost:8000/. 44 tests passing (2 replay the frontend's exact calls).
 - Blocked on the frontend side: login needs Supabase keys or a demo-token login; `confirm` events have no UI (the Trip Planner hangs at its approval step).
+- Frontend must-fix items 1–8 are done in `frontend/index.html`. A headless-Chrome replay passed: demo login → search → Trip Planner → A/B/C → Approve → result, file download and receipt. A second replay covered a free-text answer with Quick Summarizer. 47 tests passing.
+- Known cosmetic issues (not fixed, out of scope): the receipt rounds amounts ≥10 to whole credits and small ones to 0.1 (for example "Released 12" when 11.9 was released); `/favicon.ico` returns 404.

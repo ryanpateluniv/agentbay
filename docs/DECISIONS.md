@@ -52,3 +52,14 @@ One line each, with the reason.
   - `POST /v1/sessions` also accepts `{agent_id, task, cap_credits}` (implicit quote). `POST /v1/wallet/topup` also accepts `{credits}` (mock, 1–10,000). Kill returns `refunded_sessions`.
   - `GET /v1/sessions` now returns `{sessions: [...]}` with `title`, `active`, `cap_credits` (breaking for that backend-only extra endpoint; nothing else used it).
   - `POST /v1/conversations/{id}/stream` is authorised by the unguessable conversation id, because the frontend sends no auth header there.
+- Frontend edits (2026-11-22, minimal; no restyling or refactoring), items 1–8 of the FRONTEND_REVIEW must-fix list:
+  1. Demo login: with no Supabase keys, the sign-in overlay gets one button per `demo_tokens` entry (existing `auth-quiet` style). The token is kept in localStorage `cohort-demo-token` and cleared on sign-out. The Supabase path is unchanged.
+     - `bootAuth()` was defined but never called, so the overlay never appeared and every call went out without a token. The two token-less boot calls (`refreshBal(); loadSidebar();`) are replaced by `bootAuth()`, and `enterApp` now also calls `loadSidebar()`.
+  2. `confirm` events render Approve/Deny and call `POST /v1/sessions/{id}/confirm {confirm_id, approved}`.
+  3. `ask_user` without options shows a text input plus Send. Answers now carry `reply_to`.
+  4. Idempotency-Key on Start session, Add credits (both buttons) and Run review. One key per action, reused while that action is still in flight, so a double-click is deduplicated (a fresh key per raw click would not dedupe anything).
+  5. Authorization header on `POST /v1/conversations/{id}/stream`.
+  6. `spend` and `status` events no longer become bubbles (they still drive the meter and status pill). `file` events are download links (`url?access_token=`).
+  7. The cap defaults to `high_credits` (p90), falling back to `maximum`.
+  8. The sidebar Library comes from `GET /v1/agents` (title plus first example task). The three agents that don't exist are gone.
+- Backend tweaks for those edits: `example_tasks` added to agent cards (`GET /v1/agents`); `POST /v1/admin/versions/{v}/review` honours Idempotency-Key (same key, same run); flat SSE `buyer_confirm` gets `text` (Approved/Denied).

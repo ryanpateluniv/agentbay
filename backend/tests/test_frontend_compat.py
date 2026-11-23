@@ -85,3 +85,35 @@ def test_admin_rerun_review_sync(live_server):
         assert r.status_code == 200, r.text
         body = r.json()
         assert body["decision"] == "approved" and isinstance(body["findings"], list) and body["confidence"] > 0
+
+
+def test_library_agents_have_example_tasks(live_server):
+    agents = httpx.get(f"{live_server}/v1/agents").json()
+    assert agents and all(a["example_tasks"] for a in agents)
+
+
+def test_idempotency_keys_dedupe_double_clicks(live_server):
+    import concurrent.futures
+    with httpx.Client(base_url=live_server, timeout=120) as c:
+        before = c.get("/v1/wallet", headers=SAM).json()["balance_credits"]
+        h = SAM | {"idempotency-key": "click-1"}
+        for _ in range(2):
+            c.post("/v1/wallet/topup", headers=h, json={"credits": 500})
+        assert c.get("/v1/wallet", headers=SAM).json()["balance_credits"] == before + 500
+        body = {"agent_id": "invoice-auditor", "task": "Audit invoice 7", "cap_credits": 40}
+        a = c.post("/v1/sessions", headers=SAM | {"idempotency-key": "start-1"}, json=body).json()
+        b = c.post("/v1/sessions", headers=SAM | {"idempotency-key": "start-1"}, json=body).json()
+        assert a["session_id"] == b["session_id"]
+        h = ADMIN | {"idempotency-key": "review-1"}
+        with concurrent.futures.ThreadPoolExecutor(2) as ex:
+            r1, r2 = ex.map(lambda _: c.post("/v1/admin/versions/agv_quick_summarizer_1/review", headers=h), range(2))
+        assert r1.json()["report_card"] == r2.json()["report_card"]
+
+
+def test_flat_event_texts():
+    from app.api.buyer import flatten_event
+    base = {"id": 1, "role": "buyer", "ts": "t"}
+    assert flatten_event(base | {"type": "buyer_confirm", "data": {"confirm_id": "c1", "approved": True}})["text"] == "Approved"
+    flat = flatten_event(base | {"type": "confirm", "role": "agent", "data": {"id": "c_9", "action": "Book it?"}})
+    assert flat["id"] == "c_9" and flat["text"] == "Book it?"  # confirm_id for POST /confirm
+    assert flatten_event(base | {"type": "spend", "data": {"spent_microcredits": 1500}})["spent_credits"] == 1.5

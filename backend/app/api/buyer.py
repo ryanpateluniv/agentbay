@@ -188,6 +188,8 @@ def flatten_event(ev: dict) -> dict:
         out["text"] = d.get("question") or d.get("action")
     if ev["type"] == "file":
         out["text"] = f"File: {d.get('name')}"
+    if ev["type"] == "buyer_confirm":
+        out["text"] = "Approved" if d.get("approved") else "Denied"
     if ev["type"] == "settled":
         out["text"] = "Settled"
         out["refunded"] = d.get("price_microcredits") == 0

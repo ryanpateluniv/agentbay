@@ -55,6 +55,7 @@ class AgentCard(BaseModel):
     relevance: float = 0.0
     inputs: list[str] = []
     outputs: list[str] = []
+    example_tasks: list[str] = []
 
 
 class SearchResponse(BaseModel):

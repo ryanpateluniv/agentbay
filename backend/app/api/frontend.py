@@ -4,7 +4,7 @@ Also serves the frontend itself at / so everything runs on one port."""
 import asyncio
 import json
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, Header, HTTPException
 from fastapi.responses import FileResponse, StreamingResponse
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DB
@@ -121,6 +121,7 @@ async def stream_conversation(conversation_id: str, body: dict):
 # ---------- admin conveniences ----------
 
 admin = require_role("admin")
+_REVIEW_RUNS: dict[tuple, str] = {}
 
 
 @router.get("/v1/admin/agents", summary="All agents with their current version's review decision and findings")
@@ -140,11 +141,17 @@ def admin_agents(db: DB = Depends(get_db), user: User = Depends(admin)):
 
 
 @router.post("/v1/admin/versions/{version_id}/review", summary="Re-run the review pipeline and wait for the result")
-async def rerun_review(version_id: str, db: DB = Depends(get_db), user: User = Depends(admin)):
+async def rerun_review(version_id: str, db: DB = Depends(get_db), user: User = Depends(admin),
+                       idempotency_key: str | None = Header(None)):
     ver = db.get(AgentVersion, version_id)
     if ver is None:
         raise HTTPException(404, detail="version not found")
-    run_id = review.start_review(version_id)
+    key = (user.id, version_id, idempotency_key) if idempotency_key else None
+    run_id = _REVIEW_RUNS.get(key) if key else None
+    if run_id is None:  # same Idempotency-Key -> wait on the same run instead of starting another
+        run_id = review.start_review(version_id)
+        if key:
+            _REVIEW_RUNS[key] = run_id
     for _ in range(600):
         await asyncio.sleep(0.3)
         db.expire_all()

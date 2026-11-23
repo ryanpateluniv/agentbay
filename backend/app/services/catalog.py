@@ -66,7 +66,7 @@ def agent_card(db: DB, agent: Agent, relevance: float = 0.0) -> dict:
         "duration_p95_s": int(live.get("duration_p95_s") or (review.latency_p95 // 1000 if review else 0)),
         "success_rate": live.get("q_live"), "rating_avg": live.get("rating_avg"),
         "rating_n": int(live.get("rating_n", 0)), "relevance": round(relevance, 3),
-        "inputs": m.get("inputs", []), "outputs": m.get("outputs", []),
+        "inputs": m.get("inputs", []), "outputs": m.get("outputs", []), "example_tasks": listing.example_tasks or [],
     }
 
 

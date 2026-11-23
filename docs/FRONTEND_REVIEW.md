@@ -69,6 +69,8 @@ Reviewed 2026-11-22 against `contracts/openapi.yaml` and `contracts/EVENTS.md`. 
 
 ## What the frontend must change
 
+_Update 2026-11-22: items 1–8 are done (see DECISIONS.md) and verified by a headless-Chrome replay. Item 9 is still open._
+
 1. **Add a demo login** (blocking without Supabase). For example, when `/v1/auth/config` returns `configured: false`, offer the `demo_tokens` it now lists (`tok_sam`, `tok_riya`, `tok_admin`) and set `state.token`. Or add Supabase keys to `.env`.
 2. **Handle `confirm` events:** Approve/Deny buttons that `POST /v1/sessions/{id}/confirm {confirm_id: data.id, approved}`. **The real Trip Planner asks for confirmation; without this the session hangs until it times out** (then it's refunded).
 3. **Free-text answers:** when `ask_user` has no `options`, show a text box and send `{text, reply_to: data.id}`.
