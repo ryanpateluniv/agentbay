@@ -1545,6 +1545,123 @@
     padding: 0;
   }
   #auth-error { min-height: 18px; text-align: center; font-size: 13px; color: #e7b3b3; }
+  #landing {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    background: var(--canvas);
+    color: var(--text);
+    padding: 18px 28px 28px;
+  }
+  #landing.hidden { display: none; }
+  .land-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 36px;
+  }
+  .land-brand {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+  .land-text {
+    border: 0;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+    padding: 0 4px;
+    height: 32px;
+  }
+  .land-stage {
+    flex: 1;
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(280px, 420px);
+    gap: 56px;
+    align-items: center;
+  }
+  .land-hero h1 {
+    margin: 0;
+    font-size: 64px;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+    line-height: 1.02;
+  }
+  .land-hero p {
+    margin: 18px 0 0;
+    max-width: 460px;
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.45;
+  }
+  .land-actions {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 28px;
+  }
+  #land-start {
+    height: 40px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--send);
+    color: var(--send-text);
+    font: inherit;
+    font-size: 15px;
+  }
+  .land-cards { display: flex; flex-direction: column; gap: 12px; }
+  .land-card {
+    min-height: 148px;
+    border-radius: 22px;
+    padding: 24px 28px;
+    color: #fff;
+    display: flex;
+    align-items: flex-end;
+    font-size: 22px;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+  .land-card.blue {
+    background:
+      radial-gradient(90% 160% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11, 47, 134, 0) 60%),
+      radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59, 130, 246, 0) 62%),
+      linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%);
+  }
+  .land-card.amber {
+    background:
+      radial-gradient(80% 160% at 0% 40%, #fdba74 0%, #ea580c 34%, rgba(234, 88, 12, 0) 62%),
+      linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%);
+  }
+  .land-agents {
+    width: min(1080px, 100%);
+    margin: 0 auto;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .land-agents button {
+    height: 34px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 13px;
+  }
+  .land-agents button:hover { color: var(--text); background: var(--fill); }
+  @media (max-width: 860px) {
+    .land-stage { grid-template-columns: 1fr; gap: 28px; align-content: center; }
+    .land-hero h1 { font-size: 44px; }
+  }
   /* ---------- polish: session, receipt, shared controls ---------- */
   :root, html[data-theme="light"] { --good: #0e7d6d; --good-soft: #e3f4f1; --bad: #b4443c; --bad-soft: #fbeceb; --beta: #a0650b; --beta-soft: #fbf1df; --focus: #2f6fed; }
   html[data-theme="dark"] { --good: #4cc9a6; --good-soft: rgba(76,201,166,0.12); --bad: #f07a72; --bad-soft: rgba(240,122,114,0.12); --beta: #e7b45a; --beta-soft: rgba(231,180,90,0.12); --focus: #6b9bff; }
@@ -1722,9 +1839,40 @@
   #creator-review { margin-top: 24px; }
   #creator-review h3 { margin-top: 0; }
   @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
+  #landing { z-index: 40; }  /* landing first, then sign-in (z 30), then the app */
 </style>
 </head>
 <body>
+<div id="landing">
+  <header class="land-bar">
+    <div class="land-brand">Cohort.ai</div>
+    <button type="button" id="land-open" class="land-text">Open app</button>
+  </header>
+  <div class="land-stage">
+    <div class="land-hero">
+      <h1>Hire an agent. See the price first.</h1>
+      <p>Tell Cohort the work. It matches an agent from the library, you set the credits, and what is left comes back when the run ends.</p>
+      <div class="land-actions">
+        <button type="button" id="land-start">Open Cohort</button>
+        <button type="button" id="land-library" class="land-text">Library</button>
+      </div>
+    </div>
+    <div class="land-cards" aria-hidden="true">
+      <div class="land-card blue">See the price before a session starts.</div>
+      <div class="land-card amber">Unused credit comes back when it ends.</div>
+    </div>
+  </div>
+  <ul class="land-agents">
+    <li><button type="button" data-agent="0">Invoice Auditor</button></li>
+    <li><button type="button" data-agent="1">Trip Planner</button></li>
+    <li><button type="button" data-agent="2">Research Briefer</button></li>
+    <li><button type="button" data-agent="3">Inbox Cleaner</button></li>
+    <li><button type="button" data-agent="4">Meeting Notes</button></li>
+    <li><button type="button" data-agent="5">Contract Reader</button></li>
+    <li><button type="button" data-agent="6">Support Reply</button></li>
+    <li><button type="button" data-agent="7">Spreadsheet Fixer</button></li>
+  </ul>
+</div>
 <div id="auth" class="auth hidden">
   <div class="auth-card">
     <div id="auth-options" class="auth-options">
@@ -3643,6 +3791,27 @@ $("#refund-form").onsubmit = async (event) => {
     $("#refund-note").textContent = "Refunded " + creditsFine(fromMicro(res.refunded_microcredits || 0)) + ".";
   } catch (err) { $("#refund-note").textContent = err.message || "Refund failed."; }
 };
+function enterProduct(view) {
+  sessionStorage.setItem("cohort-entered", "1");
+  $("#landing").classList.add("hidden");
+  if (view) show(view);
+}
+function landingFirst() {
+  const hash = location.hash.replace(/^#/, "");
+  const deep = hash.startsWith("/chat/") || hash === "/account" || hash === "/library" || hash.startsWith("/agent/");
+  if (deep || sessionStorage.getItem("cohort-entered") === "1") $("#landing").classList.add("hidden");
+}
+$("#land-open").onclick = () => enterProduct();
+$("#land-start").onclick = () => enterProduct();
+$("#land-library").onclick = () => enterProduct("library");
+document.querySelectorAll(".land-agents button").forEach((button) => {
+  button.onclick = () => {
+    const sample = agentCatalog()[Number(button.dataset.agent)];
+    enterProduct();
+    if (sample) tryAgent(sample);
+  };
+});
+landingFirst();
 bootAuth();
 
 async function restorePlace() {

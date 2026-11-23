@@ -116,8 +116,8 @@ with sync_playwright() as p:
         page.locator("#new-chat").click()
         page.fill("#task", "Plan a 5-day trip to Tokyo under $2,000")
         page.press("#task", "Enter")
-        page.wait_for_selector(".match", timeout=15000)
-        cards = [t.split("\n")[1] for t in page.locator(".match").all_inner_texts()]
+        page.wait_for_selector(".pick", timeout=15000)
+        cards = [t.split("\n")[1] for t in page.locator(".pick").all_inner_texts()]
         check(any("Trip Planner" in c for c in cards), cards)
         stream = [c for c in calls if c[1].endswith("/stream")]
         check(stream and stream[-1][3], "stream call without Authorization")
@@ -128,8 +128,8 @@ with sync_playwright() as p:
         page.locator("#new-chat").click()
         page.fill("#task", "Summarize and brief me on research about invoices")
         page.press("#task", "Enter")
-        page.wait_for_selector(".match", timeout=15000)
-        boxes = page.locator(".match input[data-pick]")
+        page.wait_for_selector(".pick", timeout=15000)
+        boxes = page.locator(".pick input[data-pick]")
         check(boxes.count() >= 2, f"{boxes.count()} compare boxes")
         boxes.nth(0).check(); boxes.nth(1).check()
         page.locator("#run-compare").click()
@@ -152,8 +152,8 @@ with sync_playwright() as p:
         page.locator("#new-chat").click()
         page.fill("#task", "Plan a 5-day trip to Tokyo under $2,000")
         page.press("#task", "Enter")
-        page.wait_for_selector(".match", timeout=15000)
-        page.locator(".match", has_text="Trip Planner").locator("button.choose").click()
+        page.wait_for_selector(".pick", timeout=15000)
+        page.locator(".pick", has_text="Trip Planner").locator("button.choose").click()
         page.wait_for_selector("#quote:not(.hidden)", timeout=5000)
         cap = page.input_value("#quote-cap")
         q = api("POST", "/v1/quotes", "tok_sam", {"agent_id": "agt_trip_planner", "task": "x"}, {"Content-Type": "application/json"}).json()
