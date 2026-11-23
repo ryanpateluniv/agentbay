@@ -29,3 +29,8 @@ _Updated 2026-11-22 ~19:30_
 - Point at the real agents in `agents/` once they land (resolved automatically per session)
 - Docker mode smoke test (Docker daemon is not running on this machine, so it's untested)
 - Real embeddings for search; LLM re-ranker (cut)
+
+## Cost update (2026-11-22, strong = terra)
+- Real Invoice Auditor session: $0.0009 (was $0.0074 with astra). Metering matched OpenAI exactly.
+- One full real `make demo`: about $0.0057 (was about $0.036). The Trip Planner's single `strong` (terra) call is about 90% of it; the luna judge costs about $0.0001.
+- All real calls so far: about $0.050, plus about $0.0003 of earlier model probes.

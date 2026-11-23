@@ -39,3 +39,7 @@ One line each, with the reason.
 - SDK: `ctx.task.files` is now a list of file names (matching the agents teammate's code); the wire format is unchanged.
 - Seeded listings take their manifest (price, limits, models) from `agents/<slug>/agent.yaml` when it exists. Tests set `AGENTS_DIR` to an empty dir, so they stay hermetic.
 - Demo agents' Python deps (openai, pypdf, langgraph) are in `backend/requirements.txt`, because the subprocess sandbox shares the backend venv.
+- 2026-11-22 cost change: `strong` now maps to gpt-6.1-terra (same as balanced). gpt-6.2-astra is removed from the active config and kept only as a commented entry in `backend/config/models.yaml`. Agents that ask for strong get terra.
+- The platform's own LLM use is configured under `platform:` in models.yaml. The review judge uses `fast` (luna). Injection/exfiltration probes, search and quotes make no LLM calls (string checks, TF-IDF and platform statistics), and canaries are simulated, so luna is the only model the platform itself calls.
+- Seed default `models_allowed` for listings without their own agent.yaml is now [fast, balanced].
+- Real-mode safety caps are unchanged at REAL_MAX_USD_PER_SESSION=0.25 and REAL_MAX_USD_PER_RUN=2.00 (env-configurable). "Run" = one server process, so a fresh `make dev` + `make demo` is one demo run.

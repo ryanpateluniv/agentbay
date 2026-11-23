@@ -159,7 +159,7 @@ def test_streaming_bills_streamed_tokens(live_server):
         b = c.get("/proxy/v1/budget", headers=h).json()
         assert b["spent_microcredits"] > 0
         assert c.post("/proxy/v1/chat/completions", headers=h,
-                      json={"model": "balanced", "messages": []}).json()["error"]["code"] == "model_not_allowed"
+                      json={"model": "strong", "messages": []}).json()["error"]["code"] == "model_not_allowed"
 
 
 def test_concurrent_calls_cannot_blow_through_cap(live_server):

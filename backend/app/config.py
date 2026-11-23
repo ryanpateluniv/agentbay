@@ -55,5 +55,11 @@ def load_models() -> dict:
     return yaml.safe_load(settings.models_config.read_text())["aliases"]
 
 
+def platform_alias(use: str, default: str = "fast") -> str:
+    """Alias the platform itself uses for `use` (e.g. judge_alias), from config/models.yaml."""
+    import yaml
+    return (yaml.safe_load(settings.models_config.read_text()).get("platform") or {}).get(use, default)
+
+
 def credits_to_micro(credits: int | float) -> int:
     return int(round(credits * MICRO))

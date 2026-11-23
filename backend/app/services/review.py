@@ -11,7 +11,7 @@ import jsonschema
 from sqlalchemy import select
 from sqlalchemy.orm import Session as DB
 
-from ..config import MICRO, REPO_ROOT, settings
+from ..config import MICRO, REPO_ROOT, platform_alias, settings
 from ..db import SessionLocal
 from ..models import (Agent, AgentVersion, Listing, ModelPrice, ReviewFinding, ReviewRun, Session, SessionFile,
                       SessionMessage, TestResult, ToolPrice, now)
@@ -178,8 +178,8 @@ async def run_case(db: DB, ver: AgentVersion, task: str, answers: list[str]) -> 
 
 
 async def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str]:
-    """Automated checker + LLM judge. Real mode asks the `balanced` alias with a rubric (through the same
-    upstream client and safety cap as the proxy); fake mode is a deterministic heuristic."""
+    """Automated checker + LLM judge. Real mode asks the configured judge alias (`fast` = luna by default) with a
+    rubric, through the same upstream client and safety cap as the proxy; fake mode is a deterministic heuristic."""
     if out["status"] != "settled" or not out["result"].strip():
         return False, 0, f"no result (status {out['status']})"
     blob = (out["result"] + " " + out["files_text"]).lower()
@@ -191,7 +191,7 @@ async def judge(task: str, out: dict, expect: list[str]) -> tuple[bool, int, str
         from . import upstream
         from .proxy import current_price
         db = SessionLocal()
-        price = current_price(db, "balanced")
+        price = current_price(db, platform_alias("judge_alias"))
         db.close()
         messages = [{"role": "system", "content": "You grade AI agent outputs. Rubric: relevance, completeness, "
                      "correctness, honesty. Reply JSON {\"score\": 0-100, \"why\": str}."},

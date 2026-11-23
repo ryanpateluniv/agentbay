@@ -1,10 +1,16 @@
 # Model aliases -> provider models, and the prices the cost formula uses.
 # Prices are USD per 1M tokens as decimal strings (converted to integer micro-USD, never floats).
-# Source: https://developers.openai.com/api/docs/pricing, read 2026-11-22. VERIFY before relying on them.
+# Source: https://developers.openai.com/api/docs/pricing, re-checked 2026-11-22. VERIFY before relying on them.
+# (Inputs over 272K tokens are billed at a higher long-context rate. Not modelled; demo prompts are tiny.)
 # Ids were checked against GET /v1/models for this account on 2026-11-22.
 # Used in both modes: fake mode bills fake tokens at these prices too.
 # Changing this file takes effect after `make seed` (or PUT /v1/admin/model-prices at runtime).
 provider: openai
+
+# What the platform itself uses the LLM for (never "strong" by default).
+platform:
+  judge_alias: fast          # review pipeline LLM judge
+
 aliases:
   fast:
     provider_model: gpt-6-luna
@@ -19,9 +25,18 @@ aliases:
     cached_input: "0.05"
     output: "5.00"
     drop_params: [temperature, top_p]
+  # "strong" deliberately maps to terra (same as balanced) to keep the demo cheap.
+  # Agents whose manifest asks for strong get gpt-6.1-terra.
   strong:
-    provider_model: gpt-6.2-astra
-    input: "8.00"
-    cached_input: "0.40"
-    output: "40.00"
+    provider_model: gpt-6.1-terra
+    input: "1.00"
+    cached_input: "0.05"
+    output: "5.00"
     drop_params: [temperature, top_p]
+  # To re-enable the top model for "strong", replace the strong entry above with:
+  # strong:
+  #   provider_model: gpt-6.2-astra
+  #   input: "8.00"
+  #   cached_input: "0.40"
+  #   output: "40.00"
+  #   drop_params: [temperature, top_p]

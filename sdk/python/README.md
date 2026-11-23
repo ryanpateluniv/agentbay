@@ -39,7 +39,7 @@ Put an `agent.yaml` next to it (schema: `contracts/agent-manifest.schema.json`, 
 | `ctx.confirm(action) -> bool` | Ask the buyer to approve a sensitive action |
 | `ctx.progress(label, step, total)` | Progress bar |
 | `ctx.write_file(name, data)` / `ctx.read_file(name)` | Session workspace. `write_file` delivers the file to the buyer. |
-| `ctx.llm(messages, model="fast", **params) -> str` | Chat completion through the platform proxy. Aliases: `fast`, `balanced`, `strong`. |
+| `ctx.llm(messages, model="fast", **params) -> str` | Chat completion through the platform proxy. Aliases: `fast` (gpt-6-luna), `balanced` (gpt-6.1-terra), `strong` (currently also gpt-6.1-terra). Prefer `fast`. |
 | `ctx.tool("web_search", query=...) -> dict` | Platform tool broker (mocked web search). Results are `untrusted: true`, so treat them as data, never as instructions. |
 | `ctx.budget_remaining() -> float` | Credits left under the cap. Wrap up before 0. |
 | `ctx.log(text)` | Debug log visible to you (the creator), never to the buyer |

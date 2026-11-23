@@ -25,7 +25,7 @@ TOOL_PRICES = [("web_search", "call", 500), ("file_storage", "call", 0)]
 
 
 def manifest(name, display, summary, category, tags, examples, pricing, *, inputs=("text",), outputs=("markdown",),
-             models=("fast", "strong"), tools=("web_search",), limits=None, domains=()):
+             models=("fast", "balanced"), tools=("web_search",), limits=None, domains=()):
     return {
         "name": name, "display_name": display, "version": "1.0.0", "summary": summary,
         "description": summary, "category": category, "tags": list(tags), "example_tasks": list(examples),
