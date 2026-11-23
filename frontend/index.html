@@ -13,7 +13,7 @@
     --text: #1c1c1e;
     --muted: #6f6f76;
     --faint: #8d8d94;
-    --line: #e4e4e7;
+    --line: #efefef;
     --fill: #f6f6f7;
     --fill-2: #dedee2;
     --hover: #dcdce0;
@@ -67,65 +67,42 @@
     overflow: hidden;
   }
   aside {
-    width: 248px;
-    flex: 0 0 248px;
+    width: 220px;
+    flex: 0 0 220px;
     background: var(--shell);
     border-radius: 0;
     display: flex;
     flex-direction: column;
-    padding: 12px 10px 10px;
+    padding: 12px 12px 16px;
     margin: 4px 0;
     min-height: 0;
   }
   .brand {
     display: flex;
     align-items: center;
-    height: 32px;
-    margin: 0 6px 8px;
-    padding: 0;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.02em;
-  }
-  .side-search {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    height: 34px;
-    margin: 0 2px 8px;
+    height: auto;
+    margin: 0 0 18px;
     padding: 0 10px;
-    border: 1px solid var(--line);
-    border-radius: 10px;
-    background: var(--panel);
-    color: var(--muted);
-  }
-  .side-search input {
-    width: 100%;
-    border: 0;
-    outline: none;
-    background: transparent;
-    font: inherit;
-    font-size: 13px;
-    color: var(--text);
-  }
-  .side-search input::placeholder { color: var(--muted); }
-  .side-new {
-    margin: 0 2px 8px;
-    background: var(--panel);
-    border: 1px solid var(--line);
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
   }
   .side-nav {
     display: flex;
     flex-direction: column;
-    gap: 1px;
+    gap: 2px;
     margin: 0;
     padding: 0;
   }
   .side-label {
-    margin: 18px 8px 6px;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
+    margin: 16px 10px 6px;
+    padding: 0;
+    border-top: 0;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 16px;
+    letter-spacing: 0;
+    text-transform: none;
     color: var(--muted);
   }
   .side-scroll { flex: 1; min-height: 0; overflow: auto; }
@@ -134,21 +111,65 @@
     width: 100%;
     display: flex;
     align-items: center;
-    gap: 10px;
     text-align: left;
     background: transparent;
-    border: 0;
+    border: 1px solid transparent;
     border-radius: 8px;
-    height: 32px;
-    padding: 0 8px;
-    font-size: 13px;
-    color: var(--text);
+    height: 34px;
+    padding: 0 10px;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--muted);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .nav-item svg { color: var(--muted); flex: 0 0 auto; }
-  .side-item.on, .nav-item.on, .side-item:hover, .nav-item:hover { background: var(--nav); }
+  .nav-item svg { color: currentColor; flex: 0 0 auto; }
+  .nav-item.on, .nav-item:hover { background: rgba(255,255,255,0.08); }
+  .nav-item.on, .nav-item.on svg,
+  .nav-item:hover, .nav-item:hover svg { color: var(--text); }
+  .nav-item.history-item,
+  .nav-item.history-item:hover,
+  .nav-item.history-item.on {
+    height: 34px;
+    padding: 0 10px;
+    border-radius: 8px;
+    background: transparent;
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .nav-item.history-item span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .nav-item.history-item:hover { background: rgba(255,255,255,0.08); color: var(--text); }
+  .nav-item.history-item.on,
+  .nav-item.history-item.on:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  html[data-theme="light"] aside {
+    background: #fafafa;
+    color: #767676;
+  }
+  html[data-theme="light"] aside .brand { color: #1c1c1e; }
+  html[data-theme="light"] aside .side-label,
+  html[data-theme="light"] aside .nav-item,
+  html[data-theme="light"] aside .history-item,
+  html[data-theme="light"] aside .nav-item svg {
+    color: #767676;
+  }
+  html[data-theme="light"] .nav-item.on,
+  html[data-theme="light"] .nav-item.on svg,
+  html[data-theme="light"] .nav-item.history-item.on,
+  html[data-theme="light"] .nav-item.history-item.on:hover { background: #ffffff; color: #1c1c1e; }
+  html[data-theme="light"] .nav-item:hover,
+  html[data-theme="light"] .nav-item:hover svg,
+  html[data-theme="light"] .nav-item.history-item:hover { background: #ffffff; color: #1c1c1e; }
+  html[data-theme="light"] .nav-item.on,
+  html[data-theme="light"] .nav-item:hover,
+  html[data-theme="light"] .nav-item.history-item.on,
+  html[data-theme="light"] .nav-item.history-item.on:hover,
+  html[data-theme="light"] .nav-item.history-item:hover { border-color: #efefef; }
   .side-item.run { height: auto; white-space: normal; display: flex; flex-direction: column; align-items: flex-start; gap: 1px; }
   .side-item.run .s { color: var(--muted); font-size: 11px; }
   .side-user {
@@ -285,20 +306,21 @@
     position: absolute;
     top: 40px;
     right: 0;
-    width: 280px;
+    width: 232px;
     background: #1c1e21;
     border: 1px solid #2c2e33;
-    border-radius: 16px;
-    padding: 14px 16px 10px;
+    border-radius: 10px;
+    padding: 12px 0 8px;
     box-shadow: 0 24px 60px rgba(0,0,0,0.45);
     z-index: 6;
+    overflow: hidden;
   }
   html[data-theme="light"] .user-menu {
     background: #fff;
     border-color: #ececef;
     box-shadow: 0 12px 40px rgba(0,0,0,0.08);
   }
-  .acct-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 0 14px; }
+  .acct-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 12px 14px; }
   .acct-balance { display: flex; align-items: center; gap: 10px; font-size: 15px; }
   .acct-balance .ring { width: 22px; height: 22px; }
   .acct-balance .ring circle { stroke-width: 2; }
@@ -320,40 +342,110 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 0;
+    padding: 5px 12px;
     color: #8a8a8e;
     font-size: 14px;
     font-variant-numeric: tabular-nums;
   }
   .acct-line b { font-weight: 400; color: var(--text); }
-  .acct-split { height: 1px; background: #2c2e33; margin: 10px -16px 8px; }
+  .acct-split { height: 1px; background: #2c2e33; margin: 10px 0 8px; }
   html[data-theme="light"] .acct-split { background: #ececef; }
+  .account-list { margin-top: 8px; max-width: 440px; }
+  .account-list div {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 14px;
+  }
+  .account-list span { color: var(--muted); }
   .user-row {
+    appearance: none;
+    -webkit-appearance: none;
     width: 100%;
+    margin: 0;
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 12px;
     border: 0;
+    outline: none;
+    box-shadow: none;
     background: transparent;
     border-radius: 8px;
-    height: 34px;
-    padding: 0 8px;
+    height: 36px;
+    padding: 0 12px;
     font-size: 14px;
     text-align: left;
   }
-  .user-row:hover { background: rgba(255,255,255,0.05); }
+  .user-row:hover {
+    background: rgba(255,255,255,0.08);
+    border: 0;
+    outline: none;
+    box-shadow: none;
+  }
+  .user-row:focus { background: transparent; outline: none; }
   html[data-theme="light"] .user-row:hover { background: #f3f3f4; }
   .user-row .chev { color: var(--muted); font-size: 16px; }
   .chat.home {
     position: relative;
-    justify-content: center;
+    justify-content: safe center;
     align-items: center;
     gap: 0;
-    padding: 0 48px 210px;
+    padding: 24px 32px 28px;
+    overflow: auto;
   }
+  .chat.home .stage { margin-top: 0; }
+  .home-fill {
+    width: min(1100px, 100%);
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+    margin-top: 96px;
+  }
+  .chat:not(.home) .home-fill { display: none; }
+  .home-shortcuts {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 6px;
+    width: min(980px, 100%);
+    flex-wrap: wrap;
+  }
+  .home-shortcuts button {
+    appearance: none;
+    -webkit-appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    width: 84px;
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.2;
+    border-radius: 12px;
+  }
+  .home-shortcuts button svg {
+    width: 22px;
+    height: 22px;
+    padding: 11px;
+    box-sizing: content-box;
+    border-radius: 14px;
+    border: 0;
+    background: transparent;
+  }
+  .home-shortcuts button:hover { color: var(--text); background: rgba(255,255,255,0.08); }
+  .home-shortcuts button:hover svg { background: transparent; }
+  html[data-theme="light"] .home-shortcuts button:hover { background: #f2f2f4; color: #1c1c1e; }
+  html[data-theme="light"] .home-shortcuts button:hover svg { background: transparent; }
   .chat.home .stage,
-  .chat.home .dock { width: min(680px, 100%); }
+  .chat.home .dock { width: min(680px, 100%); padding: 0; }
   .chat.home .stage {
     display: flex;
     flex: none;
@@ -361,7 +453,6 @@
     padding: 0;
     margin-bottom: 18px;
   }
-  .chat.home .dock { padding: 0; }
   .chat.home .composer {
     flex-direction: row;
     align-items: center;
@@ -443,16 +534,16 @@
     from { transform: translateX(-30%) rotate(0deg); }
     to { transform: translateX(20%) rotate(360deg); }
   }
+  .promo { width: 100%; display: flex; flex-direction: column; align-items: center; }
   .banner {
-    position: absolute;
-    left: 50%;
-    bottom: 28px;
-    transform: translateX(-50%);
-    width: min(680px, calc(100% - 96px));
-    height: 176px;
-    border-radius: 16px;
+    position: relative;
+    width: 100%;
+    height: 156px;
+    margin-top: 0;
+    border-radius: 22px;
     overflow: hidden;
     color: #fff;
+    flex: none;
   }
   .chat:not(.home) .banner { display: none; }
   .banner-slide {
@@ -462,9 +553,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 16px;
     text-align: center;
-    padding: 20px 32px 28px;
+    padding: 24px 32px;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.25s ease;
@@ -473,33 +564,36 @@
   .banner[data-slide="1"] .banner-slide:nth-child(2) { opacity: 1; pointer-events: auto; }
   .banner-slide p {
     margin: 0;
-    max-width: 520px;
-    font-size: 18px;
+    max-width: 640px;
+    font-size: 22px;
     font-weight: 400;
     line-height: 1.3;
     letter-spacing: -0.02em;
   }
-  .banner-slide .sub {
-    font-size: 13px;
-    line-height: 1.4;
-    color: rgba(255, 255, 255, 0.82);
-    letter-spacing: 0;
-  }
-  .banner-facts {
+  .banner-actions {
     display: flex;
-    gap: 14px;
-    margin: 2px 0 4px;
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.9);
+    align-items: center;
+    gap: 16px;
   }
   .banner-slide .try {
     height: 32px;
+    min-height: 32px;
+    flex: none;
     padding: 0 14px;
     border: 0;
     border-radius: 999px;
     background: #fff;
     color: #111;
     font-size: 13px;
+    line-height: 32px;
+  }
+  .banner-slide .more {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    font-size: 14px;
+    height: 32px;
+    padding: 0;
   }
   .banner-slide.blue {
     background:
@@ -513,14 +607,10 @@
       linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%);
   }
   .banner-dots {
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 12px;
     display: flex;
     justify-content: center;
     gap: 6px;
-    z-index: 1;
+    margin-top: 14px;
   }
   .banner-dots button {
     width: 6px;
@@ -534,40 +624,36 @@
   .mark { display: flex; justify-content: center; margin-bottom: 4px; }
   .settings-menu { display: flex; flex-direction: column; gap: 2px; padding: 4px 0 8px; }
   .settings-menu .nav-item { padding-left: 22px; color: var(--muted); }
-  .theme-slot { position: relative; }
-  .theme-flyout {
-    position: fixed;
-    width: 148px;
-    background: #1c1e21;
-    border: 1px solid #2c2e33;
-    border-radius: 10px;
-    padding: 4px;
-    box-shadow: 0 16px 40px rgba(0,0,0,0.4);
-    z-index: 7;
-  }
-  html[data-theme="light"] .theme-flyout {
-    background: #fff;
-    border-color: #e6e6ea;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-  }
-  .theme-flyout button {
-    width: 100%;
-    height: 32px;
-    border: 0;
-    border-radius: 7px;
-    background: transparent;
-    color: var(--text);
+  .theme-choices {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 10px;
-    font-size: 14px;
-    text-align: left;
+    gap: 4px;
+    margin: 2px 12px 0;
   }
-  .theme-flyout button:hover { background: rgba(255,255,255,0.05); }
-  html[data-theme="light"] .theme-flyout button:hover { background: #f3f3f4; }
-  .side-settings:hover { background: var(--nav); color: var(--text); }
-  .theme-flyout button.on::after { content: "✓"; width: auto; font-size: 13px; }
+  .theme-choices button {
+    appearance: none;
+    -webkit-appearance: none;
+    flex: 1;
+    height: 30px;
+    margin: 0;
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .theme-choices button.on,
+  .theme-choices button:hover,
+  .theme-choices button:focus {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border: 0;
+    outline: none;
+    box-shadow: none;
+  }
+  html[data-theme="light"] .theme-choices button.on,
+  html[data-theme="light"] .theme-choices button:hover { background: #f2f2f4; color: var(--text); }
   .chat:not(.home) .fine { display: none; }
   .thread {
     flex: 1;
@@ -598,26 +684,254 @@
     overflow: auto;
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-top: 10px;
-  }
-  .side-history .side-label {
-    margin: 16px 8px 4px;
-    padding: 0;
-    color: var(--muted);
-    font-size: 12px;
-    letter-spacing: 0;
-    text-transform: none;
+    gap: 1px;
+    margin-top: 2px;
   }
   .history-item {
-    display: block;
+    display: flex;
+    align-items: center;
     min-width: 0;
-    font-size: 13px;
-    line-height: 30px;
-    height: 30px;
+    height: 34px;
+    line-height: 34px;
+    padding: 0 10px;
+    font-size: 14px;
     color: var(--muted);
     text-overflow: ellipsis;
   }
+  .chat-menu {
+    position: fixed;
+    z-index: 8;
+    min-width: 148px;
+    padding: 4px;
+    border-radius: 10px;
+    background: #1c1e21;
+    border: 1px solid #2c2e33;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.28);
+  }
+  html[data-theme="light"] .chat-menu {
+    background: #fff;
+    border-color: #ececef;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  }
+  .chat-menu button {
+    width: 100%;
+    height: 32px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    text-align: left;
+    padding: 0 10px;
+    font-size: 14px;
+    color: #e5484d;
+  }
+  .chat-menu button:hover { background: rgba(255,255,255,0.06); }
+  html[data-theme="light"] .chat-menu button:hover { background: #f3f3f4; }
+  #library { margin: 0; width: 100%; max-width: none; }
+  .library-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 8px 0 4px;
+  }
+  .library-head h2 { margin: 0; text-align: left; }
+  .library-head .meta { margin: 4px 0 0; text-align: left; }
+  .library-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 280px;
+    height: 40px;
+    flex: 0 0 280px;
+    padding: 0 14px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: var(--fill);
+    color: var(--muted);
+  }
+  .library-search input {
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: transparent;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+  }
+  .library-search input::placeholder { color: var(--faint); }
+  .agent-page { text-align: left; width: 100%; padding-top: 4px; }
+  .agent-page .back {
+    height: 32px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--muted);
+    font-size: 14px;
+  }
+  .agent-hero {
+    position: relative;
+    margin-top: 12px;
+    border-radius: 18px;
+    min-height: 220px;
+    padding: 28px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 8px;
+    overflow: hidden;
+  }
+  .agent-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(8, 6, 18, 0.5) 0%, rgba(8, 6, 18, 0.22) 46%, rgba(8, 6, 18, 0.08) 100%);
+    pointer-events: none;
+  }
+  .agent-hero > * { position: relative; z-index: 1; }
+  .agent-hero h2 { margin: 0; font-size: 32px; font-weight: 400; letter-spacing: -0.03em; text-align: left; color: #fff; }
+  .agent-hero .dev { margin: 0; color: rgba(255,255,255,0.78); font-size: 14px; }
+  .agent-hero .blurb { margin: 0; max-width: 560px; font-size: 15px; line-height: 1.45; color: rgba(255,255,255,0.92); }
+  .try-now {
+    margin-top: 8px;
+    height: 34px;
+    padding: 0 16px;
+    border: 0;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font-size: 14px;
+  }
+  .agent-block { margin-top: 28px; }
+  .agent-block h3 { margin: 0 0 8px; font-size: 13px; font-weight: 400; color: var(--muted); }
+  .agent-block .summary { margin: 0; max-width: 680px; font-size: 16px; line-height: 1.55; }
+  .previews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .preview {
+    text-align: left;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--fill);
+    padding: 14px;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .preview span { color: var(--muted); font-size: 12px; }
+  .preview b { font-weight: 400; font-size: 14px; line-height: 1.4; }
+  html[data-theme="light"] .preview {
+    background: #e3e3e8;
+    border-color: #c8c8ce;
+  }
+  html[data-theme="light"] .preview b { color: #1c1c1e; }
+  html[data-theme="light"] .agent-block h3 { color: #3a3a40; }
+  .credit-ask {
+    width: min(680px, 100%);
+    margin: 0 auto 12px;
+    padding: 14px 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--fill);
+    text-align: left;
+  }
+  .credit-ask p { margin: 0 0 10px; font-size: 14px; line-height: 1.45; }
+  .credit-ask-row { display: flex; gap: 8px; align-items: center; }
+  .credit-ask button {
+    height: 32px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--send);
+    color: var(--send-text);
+    font-size: 13px;
+  }
+  .credit-ask input {
+    height: 32px;
+    width: 110px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: transparent;
+    padding: 0 10px;
+    color: var(--text);
+    font: inherit;
+    font-size: 14px;
+  }
+  .library-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+  }
+  .agent-card {
+    width: auto;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel);
+    color: var(--text);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    overflow: hidden;
+    text-align: left;
+  }
+  .card-face { height: 168px; flex: none; }
+  .card-body {
+    flex: none;
+    min-height: 168px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    background: var(--panel);
+  }
+  .tone-0 {
+    background:
+      radial-gradient(80% 160% at 0% 40%, #fdba74 0%, #ea580c 34%, rgba(234, 88, 12, 0) 62%),
+      linear-gradient(105deg, #c2410c 0%, #ea580c 28%, #1c0a04 62%, #f97316 100%);
+  }
+  .tone-1 {
+    background:
+      radial-gradient(90% 160% at 8% 110%, #0b2f86 0%, #0b2f86 28%, rgba(11, 47, 134, 0) 60%),
+      radial-gradient(70% 140% at 100% 0%, #9fd4ff 0%, #3b82f6 36%, rgba(59, 130, 246, 0) 62%),
+      linear-gradient(105deg, #123a9a 0%, #2563eb 42%, #1d4ed8 70%, #0b3a8a 100%);
+  }
+  .tone-2 {
+    background:
+      radial-gradient(80% 150% at 0% 30%, #e9d5ff 0%, #7c3aed 36%, rgba(124, 58, 237, 0) 64%),
+      linear-gradient(105deg, #4c1d95 0%, #6d28d9 32%, #1a0b2e 64%, #a78bfa 100%);
+  }
+  .tone-3 {
+    background:
+      radial-gradient(80% 150% at 0% 40%, #99f6e4 0%, #0f766e 34%, rgba(15, 118, 110, 0) 64%),
+      linear-gradient(105deg, #115e59 0%, #0d9488 30%, #042f2e 64%, #2dd4bf 100%);
+  }
+  .tone-4 {
+    background:
+      radial-gradient(80% 150% at 0% 40%, #fda4af 0%, #e11d48 34%, rgba(225, 29, 72, 0) 64%),
+      linear-gradient(105deg, #9f1239 0%, #e11d48 30%, #1c060c 64%, #fb7185 100%);
+  }
+  .tone-5 {
+    background:
+      radial-gradient(80% 150% at 0% 40%, #86efac 0%, #15803d 34%, rgba(21, 128, 61, 0) 64%),
+      linear-gradient(105deg, #14532d 0%, #16a34a 30%, #052e16 64%, #4ade80 100%);
+  }
+  .tone-6 {
+    background:
+      radial-gradient(80% 150% at 0% 40%, #fde68a 0%, #ca8a04 34%, rgba(202, 138, 4, 0) 64%),
+      linear-gradient(105deg, #854d0e 0%, #eab308 30%, #1c1404 64%, #facc15 100%);
+  }
+  .tone-7 {
+    background:
+      radial-gradient(80% 150% at 0% 40%, #c4b5fd 0%, #4f46e5 34%, rgba(79, 70, 229, 0) 64%),
+      linear-gradient(105deg, #312e81 0%, #4338ca 30%, #0b1026 64%, #818cf8 100%);
+  }
+  .agent-card h3 { margin: 0; font-size: 16px; font-weight: 400; color: var(--text); }
+  .agent-card .dev { margin: 0; color: var(--muted); font-size: 12px; }
+  .agent-card p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.4; }
+  .agent-card .choose { margin-top: 18px; flex: none; height: 30px; }
   .side-settings {
     width: 100%;
     height: 32px;
@@ -729,6 +1043,51 @@
     box-sizing: border-box;
   }
   .plus { border: 0; background: transparent; }
+  .attach-preview { display: flex; width: 100%; padding: 2px 2px 8px; }
+  .attach-preview.hidden { display: none; }
+  .attach-chip { position: relative; width: 72px; height: 72px; }
+  .attach-chip img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 4px;
+    display: block;
+  }
+  .attach-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 18px;
+    height: 18px;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.72);
+    color: #fff;
+    font-size: 13px;
+    line-height: 18px;
+    padding: 0;
+  }
+  .composer.has-image,
+  .chat.home .composer.has-image {
+    flex-wrap: wrap;
+    align-items: center;
+    align-content: center;
+    border-radius: 12px;
+    padding: 12px;
+  }
+  .composer.has-image .attach-preview,
+  .chat.home .composer.has-image .attach-preview {
+    flex: 1 0 100%;
+  }
+  .msg.user img.msg-image {
+    width: 160px;
+    max-width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 8px;
+  }
   .mic:hover {
     background: transparent;
     color: var(--text);
@@ -796,7 +1155,7 @@
     border-radius: 999px;
     padding: 2px 8px;
   }
-  .match .choose {
+  .match .choose, .agent-card .choose {
     align-self: flex-start;
     margin-top: 4px;
     height: 30px;
@@ -805,6 +1164,13 @@
     border-radius: 8px;
     background: var(--send);
     color: var(--send-text);
+  }
+  .agent-card .choose {
+    align-self: flex-start;
+    margin-top: 18px;
+    height: 30px;
+    padding: 0 14px;
+    border-radius: 10px;
   }
   .quote {
     position: fixed;
@@ -901,7 +1267,7 @@
   .chip.live { background: var(--sea-soft); color: #0e7d6d; }
   .chip.bad { background: #fdecec; color: #9a3b3b; }
   .empty { color: var(--muted); font-size: 14px; padding: 18px 4px; }
-  .page { flex: 1; overflow: auto; padding: 12px 32px 48px; max-width: 920px; }
+  .page { flex: 1; overflow: auto; padding: 12px 32px 48px; max-width: 980px; }
   .page h2 { font-weight: 400; font-size: 22px; letter-spacing: -0.02em; margin: 12px 0; }
   .hidden { display: none !important; }
   #receipt:empty { display: none; }
@@ -923,32 +1289,6 @@
   #session-back { margin: 8px 0 16px; }
   .bubble { padding: 12px 14px; background: var(--fill); border: 0; border-radius: 8px; line-height: 1.45; }
   .bubble.buyer { background: var(--hover); }
-  .note { font-size: 12px; color: var(--muted); line-height: 1.4; padding: 2px 0; }
-  html[data-theme="dark"] #log a, #log a:visited { color: #d7e4ff; }
-  html[data-theme="light"] #log a, #log a:visited { color: #1d4ed8; }
-  .session-tools, .quote-files { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0; }
-  .session-tools input[type="number"], .session-tools input[type="text"], #quote input[type="file"] { font: inherit; }
-  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-  .cmp, .card-block {
-    border: 1px solid var(--line);
-    border-radius: 12px;
-    padding: 14px;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .cmp .flag { font-size: 12px; color: var(--muted); }
-  .kv { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-  .kv span:first-child { color: var(--muted); }
-  .steps { display: flex; gap: 8px; margin: 8px 0 16px; }
-  .steps button { border: 0; background: transparent; color: var(--muted); padding: 0 0 6px; border-bottom: 1px solid transparent; }
-  .steps button.on { color: var(--text); border-bottom-color: var(--text); }
-  .form-grid { display: flex; flex-direction: column; gap: 10px; max-width: 460px; }
-  .form-grid input, .form-grid textarea, .form-grid select {
-    font: inherit; color: inherit; background: transparent; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
-  }
-  .warn { color: #c45c4a; }
   .meter { height: 2px; background: var(--hover); border-radius: 2px; overflow: hidden; }
   .meter > div { height: 100%; width: 0; background: var(--ink); }
   .meta { color: var(--muted); font-size: 13px; }
@@ -1065,79 +1405,32 @@
 <body>
 <div id="auth" class="auth hidden">
   <div class="auth-card">
-    <svg class="auth-mark" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
-      <g transform="translate(18 18)">
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(45)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(90)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(135)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(180)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(225)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(270)"/>
-        <rect x="-3.2" y="-15" width="6.4" height="5.2" rx="2.2" transform="rotate(315)"/>
-      </g>
-    </svg>
-    <h1 id="auth-title">Create your workspace</h1>
-    <div id="auth-options" class="auth-options">
-      <button id="auth-google" class="auth-google" type="button">
-        <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.4 30.2 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.8 6.1C12.2 13.2 17.6 9.5 24 9.5z"/><path fill="#fff" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#fff" d="M10.3 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l7.8-6.1z"/><path fill="#fff" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.4 0-11.8-3.7-13.7-9l-7.8 6.1C6.4 42.6 14.6 48 24 48z"/></svg>
-        Continue with Google
-      </button>
-      <button id="auth-email-go" class="auth-quiet" type="button">Continue with email</button>
-      <p id="auth-legal" class="auth-fine">By signing up, you agree to our Terms of Service.</p>
-      <p class="auth-fine"><button id="auth-switch" type="button">Already have an account? Log in</button></p>
-    </div>
-    <form id="auth-form" class="hidden">
-      <div class="auth-field">
-        <input id="auth-email" type="email" autocomplete="email" placeholder="Email address" required />
-      </div>
-      <div class="auth-field">
-        <input id="auth-password" type="password" autocomplete="current-password" placeholder="Password" required />
-        <button id="auth-eye" type="button" aria-label="Show password">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-        </button>
-      </div>
-      <button id="auth-submit" type="submit">Create account</button>
-      <button id="auth-other" class="auth-link" type="button">View other signup options</button>
-    </form>
+    <button id="auth-google" class="auth-google" type="button">
+      <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#fff" d="M24 9.5c3.5 0 6.6 1.2 9 3.2l6.7-6.7C35.7 2.4 30.2 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.8 6.1C12.2 13.2 17.6 9.5 24 9.5z"/><path fill="#fff" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4 7.1-10 7.1-17z"/><path fill="#fff" d="M10.3 28.7A14.5 14.5 0 0 1 9.5 24c0-1.6.3-3.2.8-4.7l-7.8-6.1A23.9 23.9 0 0 0 0 24c0 3.9.9 7.5 2.5 10.8l7.8-6.1z"/><path fill="#fff" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.5-5.8c-2 1.4-4.6 2.3-7.7 2.3-6.4 0-11.8-3.7-13.7-9l-7.8 6.1C6.4 42.6 14.6 48 24 48z"/></svg>
+      Continue with Google
+    </button>
     <p id="auth-error"></p>
   </div>
 </div>
 <div class="app">
 <aside>
   <div class="brand">Cohort.ai</div>
-  <label class="side-search">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-    <input id="side-find" type="search" placeholder="Search..." />
-  </label>
-  <button id="new-chat" class="nav-item side-new" type="button" data-view="discover">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
-    New chat
-  </button>
   <nav class="side-nav">
-    <button class="nav-item" type="button" data-view="session">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg>
-      Session
+    <button id="new-chat" class="nav-item on" type="button" data-view="discover">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z"/></svg>
+      New chat
     </button>
-    <button class="nav-item" type="button" data-view="wallet">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
-      Wallet
-    </button>
-    <button class="nav-item" type="button" data-view="creator">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/></svg>
-      Creator
-    </button>
-    <button class="nav-item" type="button" data-view="admin">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3z"/></svg>
-      Review
+    <button class="nav-item" type="button" data-view="library">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 6 4 14"/><path d="M12 6v14"/><path d="M8 8v12"/><path d="M4 4v16"/></svg>
+      Library
     </button>
   </nav>
+  <div class="side-label">Activity</div>
   <div id="history" class="side-history"></div>
-  <button id="settings" class="nav-item side-settings" type="button" aria-label="Settings">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    Settings
-  </button>
 </aside>
+<div id="chat-menu" class="chat-menu hidden" role="menu">
+  <button type="button" id="chat-delete">Delete</button>
+</div>
 <main>
 <header class="top">
   <div class="crumb-row">
@@ -1171,30 +1464,38 @@
       <div class="acct-line"><span>Total</span><b id="credit-total">0</b></div>
       <div class="acct-line"><span>Remaining</span><b id="credit-left">0</b></div>
       <div class="acct-split"></div>
+      <button class="user-row" type="button" data-view="account">Account overview</button>
       <button class="user-row" type="button" data-view="creator">Creator</button>
-      <div class="theme-slot">
-        <button class="user-row" id="theme-toggle" type="button">Theme <span class="chev">›</span></button>
-        <div class="theme-flyout hidden" id="theme-flyout" role="menu" aria-label="Theme">
-          <button type="button" data-theme-choice="light">Light</button>
-          <button type="button" data-theme-choice="dark">Dark</button>
-          <button type="button" data-theme-choice="system">System</button>
-        </div>
+      <div class="theme-choices" role="group" aria-label="Theme">
+        <button type="button" data-theme-choice="light">Light</button>
+        <button type="button" data-theme-choice="dark">Dark</button>
+        <button type="button" data-theme-choice="system">System</button>
       </div>
-      <button class="user-row hidden" id="sign-out" type="button">Sign out</button>
+      <button class="user-row" id="sign-out" type="button">Log out</button>
     </div>
   </div>
   </div>
 </header>
 <section id="discover" class="chat home">
   <div id="empty" class="stage">
-    <h2>What's on the agenda today?</h2>
+    <h2 id="agenda">How can Cohort help you, Jaineel?</h2>
   </div>
   <div id="thread" class="thread hidden"></div>
   <div class="dock">
     <div class="composer-wrap">
+      <div id="credit-ask" class="credit-ask hidden">
+        <p id="credit-ask-copy"></p>
+        <div class="credit-ask-row">
+          <button type="button" id="credit-all">Use all</button>
+          <input id="credit-amount" type="number" min="1" inputmode="numeric" placeholder="Amount" aria-label="Credits to spend">
+          <button type="button" id="credit-some">Use this amount</button>
+        </div>
+      </div>
       <div class="composer">
+        <div id="attach-preview" class="attach-preview hidden"></div>
         <span class="prompt-orb" aria-hidden="true"></span>
-        <button class="plus" id="attach" type="button" aria-label="Focus the task">+</button>
+        <button class="plus" id="attach" type="button" aria-label="Add image">+</button>
+        <input id="file" type="file" accept="image/*" hidden>
         <textarea id="task" rows="1" placeholder="Ask anything…"></textarea>
         <button class="mic" id="voice" type="button" aria-label="Voice">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4"/></svg>
@@ -1205,24 +1506,63 @@
       </div>
     </div>
   </div>
-  <div class="banner" id="banner" data-slide="0">
+  <div class="home-fill">
+    <div class="home-shortcuts">
+      <button type="button" data-prompt="Audit this invoice for tax errors"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg><span>Invoice</span></button>
+      <button type="button" data-prompt="Plan a three-day trip to Lisbon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg><span>Trip</span></button>
+      <button type="button" data-prompt="Write a research brief on battery recycling"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.34-4.34"/></svg><span>Research</span></button>
+      <button type="button" data-prompt="Sort this inbox into what needs a reply"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg><span>Inbox</span></button>
+      <button type="button" data-prompt="Turn these meeting notes into decisions and next actions"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M16 2v20"/></svg><span>Notes</span></button>
+      <button type="button" data-prompt="Flag the odd clauses in this contract"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5"/></svg><span>Contract</span></button>
+      <button type="button" data-prompt="Draft a reply to this support ticket"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 17a2 2 0 0 1-2 2H6.828a2 2 0 0 0-1.414.586l-2.202 2.202A.71.71 0 0 1 2 21.286V5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2z"/></svg><span>Support</span></button>
+      <button type="button" data-prompt="Find the broken formulas in this spreadsheet"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/></svg><span>Sheet</span></button>
+    </div>
+    <div class="promo">
+    <div class="banner" id="banner" data-slide="0">
     <div class="banner-slide blue">
       <p>See the price before a session starts.</p>
-      <p class="sub">You get a quote and a credit cap first. The agent only runs after you accept it.</p>
-      <div class="banner-facts"><span>Quoted first</span><span>Cap is held</span><span>Receipt at the end</span></div>
-      <button class="try" type="button">Try it</button>
+      <div class="banner-actions">
+        <button class="try" type="button">Try it</button>
+        <button class="more" type="button">Learn more</button>
+      </div>
     </div>
     <div class="banner-slide amber">
       <p>Unused credit comes back when it ends.</p>
-      <p class="sub">Spend is metered while the agent works. Whatever is left of the hold is released.</p>
-      <div class="banner-facts"><span>Live spend</span><span>Stop anytime</span><span>Unused hold released</span></div>
-      <button class="try" type="button">Try it</button>
+      <div class="banner-actions">
+        <button class="try" type="button">Try it</button>
+        <button class="more" type="button">Learn more</button>
+      </div>
+    </div>
     </div>
     <div class="banner-dots">
       <button type="button" class="on" data-slide="0" aria-label="Blue banner"></button>
       <button type="button" data-slide="1" aria-label="Orange banner"></button>
     </div>
+    </div>
   </div>
+</section>
+
+<section id="account" class="page hidden">
+  <h2>Account overview</h2>
+  <p class="meta">Your workspace and credit balance.</p>
+  <div id="account-body" class="account-list"></div>
+</section>
+
+<section id="library" class="page hidden">
+  <div id="library-home">
+    <div class="library-head">
+      <div>
+        <h2>Library</h2>
+        <p class="meta">Open an agent, read the summary, then start a run.</p>
+      </div>
+      <label class="library-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="library-find" type="search" placeholder="Search..." aria-label="Search agents">
+      </label>
+    </div>
+    <div id="library-grid" class="library-grid"></div>
+  </div>
+  <article id="agent-page" class="agent-page hidden"></article>
 </section>
 
 <section id="session" class="page hidden">
@@ -1239,106 +1579,20 @@
     <p class="meta" id="spend"></p>
     <div id="log"></div>
     <div id="ask" class="hidden"></div>
-    <p id="session-edge" class="warn"></p>
-    <div class="session-tools">
-      <label>Extend cap <input id="extend-credits" type="number" min="1" step="1" value="10" aria-label="Credits to add"></label>
-      <button class="ghost" id="extend" type="button">Extend</button>
-      <label>File <input id="session-file" type="file" aria-label="Attach a file"></label>
-      <span id="file-note" class="meta"></span>
-    </div>
     <button class="ghost" id="cancel" type="button">Cancel session</button>
     <pre id="receipt"></pre>
-    <div id="after-receipt" class="hidden">
-      <form id="rate-form" class="form-grid">
-        <label>Stars <input id="rate-stars" type="number" min="1" max="5" step="1" value="5"></label>
-        <input id="rate-comment" type="text" placeholder="Comment">
-        <button type="submit">Rate this agent</button>
-      </form>
-      <form id="dispute-form" class="form-grid">
-        <input id="dispute-reason" type="text" placeholder="Why this result should be reviewed" required>
-        <button type="submit">Open a dispute</button>
-      </form>
-      <p id="after-note" class="meta"></p>
-    </div>
   </div>
 </section>
 
 <section id="creator" class="page hidden">
-  <h2>Creator</h2>
-  <div id="creator-error" class="warn"></div>
-  <div id="creator-home"></div>
-  <div class="steps" id="creator-steps">
-    <button type="button" data-step="1">1 Basics</button>
-    <button type="button" data-step="2">2 Manifest</button>
-    <button type="button" data-step="3">3 Listing</button>
-    <button type="button" data-step="4">4 Samples</button>
-    <button type="button" data-step="5">5 Submit</button>
-  </div>
-  <form id="creator-form" class="form-grid">
-    <div data-step-panel="1">
-      <input id="c-slug" placeholder="slug" required>
-      <input id="c-category" placeholder="category" value="general">
-      <select id="c-mode"><option value="hosted">hosted</option><option value="external">external</option></select>
-      <input id="c-endpoint" placeholder="endpoint url, external only">
-    </div>
-    <div data-step-panel="2" class="hidden">
-      <input id="c-version" placeholder="version" value="0.1.0">
-      <select id="c-price-model"><option>per_task</option><option>per_message</option><option>per_minute</option><option>usage_based</option><option>outcome_based</option></select>
-      <input id="c-price" type="number" min="0" step="1" value="5" placeholder="price credits">
-    </div>
-    <div data-step-panel="3" class="hidden">
-      <input id="c-title" placeholder="title">
-      <input id="c-summary" placeholder="summary">
-      <textarea id="c-description" rows="3" placeholder="description"></textarea>
-      <input id="c-tags" placeholder="tags, comma separated">
-    </div>
-    <div data-step-panel="4" class="hidden">
-      <textarea id="c-samples" rows="3" placeholder="one example task per line"></textarea>
-    </div>
-    <div data-step-panel="5" class="hidden">
-      <input id="c-source" placeholder="source path, optional">
-      <p class="meta" id="c-submit-note"></p>
-    </div>
-    <div>
-      <button type="button" id="c-back">Back</button>
-      <button type="button" id="c-next">Next</button>
-      <button type="submit" id="c-submit" class="hidden">Submit for review</button>
-    </div>
-  </form>
-  <div id="creator-review"></div>
+  <h2>Creator ledger</h2>
+  <div id="creator-body"></div>
 </section>
 
 <section id="admin" class="page hidden">
-  <h2>Review</h2>
-  <div id="admin-error" class="warn"></div>
-  <div id="admin-metrics"></div>
-  <h3>Queue</h3>
-  <div id="admin-queue"></div>
-  <h3>Agents</h3>
+  <h2>Review queue</h2>
+  <p class="meta">Guaranteed Returns Bot is waiting. Run review, then use the kill switch on a live agent.</p>
   <div id="admin-body"></div>
-  <h3>Refund a session</h3>
-  <form id="refund-form" class="form-grid">
-    <input id="refund-id" placeholder="session id" required>
-    <input id="refund-reason" placeholder="reason" value="admin refund">
-    <button type="submit">Refund</button>
-    <p id="refund-note" class="meta"></p>
-  </form>
-</section>
-
-<section id="wallet" class="page hidden">
-  <h2>Wallet</h2>
-  <div id="wallet-body"></div>
-</section>
-
-<section id="compare" class="page hidden">
-  <button class="ghost" id="compare-back" type="button">Back</button>
-  <h2>Compare</h2>
-  <div id="compare-body"></div>
-</section>
-
-<section id="agent" class="page hidden">
-  <button class="ghost" id="agent-back" type="button">Back</button>
-  <div id="agent-body"></div>
 </section>
 </main>
 </div>
@@ -1352,10 +1606,6 @@
       <input id="quote-cap" type="number" min="1" step="1" />
     </label>
     <p id="quote-hold" class="meta"></p>
-    <label class="quote-files">Attach a file
-      <input id="quote-file" type="file">
-    </label>
-    <p id="quote-files" class="meta"></p>
     <p id="quote-error" class="warn"></p>
     <div class="quote-actions">
       <button id="quote-back" type="button">Back</button>
@@ -1387,7 +1637,7 @@ document.querySelectorAll("[data-theme-choice]").forEach((button) => {
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
   if (themeChoice === "system") applyTheme("system");
 });
-const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options", me: null, files: [], picks: [], cap: 0, quote: null, step: 1, draftAgent: null };
+const state = { session: null, es: null, conversation: null, task: "", token: "", supabase: null, authMode: "sign-up", authStep: "options" };
 
 async function api(path, opts) {
   opts = opts || {};
@@ -1395,13 +1645,7 @@ async function api(path, opts) {
   if (state.token) headers.Authorization = "Bearer " + state.token;
   const res = await fetch(path, Object.assign({}, opts, { headers }));
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    const body = data.detail && typeof data.detail === "object" ? data.detail : data;
-    const err = new Error((body && body.detail) || (typeof data.detail === "string" ? data.detail : "") || res.statusText);
-    err.code = (body && body.error) || data.error || "";
-    err.status = res.status;
-    throw err;
-  }
+  if (!res.ok) throw new Error(data.detail || res.statusText);
   return data;
 }
 async function refreshBal() {
@@ -1425,22 +1669,13 @@ function paintUser(name) {
   const label = name || "Account";
   const letter = label.slice(0, 1).toUpperCase();
   $(".user-letter").textContent = letter;
+  const who = label.replace(/\(.*\)/, "").trim().split(/\s+/)[0] || "there";
+  const agenda = $("#agenda");
+  if (agenda) agenda.textContent = "How can Cohort help you, " + who + "?";
 }
 function showAuth(message) {
   $("#auth").classList.remove("hidden");
   if (message) $("#auth-error").textContent = message;
-}
-function paintAuth() {
-  const signingUp = state.authMode === "sign-up";
-  const emailStep = state.authStep === "email";
-  $("#auth-title").textContent = signingUp ? "Create your workspace" : "Log in to Cohort";
-  $("#auth-options").classList.toggle("hidden", emailStep);
-  $("#auth-form").classList.toggle("hidden", !emailStep);
-  $("#auth-submit").textContent = signingUp ? "Create account" : "Log in";
-  $("#auth-other").textContent = signingUp ? "View other signup options" : "View other login options";
-  $("#auth-legal").classList.toggle("hidden", !signingUp || emailStep);
-  $("#auth-switch").textContent = signingUp ? "Already have an account? Log in" : "Don't have an account? Sign up";
-  $("#auth-password").setAttribute("autocomplete", signingUp ? "new-password" : "current-password");
 }
 function enterApp(session) {
   state.token = session.access_token;
@@ -1448,40 +1683,14 @@ function enterApp(session) {
   const name = meta.full_name || meta.name || (session.user.email || "Account").split("@")[0];
   paintUser(name);
   $("#auth").classList.add("hidden");
-  loadMe();
   refreshBal();
-  loadSidebar();
-}
-async function loadMe() {
-  try { state.me = await api("/v1/me"); } catch (err) { state.me = { roles: [] }; }
-  if (state.me.name) paintUser(state.me.name);
-}
-function hasRole(role) {
-  const roles = (state.me && state.me.roles) || [];
-  return roles.includes(role);
-}
-function enterDemo(token) {
-  localStorage.setItem("cohort-demo-token", token);
-  enterApp({ access_token: token, user: { email: token.replace("tok_", "") + "@demo.dev", user_metadata: {} } });
 }
 async function bootAuth() {
   let cfg = { configured: false };
   try { cfg = await fetch("/v1/auth/config").then((res) => res.json()); } catch (err) { cfg = { configured: false }; }
   if (!cfg.configured || !window.supabase) {
-    ["auth-google", "auth-email-go", "auth-submit", "auth-switch"].forEach((id) => { $("#"+id).disabled = true; });
-    const demo = cfg.demo_tokens || [];
-    const saved = localStorage.getItem("cohort-demo-token");
-    if (saved && demo.includes(saved)) return enterDemo(saved);
-    showAuth(demo.length ? "No Supabase keys set. Pick a demo account." : "Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
-    const roles = { tok_sam: "Sam · buyer", tok_riya: "Riya · creator", tok_admin: "Admin · admin" };
-    demo.slice().reverse().forEach((token) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "auth-quiet";
-      b.textContent = "Demo login: " + (roles[token] || token);
-      b.onclick = () => enterDemo(token);
-      $("#auth-options").prepend(b);
-    });
+    ["auth-google"].forEach((id) => { $("#"+id).disabled = true; });
+    showAuth("Add SUPABASE_URL and SUPABASE_ANON_KEY to .env, then restart the server.");
     return;
   }
   state.supabase = window.supabase.createClient(cfg.url, cfg.anon_key);
@@ -1495,28 +1704,6 @@ async function bootAuth() {
     }
   });
 }
-$("#auth-switch").onclick = () => {
-  state.authMode = state.authMode === "sign-in" ? "sign-up" : "sign-in";
-  state.authStep = "options";
-  $("#auth-error").textContent = "";
-  paintAuth();
-};
-$("#auth-email-go").onclick = () => {
-  state.authStep = "email";
-  $("#auth-error").textContent = "";
-  paintAuth();
-};
-$("#auth-other").onclick = () => {
-  state.authStep = "options";
-  $("#auth-error").textContent = "";
-  paintAuth();
-};
-$("#auth-eye").onclick = () => {
-  const box = $("#auth-password");
-  const show = box.type === "password";
-  box.type = show ? "text" : "password";
-  $("#auth-eye").setAttribute("aria-label", show ? "Hide password" : "Show password");
-};
 $("#auth-google").onclick = async () => {
   if (!state.supabase) return;
   $("#auth-error").textContent = "";
@@ -1525,25 +1712,6 @@ $("#auth-google").onclick = async () => {
     options: { redirectTo: location.origin + "/" }
   });
   if (error) $("#auth-error").textContent = error.message;
-};
-$("#auth-form").onsubmit = async (event) => {
-  event.preventDefault();
-  if (!state.supabase) return;
-  $("#auth-error").textContent = "";
-  $("#auth-submit").disabled = true;
-  const email = $("#auth-email").value.trim();
-  const password = $("#auth-password").value;
-  const result = state.authMode === "sign-in"
-    ? await state.supabase.auth.signInWithPassword({ email, password })
-    : await state.supabase.auth.signUp({ email, password });
-  $("#auth-submit").disabled = false;
-  if (result.error) {
-    $("#auth-error").textContent = result.error.message;
-    return;
-  }
-  if (!result.data.session) {
-    $("#auth-error").textContent = "Account created. Confirm the email, then log in.";
-  }
 };
 $("#sign-out").onclick = async (event) => {
   event.stopPropagation();
@@ -1580,13 +1748,6 @@ $("#user").onclick = (event) => {
   if (open) placeAccountMenu($("#user"));
   $("#user").setAttribute("aria-expanded", open ? "true" : "false");
 };
-$("#settings").onclick = (event) => {
-  event.stopPropagation();
-  const menu = $("#user-menu");
-  const open = menu.classList.toggle("hidden") === false;
-  if (open) placeAccountMenu($("#settings"));
-  else placeAccountMenu($("#user"));
-};
 $("#user-menu").onclick = (event) => event.stopPropagation();
 document.querySelectorAll("#user-menu [data-view]").forEach((button) => {
   button.onclick = (event) => {
@@ -1595,56 +1756,47 @@ document.querySelectorAll("#user-menu [data-view]").forEach((button) => {
     show(event.currentTarget.dataset.view);
   };
 });
-function placeThemeFlyout() {
-  const fly = $("#theme-flyout");
-  const menu = $("#user-menu").getBoundingClientRect();
-  const row = $("#theme-toggle").getBoundingClientRect();
-  const width = 148;
-  const gap = 8;
-  let left = menu.left - width - gap;
-  if (left < 8) left = menu.right + gap;
-  fly.style.left = left + "px";
-  fly.style.top = row.top + "px";
-  fly.classList.remove("hidden");
-}
-$("#theme-toggle").onclick = () => {
-  const fly = $("#theme-flyout");
-  if (fly.classList.contains("hidden")) placeThemeFlyout();
-  else fly.classList.add("hidden");
-};
-document.querySelector(".theme-slot").onmouseenter = () => placeThemeFlyout();
-document.querySelector(".theme-slot").onmouseleave = () => $("#theme-flyout").classList.add("hidden");
-const pendingKeys = {};
-async function once(action, run) {
-  // One Idempotency-Key per user action; a double-click while it is in flight reuses the same key.
-  const fresh = !pendingKeys[action];
-  if (fresh) pendingKeys[action] = crypto.randomUUID ? crypto.randomUUID() : Date.now() + "-" + Math.random().toString(16).slice(2);
-  try { return await run(pendingKeys[action]); } finally { if (fresh) delete pendingKeys[action]; }
-}
 $("#add-credits").onclick = async () => {
-  await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
-  refreshBal();
+  const button = $("#add-credits");
+  if (button.disabled) return;
+  button.disabled = true;
+  try {
+    await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
+    await refreshBal();
+    if (!$("#account").classList.contains("hidden")) loadAccount();
+  } finally {
+    button.disabled = false;
+  }
 };
 document.addEventListener("click", () => {
   $("#user-menu").classList.add("hidden");
-  $("#theme-flyout").classList.add("hidden");
+  $("#chat-menu").classList.add("hidden");
   $("#user").setAttribute("aria-expanded", "false");
 });
+function remember(path) {
+  const next = "#" + path;
+  if (location.hash !== next) history.replaceState(null, "", next);
+}
 function show(view) {
   document.querySelectorAll(".nav-item").forEach((x) => x.classList.toggle("on", x.dataset.view === view));
-  ["discover","session","creator","admin","wallet","compare","agent"].forEach((id) => {
-    const node = $("#"+id);
-    if (node) node.classList.toggle("hidden", id !== view);
-  });
+  ["discover","session","creator","admin","library","account"].forEach((id) => $("#"+id).classList.toggle("hidden", id !== view));
+  if (view === "discover") remember(state.conversation ? "/chat/" + state.conversation : "/new");
   if (view === "session") {
     if (state.session) showLive();
     else showSessionList();
   }
+  if (view === "library") {
+    setCrumb("Library");
+    remember("/library");
+    return loadLibrary();
+  }
   if (view === "creator") loadCreator();
+  if (view === "account") {
+    setCrumb("Account overview");
+    remember("/account");
+    return loadAccount();
+  }
   if (view === "admin") loadAdmin();
-  if (view === "wallet") loadWallet();
-  if (view === "compare") setCrumb("Compare");
-  if (view === "agent") setCrumb("Agent");
 }
 function setCrumb(title) {
   $("#crumb-label").textContent = title && title !== "New chat" ? title : "New chat";
@@ -1662,11 +1814,39 @@ $("#new-chat").onclick = () => {
   $("#empty").classList.remove("hidden");
   show("discover");
   setCrumb("New chat");
+  $("#credit-ask").classList.add("hidden");
+  state.pendingAgent = null;
+  attachedImage = null;
+  paintAttachment();
   loadSidebar();
 };
-$("#attach").onclick = () => $("#task").focus();
-document.querySelectorAll(".banner .try").forEach((button) => {
-  button.onclick = () => $("#task").focus();
+$("#attach").onclick = (event) => {
+  event.stopPropagation();
+  $("#file").click();
+};
+$("#file").onchange = () => {
+  const file = $("#file").files && $("#file").files[0];
+  $("#file").value = "";
+  if (!file) return;
+  readImage(file);
+};
+$("#task").addEventListener("paste", (event) => {
+  const file = [...(event.clipboardData && event.clipboardData.files || [])].find((item) => item.type.startsWith("image/"));
+  if (!file) return;
+  event.preventDefault();
+  readImage(file);
+});
+document.querySelectorAll(".banner .try, .home-shortcuts button").forEach((button) => {
+  button.onclick = () => {
+    if (button.dataset.prompt) {
+      $("#task").value = button.dataset.prompt;
+      fitTask();
+    }
+    $("#task").focus();
+  };
+});
+document.querySelectorAll(".banner .more").forEach((button) => {
+  button.onclick = () => show("library");
 });
 function showBanner(index) {
   const dots = document.querySelectorAll(".banner-dots button");
@@ -1761,27 +1941,55 @@ $("#task").addEventListener("keydown", (e) => {
   }
 });
 
+let attachedImage = null;
+function paintAttachment() {
+  const box = $("#attach-preview");
+  const composer = document.querySelector(".composer");
+  box.innerHTML = "";
+  if (!attachedImage) {
+    box.classList.add("hidden");
+    composer.classList.remove("has-image");
+    return;
+  }
+  box.classList.remove("hidden");
+  composer.classList.add("has-image");
+  const chip = document.createElement("div");
+  chip.className = "attach-chip";
+  const img = document.createElement("img");
+  img.src = attachedImage.url;
+  img.alt = attachedImage.name;
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "attach-remove";
+  remove.setAttribute("aria-label", "Remove image");
+  remove.textContent = "×";
+  remove.onclick = (event) => {
+    event.stopPropagation();
+    attachedImage = null;
+    paintAttachment();
+  };
+  chip.append(img, remove);
+  box.appendChild(chip);
+}
+function readImage(file) {
+  if (!file.type.startsWith("image/")) return;
+  if (file.size > 8 * 1024 * 1024) {
+    $("#task").placeholder = "That image is too large";
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    attachedImage = { url: reader.result, name: file.name || "image" };
+    paintAttachment();
+    $("#task").focus();
+  };
+  reader.readAsDataURL(file);
+}
+
 function credits(n) {
   const value = Number(n) || 0;
   const shown = value < 10 ? String(Math.round(value * 10) / 10) : Math.round(value).toLocaleString("en-US");
   return shown + " credits";
-}
-function creditsFine(n) {
-  const value = Math.round((Number(n) || 0) * 10) / 10;
-  const whole = Math.abs(value - Math.round(value)) < 0.001;
-  return (whole ? String(Math.round(value)) : value.toFixed(1)) + " credits";
-}
-function fromMicro(n) { return (Number(n) || 0) / 1000; }
-function esc(value) {
-  return String(value == null ? "" : value).replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;" }[ch]));
-}
-function priceBand(price) {
-  if (!price) return "No price yet";
-  const low = price.low_credits != null ? price.low_credits : fromMicro(price.low_microcredits);
-  const mid = price.p50_credits != null ? price.p50_credits : (price.high_credits != null ? null : null);
-  const high = price.high_credits != null ? price.high_credits : fromMicro(price.high_microcredits);
-  const p50 = price.p50_microcredits != null ? fromMicro(price.p50_microcredits) : (low + high) / 2;
-  return creditsFine(low) + " / " + creditsFine(mid == null ? p50 : mid) + " / " + creditsFine(high);
 }
 function priceLabel(agent) {
   const low = Number(agent.price_low);
@@ -1806,13 +2014,11 @@ function renderThread(data) {
   setCrumb(data.title);
   const cards = state.agents.map((a) => `
     <article class="match">
-      <label class="meta"><input type="checkbox" data-pick="${a.id}" ${state.picks.includes(a.id) ? "checked" : ""}> Compare</label>
-      <h3>${esc(a.title)}</h3>
-      <p>${esc(a.summary || "")}</p>
-      <div class="row">${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join("")}<span class="tag">${esc(priceLabel(a))}</span></div>
-      <p>${esc(confidenceLabel(a))}${a.latency_p50 ? " · about " + esc(a.latency_p50) + " seconds" : ""}</p>
+      <h3>${a.title}</h3>
+      <p>${a.summary || ""}</p>
+      <div class="row">${(a.badges || []).map((b) => `<span class="tag">${b}</span>`).join("")}<span class="tag">${priceLabel(a)}</span></div>
+      <p>${confidenceLabel(a)}${a.latency_p50 ? " · about " + a.latency_p50 + " seconds" : ""}</p>
       <button class="choose" type="button" data-id="${a.id}">Choose</button>
-      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
     </article>`).join("");
   thread.innerHTML = "";
   data.messages.forEach((m) => {
@@ -1827,25 +2033,20 @@ function renderThread(data) {
     wrap.innerHTML = cards || `<p class="empty">No listed agent fits that task yet. Try wording the outcome again.</p>`;
     thread.appendChild(wrap);
     thread.querySelectorAll(".choose").forEach((b) => b.onclick = () => openQuote(b.dataset.id));
-    thread.querySelectorAll("[data-pick]").forEach((box) => box.onclick = (event) => {
-      event.stopPropagation();
-      const id = box.dataset.pick;
-      if (box.checked) {
-        if (state.picks.length >= 3) { box.checked = false; return; }
-        if (!state.picks.includes(id)) state.picks.push(id);
-      } else state.picks = state.picks.filter((item) => item !== id);
-      paintCompareBar();
-    });
-    thread.querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openAgent(b.dataset.detail));
-    paintCompareBar();
   }
   thread.scrollTop = thread.scrollHeight;
 }
 
 let sending = false;
 async function sendText(text) {
-  if (!text || sending) { if (!text) $("#task").focus(); return; }
+  const image = attachedImage;
+  if ((!text && !image) || sending) { if (!text && !image) $("#task").focus(); return; }
+  if (state.pendingAgent && state.pendingAgent.cap == null) {
+    $("#credit-ask").classList.remove("hidden");
+    return;
+  }
   sending = true;
+  $("#credit-ask").classList.add("hidden");
   $("#search").disabled = true;
   const box = $("#task");
   box.placeholder = "Ask anything…";
@@ -1861,7 +2062,14 @@ async function sendText(text) {
     thread.classList.remove("hidden");
     const mine = document.createElement("div");
     mine.className = "msg user";
-    mine.textContent = text;
+    if (image) {
+      const img = document.createElement("img");
+      img.className = "msg-image";
+      img.src = image.url;
+      img.alt = image.name;
+      mine.appendChild(img);
+    }
+    if (text) mine.append(document.createTextNode(text));
     thread.appendChild(mine);
     const thinking = document.createElement("div");
     thinking.className = "msg thinking";
@@ -1872,11 +2080,13 @@ async function sendText(text) {
     thread.appendChild(answer);
     thread.scrollTop = thread.scrollHeight;
     box.value = "";
+    attachedImage = null;
+    paintAttachment();
     fitTask();
     const res = await fetch("/v1/conversations/" + state.conversation + "/stream", {
       method: "POST",
-      headers: Object.assign({ "Content-Type": "application/json" }, state.token ? { Authorization: "Bearer " + state.token } : {}),
-      body: JSON.stringify({ text })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: text || ("Image attached: " + image.name) })
     });
     if (!res.ok) {
       const failed = await res.json().catch(() => ({}));
@@ -1928,55 +2138,172 @@ async function openConversation(id) {
   loadSidebar();
 }
 
+let chatMenuId = "";
+$("#chat-delete").onclick = async (event) => {
+  event.stopPropagation();
+  const id = chatMenuId;
+  $("#chat-menu").classList.add("hidden");
+  if (!id) return;
+  await api("/v1/conversations/" + id, { method: "DELETE" });
+  if (state.conversation === id) $("#new-chat").click();
+  else loadSidebar();
+};
+
 async function loadSidebar() {
   const data = await api("/v1/conversations");
   const box = $("#history");
   box.innerHTML = "";
-  let library = [];
-  try {
-    library = (await api("/v1/agents")).map((a) => [a.title, (a.example_tasks || [])[0] || a.summary || a.title]);
-  } catch (err) { library = []; }
-  const libLabel = document.createElement("div");
-  libLabel.className = "side-label";
-  libLabel.textContent = "Library";
-  box.appendChild(libLabel);
-  library.forEach(([title, prompt]) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "nav-item history-item";
-    button.textContent = title;
-    button.onclick = () => {
-      $("#new-chat").click();
-      const box = $("#task");
-      box.value = prompt;
-      fitTask();
-      box.focus();
-    };
-    box.appendChild(button);
-  });
   const chats = data.conversations || [];
   if (!chats.length) return;
-  const label = document.createElement("div");
-  label.className = "side-label";
-  label.textContent = "Chats";
-  box.appendChild(label);
   chats.forEach((chat) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "nav-item history-item" + (chat.id === state.conversation ? " on" : "");
-    button.textContent = chat.title || "New chat";
+    const label = document.createElement("span");
+    label.textContent = chat.title || "New chat";
+    button.appendChild(label);
     button.onclick = () => openConversation(chat.id);
+    button.oncontextmenu = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      chatMenuId = chat.id;
+      const menu = $("#chat-menu");
+      menu.classList.remove("hidden");
+      menu.style.left = event.clientX + "px";
+      menu.style.top = event.clientY + "px";
+      const box = menu.getBoundingClientRect();
+      if (box.right > window.innerWidth - 8) menu.style.left = (window.innerWidth - box.width - 8) + "px";
+      if (box.bottom > window.innerHeight - 8) menu.style.top = (window.innerHeight - box.height - 8) + "px";
+    };
     box.appendChild(button);
   });
-  filterSidebar();
 }
-function filterSidebar() {
-  const q = ($("#side-find").value || "").trim().toLowerCase();
-  $("#history").querySelectorAll(".history-item").forEach((button) => {
-    button.classList.toggle("hidden", Boolean(q) && !button.textContent.toLowerCase().includes(q));
+function agentCatalog() {
+  return [
+    ["Invoice Auditor", "Checks an invoice for duplicates, tax math, and missing fields.", "Riya", "Invoice Auditor reads an invoice line by line. It looks for duplicate charges, tax that does not add up, and fields that are missing, such as a date, a vendor, or a total. The summary it returns names each problem and the line it came from, so you can check the bill before you pay it.", "Audit this invoice for tax errors", ["Audit this invoice for tax errors", "Find duplicate lines on last month's vendor bill", "Check that the tax on this receipt matches the total"]],
+    ["Trip Planner", "Plans a multi-city trip and asks for the budget before it suggests bookings.", "Riya", "Trip Planner builds a multi-city trip from the dates and cities you give it. It asks for the budget before it suggests stays or bookings, then lays out a day-by-day plan that stays inside that number. The summary lists the stops, the rough cost, and what is still undecided.", "Plan a three-day trip to Lisbon", ["Plan a three-day trip to Lisbon", "Build a Tokyo and Kyoto week under $2,000", "Split a weekend between two cities and a train"]],
+    ["Research Briefer", "Turns a topic into a short brief, with the open questions called out.", "Riya", "Research Briefer turns a topic into a short brief. It states what is known, what the main claims are, and which questions are still open. The summary is meant to be read in a few minutes, with the sources of uncertainty called out instead of papered over.", "Write a research brief on battery recycling", ["Write a research brief on battery recycling", "Brief the open questions in small modular reactors", "Summarize what is settled about home heat pumps"]],
+    ["Inbox Cleaner", "Sorts a mailbox into what needs a reply and what can wait.", "Maya", "Inbox Cleaner sorts a mailbox into mail that needs a reply and mail that can wait. It groups the rest by sender and subject so a long inbox becomes a short list. The summary names what to answer first and what can be archived.", "Sort this inbox into what needs a reply", ["Sort this inbox into what needs a reply", "Pull out the three emails I should answer today", "Group this mailbox by sender and what can wait"]],
+    ["Meeting Notes", "Turns a meeting into notes, decisions, and the next actions.", "Arjun", "Meeting Notes turns a meeting into notes. It pulls out the decisions that were made, the open questions, and the next actions with the person who owns each one. The summary is the meeting in a few paragraphs, not a transcript.", "Turn these meeting notes into decisions and next actions", ["Turn these meeting notes into decisions and next actions", "List who owns each action from this standup", "Pull the decisions out of this hour-long call"]],
+    ["Contract Reader", "Flags odd clauses, dates, and payment terms in a contract.", "Lena", "Contract Reader flags odd clauses, dates, and payment terms in a contract. It points at renewal dates, liability limits, and anything that does not match the rest of the document. The summary is a list of what to read twice before you sign.", "Flag the odd clauses in this contract", ["Flag the odd clauses in this contract", "Find the renewal date and the payment terms", "Mark any liability line that does not match the rest"]],
+    ["Support Reply", "Drafts a customer reply from the ticket and the policy notes.", "Noah", "Support Reply drafts a customer reply from the ticket and the policy notes you provide. It stays inside the policy and does not promise a refund or a fix that the notes do not allow. The summary is a reply you can send, plus the policy line it was based on.", "Draft a reply to this support ticket", ["Draft a reply to this support ticket", "Answer this refund request using the policy notes", "Write a short reply that does not promise a fix"]],
+    ["Spreadsheet Fixer", "Finds broken formulas, duplicate rows, and totals that do not match.", "Priya", "Spreadsheet Fixer finds broken formulas, duplicate rows, and totals that do not match the lines above them. It does not rewrite the sheet on its own. The summary lists each cell that looks wrong and what the number should have been.", "Find the broken formulas in this spreadsheet", ["Find the broken formulas in this spreadsheet", "Mark duplicate rows in this customer sheet", "Check that the total matches the lines above it"]]
+  ];
+}
+async function loadLibrary() {
+  const data = await api("/v1/agents");
+  const live = data.agents || [];
+  state.agents = live.filter((agent) => agent.status === "live");
+  const samples = agentCatalog();
+  const grid = $("#library-grid");
+  $("#agent-page").classList.add("hidden");
+  $("#library-home").classList.remove("hidden");
+  grid.innerHTML = samples.map(([title, summary, developer, detail, prompt], index) => {
+    const agent = state.agents.find((item) => item.title === title);
+    const action = agent
+      ? `<button class="choose" type="button" data-id="${agent.id}">Use</button>`
+      : `<button class="choose" type="button" data-prompt="${prompt}">Try</button>`;
+    return `<article class="agent-card" data-index="${index}"><div class="card-face tone-${index}"></div><div class="card-body"><h3>${title}</h3><p class="dev">${developer}</p><p>${summary}</p>${action}</div></article>`;
+  }).join("");
+  grid.querySelectorAll(".agent-card").forEach((card) => card.onclick = () => openAgentPage(samples[Number(card.dataset.index)]));
+  grid.querySelectorAll(".choose").forEach((button) => button.onclick = (event) => {
+    event.stopPropagation();
+    if (!button.dataset.id) {
+      $("#new-chat").click();
+      $("#task").value = button.dataset.prompt;
+      fitTask();
+      $("#task").focus();
+      return;
+    }
+    const agent = state.agents.find((item) => item.id === button.dataset.id);
+    state.task = (agent && agent.example_tasks && agent.example_tasks[0]) || button.dataset.prompt;
+    openQuote(button.dataset.id);
+  });
+  filterLibrary();
+}
+
+function filterLibrary() {
+  const q = ($("#library-find").value || "").trim().toLowerCase();
+  document.querySelectorAll("#library-grid .agent-card").forEach((card) => {
+    card.classList.toggle("hidden", Boolean(q) && !card.textContent.toLowerCase().includes(q));
   });
 }
-$("#side-find").oninput = () => filterSidebar();
+$("#library-find").oninput = filterLibrary;
+
+function taskLine(title, task, cap, balance) {
+  const lead = task.charAt(0).toLowerCase() + task.slice(1);
+  if (cap == null) return `Use ${title} to ${lead}`;
+  if (cap === "all") return `Use ${title} to ${lead} Spend all ${balance.toLocaleString("en-US")} credits.`;
+  return `Use ${title} to ${lead} Spend ${Number(cap).toLocaleString("en-US")} credits.`;
+}
+async function tryAgent(sample, example) {
+  const [title, , , , prompt] = sample;
+  const task = example || prompt;
+  const w = await api("/v1/wallet").catch(() => ({ balance_credits: 0 }));
+  const balance = Math.round(w.balance_credits || 0);
+  $("#new-chat").click();
+  state.pendingAgent = { title, task, balance, cap: null };
+  $("#task").value = taskLine(title, task, null, balance);
+  fitTask();
+  $("#credit-ask").classList.remove("hidden");
+  $("#credit-ask-copy").textContent = `${title} is selected for this task. You have ${balance.toLocaleString("en-US")} credits. Use all of them, or enter how many this run should spend. Nothing is sent until you press send.`;
+  $("#credit-amount").value = "";
+  $("#task").focus();
+}
+function applyCreditChoice(cap) {
+  const picked = state.pendingAgent;
+  if (!picked) return;
+  if (cap !== "all") {
+    const amount = Math.round(Number(cap));
+    if (!amount || amount < 1) return;
+    cap = Math.min(amount, picked.balance || amount);
+  }
+  picked.cap = cap;
+  $("#task").value = taskLine(picked.title, picked.task, cap, picked.balance);
+  fitTask();
+  $("#task").focus();
+}
+$("#credit-all").onclick = () => applyCreditChoice("all");
+$("#credit-some").onclick = () => applyCreditChoice($("#credit-amount").value);
+
+function openAgentPage(sample) {
+  const index = agentCatalog().findIndex((row) => row[0] === sample[0]);
+  const [title, summary, developer, detail, , examples] = sample;
+  const shots = examples || [];
+  const page = $("#agent-page");
+  $("#library-home").classList.add("hidden");
+  page.classList.remove("hidden");
+  setCrumb(title);
+  page.innerHTML = `
+    <button class="back" type="button" id="agent-back">Library</button>
+    <div class="agent-hero tone-${index}">
+      <p class="dev">${developer}</p>
+      <h2>${title}</h2>
+      <p class="blurb">${summary}</p>
+      <button class="try-now" type="button" id="agent-try">Try now</button>
+    </div>
+    <section class="agent-block">
+      <h3>Summary</h3>
+      <p class="summary">${detail}</p>
+    </section>
+    <section class="agent-block">
+      <h3>Examples</h3>
+      <div class="previews">
+        ${shots.map((shot, i) => `<button class="preview" type="button" data-shot="${i}"><span>Preview</span><b>${shot}</b></button>`).join("")}
+      </div>
+    </section>`;
+  remember("/agent/" + encodeURIComponent(title));
+  $("#agent-back").onclick = () => {
+    page.classList.add("hidden");
+    $("#library-home").classList.remove("hidden");
+    setCrumb("Library");
+    remember("/library");
+  };
+  $("#agent-try").onclick = () => tryAgent(sample);
+  page.querySelectorAll(".preview").forEach((button) => {
+    button.onclick = () => tryAgent(sample, shots[Number(button.dataset.shot)]);
+  });
+}
 
 function showLive() {
   $("#session-home").classList.add("hidden");
@@ -2016,14 +2343,14 @@ async function openQuote(agentId) {
   $("#quote-title").textContent = agent ? agent.title : "Quote";
   $("#quote-task").textContent = task;
   $("#quote-price").textContent = agent ? priceLabel(agent) + ". Maximum " + credits(q.maximum) + "." : "Maximum " + credits(q.maximum) + ".";
-  $("#quote-cap").value = q.high_credits != null ? q.high_credits : q.maximum;
+  $("#quote-cap").value = q.maximum;
   $("#quote").classList.remove("hidden");
   paintQuote();
 }
 $("#quote-cap").addEventListener("input", paintQuote);
 $("#quote-back").onclick = () => $("#quote").classList.add("hidden");
 $("#quote-topup").onclick = async () => {
-  await once("topup", (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ credits: 500 })}));
+  await api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ credits: 500 })});
   const w = await api("/v1/wallet");
   state.quote.balance = w.balance_credits;
   paintQuote();
@@ -2032,38 +2359,19 @@ $("#quote-topup").onclick = async () => {
 $("#quote-start").onclick = () => start(state.quote.agentId, Number($("#quote-cap").value));
 async function start(agentId, cap) {
   const task = state.task || $("#task").value.trim();
-  let ses;
-  try {
-    ses = await once("start", (key) => api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap, files: state.files })}));
-  } catch (err) {
-    if (err.code === "insufficient_credits") {
-      $("#quote-error").textContent = err.message + " Add credits, or lower the cap.";
-      $("#quote-topup").classList.remove("hidden");
-      return;
-    }
-    if (err.code === "agent_unavailable") {
-      $("#quote-error").textContent = err.message || "This agent is paused or delisted.";
-      return;
-    }
-    $("#quote-error").textContent = err.message || "The session did not start.";
-    return;
-  }
+  const ses = await api("/v1/sessions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_id: agentId, task, cap_credits: cap })});
   $("#quote").classList.add("hidden");
-  state.session = ses.session_id || ses.id;
-  state.cap = cap;
+  state.session = ses.session_id;
   $("#log").innerHTML = "";
   $("#receipt").textContent = "";
-  $("#after-receipt").classList.add("hidden");
-  $("#session-edge").textContent = "";
   $("#session-title").textContent = "Live session";
   $("#session-status").textContent = "Holding";
-  $("#cancel").classList.remove("hidden");
   $("#bar").style.width = "0";
   $("#bar").className = "";
   $("#spend").textContent = "Spent " + credits(0) + " of " + credits(cap);
   show("session");
   showLive();
-  openEvents(state.session, cap);
+  openEvents(ses.session_id, cap);
   refreshBal();
 }
 async function openHistory(id, cap, active) {
@@ -2080,101 +2388,50 @@ async function openHistory(id, cap, active) {
 }
 function openEvents(id, cap) {
   if (state.es) state.es.close();
-  state.cap = cap;
   const es = new EventSource("/v1/sessions/" + id + "/events?access_token=" + encodeURIComponent(state.token || ""));
   state.es = es;
-  es.onerror = () => { $("#session-status").textContent = "Connection dropped. Reconnecting…"; };
   es.onmessage = (ev) => {
     const data = JSON.parse(ev.data);
-    const terminal = ["settled", "failed", "cancelled", "timed_out", "budget_exhausted"];
-    if (data.status && terminal.includes(data.status)) $("#cancel").classList.add("hidden");
-    if (data.type === "status" || data.type === "progress") {
-      const line = document.createElement("div");
-      line.className = "note";
-      line.textContent = data.text || data.label || data.status || data.type;
-      $("#log").appendChild(line);
-      if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
-    } else if (data.type !== "spend" && data.type !== "budget_warning" && data.type !== "budget_exhausted") {
-      const div = document.createElement("div");
-      div.className = "bubble " + (data.role || "");
-      div.textContent = data.text || data.label || data.type;
-      if (data.type === "file" && data.url) {
-        const link = document.createElement("a");
-        link.href = data.url + (data.url.includes("?") ? "&" : "?") + "access_token=" + encodeURIComponent(state.token || "");
-        link.download = data.name || "";
-        link.textContent = data.name || "Download file";
-        div.textContent = "";
-        div.appendChild(link);
-      }
-      if (data.type === "error") {
-        div.classList.add("warn");
-        if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
-      }
-      $("#log").appendChild(div);
-    }
-    if (data.spent_credits != null && cap) {
+    const div = document.createElement("div");
+    div.className = "bubble " + (data.role || "");
+    div.textContent = data.text || data.label || data.type;
+    $("#log").appendChild(div);
+    if (data.type === "status" && data.text) $("#session-status").textContent = data.text;
+    if (data.spent_credits != null) {
       const pct = Math.min(100, (data.spent_credits / cap) * 100);
       const bar = $("#bar");
       bar.style.width = pct + "%";
       bar.classList.toggle("warn", pct >= 80 && pct < 100);
       bar.classList.toggle("hot", pct >= 100);
-      $("#spend").textContent = "Spent " + creditsFine(data.spent_credits) + " of " + creditsFine(cap);
+      $("#spend").textContent = "Spent " + credits(data.spent_credits) + " of " + credits(cap);
     }
-    if (data.type === "budget_warning") $("#session-edge").textContent = "Spend is at 80% of the cap. Extend it, or let the agent wrap up.";
-    if (data.type === "budget_exhausted") $("#session-edge").textContent = "The cap is used up. The agent has a short window to deliver what it has.";
     const ask = $("#ask");
     if (data.type === "ask_user") {
       $("#session-status").textContent = "Waiting for you. Timer paused; no cost while waiting.";
       ask.classList.remove("hidden");
       ask.innerHTML = "";
-      if (data.options && data.options.length) {
-        data.options.forEach((opt) => {
-          const b = document.createElement("button");
-          b.textContent = opt;
-          b.onclick = () => answer(opt, data.id);
-          ask.appendChild(b);
-        });
-      } else {
-        const input = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Type your answer";
-        const send = document.createElement("button");
-        send.textContent = "Send";
-        send.onclick = () => { if (input.value.trim()) answer(input.value.trim(), data.id); };
-        input.onkeydown = (e) => { if (e.key === "Enter") send.click(); };
-        ask.append(input, send);
-        input.focus();
-      }
-    }
-    if (data.type === "confirm") {
-      $("#session-status").textContent = "Waiting for your approval. Timer paused; no cost while waiting.";
-      ask.classList.remove("hidden");
-      ask.innerHTML = "";
-      [["Approve", true], ["Deny", false]].forEach(([label, approved]) => {
+      (data.options && data.options.length ? data.options : ["Continue"]).forEach((opt) => {
         const b = document.createElement("button");
-        b.textContent = label;
-        b.onclick = async () => {
-          ask.classList.add("hidden");
-          await api("/v1/sessions/" + state.session + "/confirm", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ confirm_id: data.id, approved })});
-        };
+        b.textContent = opt;
+        b.onclick = () => answer(opt);
         ask.appendChild(b);
       });
     }
-    if (data.type === "settled" || (data.status && terminal.includes(data.status) && data.type === "status")) {
-      if (data.type === "settled") {
-        es.close();
-        ask.classList.add("hidden");
-        $("#cancel").classList.add("hidden");
-        showReceipt(id);
-        refreshBal();
-      }
+    if (data.type === "error") {
+      div.classList.add("warn");
+      if (data.refunded) div.textContent = (data.text || "The session failed.") + " You were not charged.";
     }
-    if (data.type === "failed" || data.status === "failed" || data.status === "cancelled") $("#cancel").classList.add("hidden");
+    if (data.type === "settled") {
+      es.close();
+      ask.classList.add("hidden");
+      showReceipt(id);
+      refreshBal();
+    }
   };
 }
-async function answer(text, replyTo) {
+async function answer(text) {
   $("#ask").classList.add("hidden");
-  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text, reply_to: replyTo })});
+  await api("/v1/sessions/" + state.session + "/messages", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ text })});
 }
 $("#cancel").onclick = async () => {
   if (!state.session) return;
@@ -2184,305 +2441,82 @@ async function showReceipt(id) {
   const r = await api("/v1/receipts/" + id);
   const charged = Number(r.price_credits) || 0;
   const lines = [
-    charged === 0 ? "You were not charged." : "Charged " + creditsFine(charged) + ".",
-    "Held " + creditsFine(r.cap_credits) + ". Released " + creditsFine(r.released_credits) + ".",
-    "Where it went: creator " + creditsFine(r.earnings_credits) + ", platform fee " + creditsFine(r.fee_credits) + ", model and tools " + creditsFine(r.cost_credits) + "."
+    charged === 0 ? "You were not charged." : "Charged " + credits(charged) + ".",
+    "Held " + credits(r.cap_credits) + ". Released " + credits(r.released_credits) + ".",
+    "Where it went: creator " + credits(r.earnings_credits) + ", platform fee " + credits(r.fee_credits) + ", model and tools " + credits(r.cost_credits) + "."
   ];
   if (r.refund_reason) lines.push(r.refund_reason);
   $("#receipt").textContent = lines.join("\n");
   $("#session-status").textContent = charged === 0 ? "Settled · not charged" : "Settled";
-  $("#cancel").classList.add("hidden");
-  $("#after-receipt").classList.remove("hidden");
 }
-function reportCardHtml(card) {
-  if (!card) return `<p class="empty">No report card yet.</p>`;
-  const scores = card.scores || {};
-  const scoreRows = Object.keys(scores).map((key) => `<div class="kv"><span>${esc(key)}</span><span>${esc(scores[key])}</span></div>`).join("");
-  const findings = (card.findings || []).map((f) => `<li>${esc(f.severity || "")} ${esc(f.category || "")} ${esc(f.detail || (typeof f === "string" ? f : ""))}</li>`).join("");
-  const stages = (card.stages || []).map((s) => `<li>${esc(s.stage)} · ${esc(s.status)} ${esc(s.detail || "")}</li>`).join("");
-  const tests = card.tests || [];
-  const passed = tests.filter((t) => t.passed).length;
-  const decision = card.decision || "pending";
-  return `<article class="card-block">
-    <p>Decision <span class="${decision === "rejected" ? "warn" : ""}">${esc(decision)}</span></p>
-    <p class="meta">Cost p50 ${creditsFine(fromMicro(card.cost_p50_microcredits))} · p90 ${creditsFine(fromMicro(card.cost_p90_microcredits))}</p>
-    <p class="meta">Latency p50 ${esc(card.latency_p50_ms || 0)} ms · p95 ${esc(card.latency_p95_ms || 0)} ms</p>
-    ${tests.length ? `<p class="meta">Tests ${passed}/${tests.length} passed</p>` : ""}
-    ${scoreRows ? `<div>${scoreRows}</div>` : `<p class="empty">No confidence breakdown yet.</p>`}
-    ${stages ? `<p class="meta">Stages</p><ul>${stages}</ul>` : ""}
-    ${findings ? `<p class="meta">Findings</p><ul>${findings}</ul>` : `<p class="empty">No findings.</p>`}
-  </article>`;
-}
-function paintCompareBar() {
-  let bar = $("#compare-bar");
-  if (!bar) {
-    bar = document.createElement("div");
-    bar.id = "compare-bar";
-    bar.className = "session-tools";
-    $("#thread").after(bar);
-  }
-  bar.innerHTML = state.picks.length
-    ? `<span class="meta">${state.picks.length} selected. Compare takes 2 or 3. The contract allows at most 3.</span> <button type="button" id="run-compare" ${state.picks.length < 2 ? "disabled" : ""}>Compare</button>`
-    : "";
-  const button = $("#run-compare");
-  if (button) button.onclick = runCompare;
-}
-async function runCompare() {
-  if (state.picks.length < 2) return;
-  const data = await api("/v1/compare", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ agent_ids: state.picks.slice(0, 3), task: state.task || "" })});
-  const marks = data.highlights || {};
-  const label = (id) => Object.keys(marks).filter((key) => marks[key] === id).map((key) => key.replaceAll("_", " ")).join(" · ");
-  $("#compare-body").innerHTML = `<div class="grid-3">${(data.agents || []).map((a) => {
-    const price = a.price || {};
-    return `<article class="cmp">
-      <p class="flag">${esc(label(a.id))}</p>
-      <h3>${esc(a.title)}</h3>
-      <p>${esc(a.summary || "")}</p>
-      <p class="meta">p50 ${creditsFine(fromMicro(price.low_microcredits))} · high ${creditsFine(fromMicro(price.high_microcredits))} · max ${creditsFine(fromMicro(price.max_microcredits))}</p>
-      <p class="meta">Confidence ${esc(a.confidence_score)} from ${esc(a.confidence_n)} sessions</p>
-      <p class="meta">Speed p50 ${esc(a.duration_p50_s)}s · p95 ${esc(a.duration_p95_s)}s</p>
-      <p>${(a.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="meta">No badges</span>`}</p>
-      <button type="button" data-start="${a.id}">Start with this agent</button>
-      <button class="ghost" type="button" data-detail="${a.id}">Report card</button>
-    </article>`;
-  }).join("")}</div>`;
-  show("compare");
-  $("#compare-body").querySelectorAll("[data-start]").forEach((b) => b.onclick = () => openQuote(b.dataset.start));
-  $("#compare-body").querySelectorAll("[data-detail]").forEach((b) => b.onclick = () => openAgent(b.dataset.detail));
-}
-async function openAgent(id) {
-  const data = await api("/v1/agents/" + id);
-  const live = data.live_stats || data.seeded_live_stats || {};
-  $("#agent-body").innerHTML = `<h2>${esc(data.title)}</h2><p class="meta">${esc(data.summary || "")}</p>
-    <p>${(data.badges || []).map((b) => `<span class="tag">${esc(b)}</span>`).join(" ") || `<span class="empty">No badge</span>`}</p>
-    <p class="meta">Confidence ${esc(data.confidence_score)} · lower bound ${esc(data.confidence_lower_bound)} · n ${esc(data.confidence_n)}</p>
-    <p class="meta">Live success ${live.success_rate == null ? "no live stats yet" : esc(live.success_rate)} · incidents in findings below</p>
-    ${reportCardHtml(Object.assign({}, data.report_card || {}, { tests: (data.report_card && data.report_card.tests) || [] }))}
-    <button type="button" id="agent-start">Start with this agent</button>`;
-  $("#agent-start").onclick = () => openQuote(id);
-  show("agent");
-}
-async function loadWallet() {
+async function loadAccount() {
   const w = await api("/v1/wallet");
-  const packs = [["S", "$10", "1,000"], ["M", "$25", "2,750"], ["L", "$50", "5,750"]];
-  const plans = [["plus", "$19 / month", "2,200"], ["pro", "$49 / month", "6,000"]];
-  const hist = (w.history || []).slice(0, 20).map((row) => `<div class="kv"><span>${esc(row.ref_type || row.memo || row.direction)}</span><span>${esc(row.direction)} ${creditsFine(fromMicro(row.amount_microcredits))}</span></div>`).join("");
-  $("#wallet-body").innerHTML = `<div class="kv"><span>Balance</span><span>${creditsFine(w.balance_credits)}</span></div>
-    <div class="kv"><span>Held</span><span>${creditsFine(fromMicro(w.held_microcredits))}</span></div>
-    <div class="kv"><span>Granted</span><span>${creditsFine(w.granted_credits)}</span></div>
-    <h3>Packs</h3>
-    <div class="grid-3">${packs.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-pack="${id}">Add ${id}</button></article>`).join("")}</div>
-    <h3>Plans</h3>
-    <div class="grid-3">${plans.map(([id, price, credits]) => `<article class="cmp"><p>${id}</p><p class="meta">${price} · ${credits} credits</p><button type="button" data-plan="${id}">Choose ${id}</button></article>`).join("")}</div>
-    <h3>History</h3>
-    ${hist || `<p class="empty">No transactions yet.</p>`}`;
-  $("#wallet-body").querySelectorAll("[data-pack]").forEach((b) => b.onclick = async () => {
-    await once("pack:" + b.dataset.pack, (key) => api("/v1/wallet/topup", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ pack: b.dataset.pack })}));
-    refreshBal();
-    loadWallet();
-  });
-  $("#wallet-body").querySelectorAll("[data-plan]").forEach((b) => b.onclick = async () => {
-    await api("/v1/subscriptions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ plan: b.dataset.plan })});
-    loadWallet();
-  });
-}
-function showCreatorStep(n) {
-  state.step = n;
-  document.querySelectorAll("#creator-steps button").forEach((b) => b.classList.toggle("on", Number(b.dataset.step) === n));
-  document.querySelectorAll("[data-step-panel]").forEach((p) => p.classList.toggle("hidden", Number(p.dataset.stepPanel) !== n));
-  $("#c-back").classList.toggle("hidden", n === 1);
-  $("#c-next").classList.toggle("hidden", n === 5);
-  $("#c-submit").classList.toggle("hidden", n !== 5);
+  const shown = (n) => Math.round(n).toLocaleString("en-US");
+  const rows = [
+    ["Name", w.user || "Jaineel"],
+    ["Email", w.email || ""],
+    ["Total", shown(w.granted_credits || 0) + " credits"],
+    ["Remaining", shown(w.balance_credits || 0) + " credits"],
+    ["Used", shown(w.used_credits || 0) + " credits"]
+  ];
+  const esc = (value) => String(value).replace(/[&<>]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[ch]));
+  $("#account-body").innerHTML = rows.map(([label, value]) => `<div><span>${esc(label)}</span><span>${esc(value)}</span></div>`).join("");
 }
 async function loadCreator() {
-  $("#creator-error").textContent = "";
-  if (!state.me) await loadMe();
-  if (!hasRole("creator") && !hasRole("admin")) {
-    $("#creator-home").innerHTML = "";
-    $("#creator-form").classList.add("hidden");
-    $("#creator-steps").classList.add("hidden");
-    $("#creator-error").textContent = "Creator role required. Sign in as Riya to open this view.";
-    return;
-  }
-  $("#creator-form").classList.remove("hidden");
-  $("#creator-steps").classList.remove("hidden");
-  if (!hasRole("creator")) {
-    $("#creator-error").textContent = "This account is an admin, not a creator. The creator API will refuse it.";
-  }
-  let analytics = { agents: [], sessions: 0 };
-  let earn = {};
-  try {
-    analytics = await api("/v1/creator/analytics");
-    earn = await api("/v1/creator/earnings");
-  } catch (err) {
-    $("#creator-error").textContent = err.message || "Creator role required.";
-    $("#creator-home").innerHTML = "";
-    $("#creator-form").classList.add("hidden");
-    $("#creator-steps").classList.add("hidden");
-    return;
-  }
-  const rows = (analytics.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title || a.agent_id)}</h3><p class="meta">${esc(a.status || "")} · ${esc(a.sessions)} sessions · rating ${a.rating_avg == null ? "none yet" : esc(a.rating_avg)}</p><button type="button" data-agent="${a.agent_id}">Open</button></article>`).join("");
-  $("#creator-home").innerHTML = `<div class="kv"><span>Sessions</span><span>${esc(analytics.sessions || 0)}</span></div>
-    <div class="kv"><span>Earnings</span><span>${creditsFine(earn.available_credits)}</span></div>
-    <div class="kv"><span>In clearing</span><span>${creditsFine(earn.clearing_credits || 0)} · ${esc(earn.clearing_days || 14)} days</span></div>
-    <div class="grid-3">${rows || `<p class="empty">No agents yet. Submit one below.</p>`}</div>`;
-  $("#creator-home").querySelectorAll("[data-agent]").forEach((b) => b.onclick = () => openCreatorAgent(b.dataset.agent));
-  showCreatorStep(state.step || 1);
-}
-async function openCreatorAgent(id) {
-  const mine = await api("/v1/creator/agents");
-  const agent = (mine || []).find((a) => a.id === id);
-  if (!agent || !agent.versions || !agent.versions.length) {
-    $("#creator-review").innerHTML = `<p class="empty">No version to review yet.</p>`;
-    return;
-  }
-  const version = agent.versions[0];
-  const data = await api("/v1/creator/agents/" + id + "/versions/" + version.id + "/review");
-  const review = data.review;
-  const card = review ? Object.assign({}, review.report_card || {}, { decision: review.decision, scores: review.scores, findings: review.findings, tests: review.tests, stages: (review.report_card || {}).stages, cost_p50_microcredits: review.cost_p50_microcredits, cost_p90_microcredits: review.cost_p90_microcredits, latency_p50_ms: review.latency_p50_ms, latency_p95_ms: review.latency_p95_ms }) : null;
-  $("#creator-review").innerHTML = `<h3>${esc(agent.title)} · ${esc(version.semver)} · ${esc(data.version_status)}</h3>
-    <p class="meta">Current stage ${esc(review ? review.stage : "not started")} · ${esc(review ? review.status : "")}</p>
-    ${reportCardHtml(card)}
-    <p class="empty">${(card && card.stages && card.stages.length) ? "" : "This report has no stage log yet. A fresh review writes the nine stages as they run."}</p>
-    <button type="button" id="rerun-review">Re-run review</button>`;
-  $("#rerun-review").onclick = async () => {
-    try {
-      await once("review:" + version.id, (key) => api("/v1/admin/versions/" + version.id + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
-      openCreatorAgent(id);
-    } catch (err) {
-      $("#creator-error").textContent = err.status === 403 ? "Re-run review needs the admin role. The pipeline itself starts when a version is submitted." : (err.message || "Review did not start.");
-    }
-  };
+  const a = await api("/v1/creator/analytics");
+  const e = await api("/v1/creator/earnings");
+  $("#creator-body").innerHTML = `<table>
+    <tr><td>Sessions</td><td>${a.sessions}</td></tr>
+    <tr><td>Creator payable</td><td>${e.available_credits} credits (simulated, ${e.clearing_days}-day clearing)</td></tr>
+    <tr><td>Platform fee balance</td><td>${a.platform_revenue_credits}</td></tr>
+    <tr><td>Provider cost</td><td>${a.provider_cost_credits}</td></tr>
+  </table>`;
 }
 async function loadAdmin() {
-  $("#admin-error").textContent = "";
-  if (!state.me) await loadMe();
-  if (!hasRole("admin")) {
-    $("#admin-metrics").innerHTML = "";
-    $("#admin-queue").innerHTML = "";
-    $("#admin-body").innerHTML = "";
-    $("#admin-error").textContent = "Admin role required. Sign in as Admin to open Review.";
-    return;
-  }
-  const metrics = await api("/v1/admin/metrics");
-  $("#admin-metrics").innerHTML = `<div class="kv"><span>Settled sessions</span><span>${esc(metrics.sessions_settled)}</span></div>
-    <div class="kv"><span>Gross charged</span><span>${creditsFine(fromMicro(metrics.gross_charged_microcredits))}</span></div>
-    <div class="kv"><span>Platform revenue</span><span>${creditsFine(fromMicro(metrics.platform_revenue_microcredits))}</span></div>
-    <div class="kv"><span>Provider cost</span><span>${creditsFine(fromMicro(metrics.provider_cost_microcredits))}</span></div>
-    <div class="kv"><span>Failure rate</span><span>${esc(metrics.failure_rate)}</span></div>`;
-  const queue = await api("/v1/admin/review-queue");
-  const queueRows = (Array.isArray(queue) ? queue : []).map((row) => `<div class="kv"><span>${esc(row.agent_id)} ${esc(row.semver)} · ${esc(row.review_stage || row.status)}</span><span><button type="button" data-decision="${row.version_id}" data-choice="approved">Approve</button> <button type="button" data-decision="${row.version_id}" data-choice="rejected">Reject</button></span></div>`).join("");
-  $("#admin-queue").innerHTML = queueRows || `<p class="empty">The review queue is empty.</p>`;
   const data = await api("/v1/admin/agents");
-  $("#admin-body").innerHTML = (data.agents || []).map((a) => `<article class="cmp"><h3>${esc(a.title)}</h3><p class="meta">${esc(a.status)} · ${esc(a.decision || "")}</p>${reportCardHtml({ decision: a.decision, findings: (a.findings || []).map((f) => ({ detail: f })) })}
-    <button type="button" data-review="${a.version_id}">Run review</button>
-    <button type="button" data-kill="${a.id}">Kill switch</button>
-    <button type="button" data-unpause="${a.id}">Unpause</button></article>`).join("") || `<p class="empty">No agents.</p>`;
-  $("#admin-queue").querySelectorAll("[data-decision]").forEach((b) => b.onclick = async () => {
-    await api("/v1/admin/versions/" + b.dataset.decision + "/decision", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ decision: b.dataset.choice })});
+  $("#admin-body").innerHTML = `<table><tr><th>Agent</th><th>Status</th><th>Decision</th><th></th></tr>` +
+    data.agents.map((a) => `<tr><td>${a.title}<div class="meta">${(a.findings||[]).join(" ")}</div></td><td>${a.status}</td><td class="${a.decision==="rejected"?"warn":"ok"}">${a.decision}</td>
+      <td><button data-review="${a.version_id}">Run review</button> <button data-kill="${a.id}">Kill switch</button></td></tr>`).join("") + `</table>`;
+  document.querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
+    const res = await api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST" });
+    alert(res.decision + "\n" + res.findings.join("\n") + "\nconfidence " + res.confidence);
     loadAdmin();
   });
-  $("#admin-body").querySelectorAll("[data-review]").forEach((b) => b.onclick = async () => {
-    const res = await once("review:" + b.dataset.review, (key) => api("/v1/admin/versions/" + b.dataset.review + "/review", { method: "POST", headers: { "Idempotency-Key": key } }));
-    alert(res.decision + "\n" + (res.findings || []).join("\n") + "\nconfidence " + res.confidence);
-    loadAdmin();
-  });
-  $("#admin-body").querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
+  document.querySelectorAll("[data-kill]").forEach((b) => b.onclick = async () => {
     const res = await api("/v1/admin/agents/" + b.dataset.kill + "/kill", { method: "POST" });
-    alert("Paused. Refunded " + (res.refunded_sessions || []).length + " sessions.");
-    loadAdmin();
-  });
-  $("#admin-body").querySelectorAll("[data-unpause]").forEach((b) => b.onclick = async () => {
-    await api("/v1/admin/agents/" + b.dataset.unpause + "/unpause", { method: "POST" });
+    alert("Paused. Refunded " + res.refunded_sessions.length + " sessions.");
     loadAdmin();
   });
 }
-$("#compare-back").onclick = () => show("discover");
-$("#agent-back").onclick = () => show("discover");
-$("#extend").onclick = async () => {
-  if (!state.session) return;
-  const add = Number($("#extend-credits").value);
-  try {
-    const ses = await once("extend", (key) => api("/v1/sessions/" + state.session + "/extend", { method: "POST", headers: {"Content-Type":"application/json", "Idempotency-Key": key}, body: JSON.stringify({ add_microcredits: Math.round(add * 1000) })}));
-    state.cap = fromMicro(ses.cap_microcredits || (state.cap + add) * 1000);
-    $("#session-edge").textContent = "Cap is now " + creditsFine(state.cap) + ".";
-    refreshBal();
-  } catch (err) {
-    $("#session-edge").textContent = err.code === "insufficient_credits" ? err.message + " Add credits from Wallet." : (err.message || "Could not extend.");
+refreshBal();
+loadSidebar();
+restorePlace();
+
+async function restorePlace() {
+  const hash = location.hash.replace(/^#/, "");
+  if (hash.startsWith("/chat/")) {
+    try {
+      await openConversation(decodeURIComponent(hash.slice(6)));
+      return;
+    } catch (err) {
+      state.conversation = null;
+    }
   }
-};
-async function rememberFile(file) {
-  if (!file) return;
-  if (file.size > 1500000) { $("#file-note").textContent = "That file is too large for this demo."; return; }
-  const buf = await file.arrayBuffer();
-  const bytes = new Uint8Array(buf);
-  let bin = "";
-  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
-  state.files = [{ name: file.name, content_base64: btoa(bin) }];
-  $("#file-note").textContent = file.name + " will be sent when the session starts.";
-  $("#quote-files").textContent = file.name;
-}
-$("#session-file").onchange = () => {
-  if (state.session) {
-    $("#file-note").textContent = "The API accepts files on session start only. Attach the file from the quote, then start.";
-    $("#session-file").value = "";
+  if (hash === "/account") {
+    await show("account");
     return;
   }
-  rememberFile($("#session-file").files[0]);
-};
-$("#quote-file").onchange = () => rememberFile($("#quote-file").files[0]);
-$("#rate-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    await api("/v1/sessions/" + state.session + "/rating", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ stars: Number($("#rate-stars").value), comment: $("#rate-comment").value })});
-    $("#after-note").textContent = "Rating saved.";
-  } catch (err) { $("#after-note").textContent = err.message || "Could not rate this session."; }
-};
-$("#dispute-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    await api("/v1/sessions/" + state.session + "/dispute", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#dispute-reason").value })});
-    $("#after-note").textContent = "Dispute opened.";
-  } catch (err) { $("#after-note").textContent = err.message || "Could not open a dispute."; }
-};
-$("#creator-steps").querySelectorAll("button").forEach((b) => b.onclick = () => showCreatorStep(Number(b.dataset.step)));
-$("#c-next").onclick = () => showCreatorStep(Math.min(5, state.step + 1));
-$("#c-back").onclick = () => showCreatorStep(Math.max(1, state.step - 1));
-$("#creator-form").onsubmit = async (event) => {
-  event.preventDefault();
-  const manifest = {
-    name: $("#c-slug").value.trim(),
-    display_name: $("#c-title").value.trim() || $("#c-slug").value.trim(),
-    version: $("#c-version").value.trim() || "0.1.0",
-    summary: $("#c-summary").value.trim(),
-    description: $("#c-description").value.trim(),
-    category: $("#c-category").value.trim() || "general",
-    tags: $("#c-tags").value.split(",").map((t) => t.trim()).filter(Boolean),
-    example_tasks: $("#c-samples").value.split("\n").map((t) => t.trim()).filter(Boolean),
-    pricing: { model: $("#c-price-model").value, price_credits: Number($("#c-price").value) || 0 }
-  };
-  try {
-    if (!state.draftAgent) {
-      const created = await api("/v1/creator/agents", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ slug: manifest.name, category: manifest.category, mode: $("#c-mode").value, endpoint_url: $("#c-endpoint").value || null })});
-      state.draftAgent = created.id;
+  if (hash === "/library" || hash.startsWith("/agent/")) {
+    await show("library");
+    if (hash.startsWith("/agent/")) {
+      const title = decodeURIComponent(hash.slice(7));
+      const sample = agentCatalog().find((row) => row[0] === title);
+      if (sample) openAgentPage(sample);
     }
-    const body = { manifest };
-    if ($("#c-source").value.trim()) body.source_path = $("#c-source").value.trim();
-    const submitted = await api("/v1/creator/agents/" + state.draftAgent + "/versions", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify(body) });
-    $("#c-submit-note").textContent = "Submitted. Review " + submitted.status + ".";
-    openCreatorAgent(state.draftAgent);
-  } catch (err) {
-    $("#c-submit-note").textContent = err.code === "review rejected" ? err.message : (err.message || "Submit failed.");
+    return;
   }
-};
-$("#refund-form").onsubmit = async (event) => {
-  event.preventDefault();
-  try {
-    const res = await api("/v1/admin/sessions/" + $("#refund-id").value.trim() + "/refund", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ reason: $("#refund-reason").value })});
-    $("#refund-note").textContent = "Refunded " + creditsFine(fromMicro(res.refunded_microcredits || 0)) + ".";
-  } catch (err) { $("#refund-note").textContent = err.message || "Refund failed."; }
-};
-bootAuth();
+  remember("/new");
+}
 </script>
 </body>
 </html>
